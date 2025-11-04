@@ -2,82 +2,84 @@
 
 A comprehensive website designed to provide detailed guidance on building and 3D printing drones, utilizing the provided control software to operate them, and creating captivating drone shows.
 
-This document contains details on what informations to provide on the website and it will be filled with more precise steps.
+This document outlines the information to be provided on the website and will be expanded with precise steps as the project progresses.
 
-# Prerequisite
+# Prerequisites
 
-This part will contain informations about what is needed before beginning the building process.
+This section will detail the requirements and preparations needed before beginning the drone-building process.
 
 ## Budget
 
-The budget required for the project
+An overview of the estimated budget required for the project, including potential cost breakdowns.
 
 ## Parts List
 
-Parts required for the building of a singular drone
+A comprehensive list of all the components required to build a single drone.
 
-### Where to order
+### Where to Order
+
+Guidance on reliable sources and platforms to procure the necessary parts.
 
 ## Software List
 
-Software needed for the development and programming of the drone
+A detailed list of software tools required for the development and programming of the drone.
 
 ### Software Setup
 
-How to install (board) libraries, etc.
+Step-by-step instructions on how to install essential libraries, drivers, and other software dependencies.
 
-## ( Skills needed )
+## Skills Needed
 
-This section contains the skills one would need to build the drone
+An outline of the skills and knowledge required to successfully build and operate the drone.
 
-## Saftey / Legal prep
+## Safety and Legal Preparations
 
-Some saftey prevautions before starting the project
+Important safety precautions and legal considerations to address before starting the project.
 
 # Assembly
 
-Contains the necessary assembly steps
+This section will provide detailed instructions for assembling the drone.
 
-## Safety checks
+## Safety Checks
 
-Safety checks for parts like batteries
+Guidelines for performing safety checks on critical components such as batteries to ensure safe operation.
 
 ## Functionality Checks
 
-Steps to check if each parts works properly
+Steps to verify that each component is functioning correctly before final assembly.
 
-## Assembly steps
+## Assembly Steps
 
-Categories containing steps to assemble the drone
+A categorized breakdown of the steps required to assemble the drone, ensuring clarity and ease of understanding.
 
 # Programming
 
-The steps necessary to get the drone working
+Comprehensive instructions for programming the drone to ensure it operates as intended.
 
-## Programming the drone itself
+## Programming the Drone Itself
 
-Steps on how to program the drone itself
+Detailed steps on how to program the drone, including:
 
-### Upload precompiled version for standart spec
+### Uploading Precompiled Versions for Standard Specifications
 
-Easy flashing of already working compiled binaries for people who don't want to mess with the source code
+Instructions for easily flashing precompiled binaries for users who prefer not to modify the source code.
 
-### Accessing and flashing the source code
+### Accessing and Flashing the Source Code
 
-Steps on how to access the source code, modify it for potential changes and flash it onto the drone
+Guidance on accessing the source code, making modifications if necessary, and flashing it onto the drone.
 
-## Programming movement
+## Programming Movement
 
-Steps on how to use the software provided to control the drone
+Instructions on using the provided software to control the drone's movements.
 
-### Control setup
+### Control Setup
 
-How to connect the drone
+Steps to connect the drone to the control software and configure it for operation.
 
-### Raw flight
+### Raw Flight
 
-Fyling the drone with raw controls
+Instructions for flying the drone using manual controls for a more hands-on experience.
 
-### Following flight
+### Following Flight
 
-How to make a drone follow another one
+Guidance on programming the drone to follow another drone, including setup and operational tips.
