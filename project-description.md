@@ -25,12 +25,12 @@
 
 ## **4. Structure of the Website**
 
-* The website will consist of multiple pages, each focusing on a specific aspect of the project:
-  * `index.html` → Home page with an overview of the project.
-  * `prerequisites.html` → Details on budget, parts, software, and skills needed.
-  * `assembly.html` → Step-by-step assembly instructions.
-  * `programming.html` → Comprehensive programming guide.
-  * `applications.html` → Exploration of various drone applications, including shows, recreational flying, and educational uses.
+* The website will consist of multiple sections, each focusing on a specific aspect and having subcategories for improved structure of the project:
+  * `index` → Home page with an overview of the project.
+  * `prerequisites` → Details on budget, parts, software, and skills needed.
+  * `assembly` → Step-by-step assembly instructions.
+  * `programming` → Comprehensive programming guide.
+  * `applications` → Exploration of various drone applications, including shows, recreational flying, and educational uses.
 
 ---
 
@@ -51,7 +51,7 @@
 * The project will be developed in the following stages:
   * **Week 1:** Develop the header section and main layout.
   * **Week 2:** Implement navigation pane logic and create templates for pages.
-  * **Week 3:** Establish page linking and integrate search functionality.
+  * **Week 3:** Establish page linking, integrate search functionality and start implementing content.
   * **Week 4:** Finalize content and perform testing.
 
 ---
