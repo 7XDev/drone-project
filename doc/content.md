@@ -5,7 +5,7 @@ A comprehensive website designed to provide detailed guidance on building and 3D
 This document outlines the information to be provided on the website and will be expanded with precise steps as the project progresses.
 
 # Prerequisites
-
+ 
 This section will detail the requirements and preparations needed before beginning the drone-building process.
 
 ## Budget
