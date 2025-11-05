@@ -2,7 +2,7 @@ class ContentBrowser {
     contentStructure;
 
     constructor() {
-        this.contentStructure = contentStructure;
+        this.contentStructure = [];
     }
 
     async fetchStructure(path) {
@@ -12,9 +12,30 @@ class ContentBrowser {
             return null;
         }
         this.contentStructure = await res.json();
+        console.log(this.contentStructure);
+    }
+
+    generateTopicsHTML(structure = this.contentStructure) {
+        let html = '';
+
+        const traverse = (items) => {
+            items.forEach(item => {
+                if (item.type === 'page') {
+                    html += `<p class="topic-unselected hyper-button">${item.name}</p>`;
+                } else if (item.type === 'category' && item.children) {
+                    traverse(item.children);
+                }
+            });
+        };
+
+        traverse(structure);
+        return html;
     }
 
     async getStructure() {
-        return '';
+        return this.generateTopicsHTML();
     }
 }
+
+// Showcase purposes
+export default ContentBrowser;
