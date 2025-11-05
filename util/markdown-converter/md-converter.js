@@ -17,9 +17,20 @@ class MarkdownConverter {
         const htmlLines = [];
         let inUnorderedList = false;
         let inOrderedList = false;
+        let inCodeBlock = false;
 
         for (const line of lines) {
-            if (/^(\*|\-|\+)\s/.test(line)) {
+            if (/^```/.test(line)) {
+                if (inCodeBlock) {
+                    htmlLines.push('</pre>');
+                    inCodeBlock = false;
+                } else {
+                    htmlLines.push('<pre class="markdown-code-block">');
+                    inCodeBlock = true;
+                }
+            } else if (inCodeBlock) {
+                htmlLines.push(this.escapeHtml(line));
+            } else if (/^(\*|\-|\+)\s/.test(line)) {
                 if (!inUnorderedList) {
                     htmlLines.push('<ul class="markdown-list">');
                     inUnorderedList = true;
@@ -59,6 +70,9 @@ class MarkdownConverter {
         if (inOrderedList) {
             htmlLines.push('</ol>');
         }
+        if (inCodeBlock) {
+            htmlLines.push('</pre>');
+        }
 
         return htmlLines.join('\n');
     }
@@ -84,8 +98,6 @@ class MarkdownConverter {
             return `<li class="markdown-ordered-list-item">${this.parseInline(content)}</li>`;
         }
 
-        // TODO Code blocks, blockquotes
-
         // Line breaks
         if (line.trim() === '') {
             return '<br>';
@@ -100,5 +112,15 @@ class MarkdownConverter {
             .replace(/\*\*(.*?)\*\*/g, '<strong class="markdown-bold">$1</strong>') // Bold
             .replace(/\*(.*?)\*/g, '<em class="markdown-italic">$1</em>') // Italic
             .replace(/`(.*?)`/g, '<code class="markdown-code">$1</code>'); // Inline code
+    }
+
+    // Escape HTML for code blocks
+    escapeHtml(text) {
+        return text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
 }
