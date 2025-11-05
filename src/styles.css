@@ -7,7 +7,7 @@ body {
     background-color: white;
 }
 
-.header {
+.header-logo {
     margin-left: 8%;
 
     display:flex;
@@ -30,4 +30,8 @@ body {
 .side-line {
     height: 1px;
     background-color: rgba(0, 0, 0, 0.1);
+}
+
+.main {
+    margin-left: 8%;
 }
