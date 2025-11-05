@@ -14,7 +14,66 @@ class MarkdownConverter {
     // Convert markdown text to HTML
     convert(md) {
         const lines = md.split('\n');
-        const htmlLines = lines.map(line => this.parseLine(line));
+        const htmlLines = [];
+        let inUnorderedList = false;
+        let inOrderedList = false;
+        let inCodeBlock = false;
+
+        for (const line of lines) {
+            if (/^```/.test(line)) {
+                if (inCodeBlock) {
+                    htmlLines.push('</pre>');
+                    inCodeBlock = false;
+                } else {
+                    htmlLines.push('<pre class="markdown-code-block">');
+                    inCodeBlock = true;
+                }
+            } else if (inCodeBlock) {
+                htmlLines.push(this.escapeHtml(line));
+            } else if (/^(\*|\-|\+)\s/.test(line)) {
+                if (!inUnorderedList) {
+                    htmlLines.push('<ul class="markdown-list">');
+                    inUnorderedList = true;
+                }
+
+                if (inOrderedList) {
+                    htmlLines.push('</ol>');
+                    inOrderedList = false;
+                }
+                htmlLines.push(this.parseLine(line));
+            } else if (/^\d+\.\s/.test(line)) {
+                if (!inOrderedList) {
+                    htmlLines.push('<ol class="markdown-ordered-list-spaced">');
+                    inOrderedList = true;
+                }
+                if (inUnorderedList) {
+                    htmlLines.push('</ul>'); 
+                    inUnorderedList = false;
+                }
+                htmlLines.push(this.parseLine(line));
+            } else {
+                if (inUnorderedList) {
+                    htmlLines.push('</ul>');
+                    inUnorderedList = false;
+                }
+                if (inOrderedList) {
+                    htmlLines.push('</ol>');
+                    inOrderedList = false;
+                }
+                htmlLines.push(this.parseLine(line));
+            }
+        }
+
+        if (inUnorderedList) {
+            htmlLines.push('</ul>');
+        }
+        if (inOrderedList) {
+            htmlLines.push('</ol>');
+        }
+        if (inCodeBlock) {
+            htmlLines.push('</pre>');
+        }
+
         return htmlLines.join('\n');
     }
 
@@ -27,14 +86,18 @@ class MarkdownConverter {
             return `<h${level} class="markdown-heading">${this.parseInline(content)}</h${level}>`;
         }
 
-        // Lists
+        // Unordered Lists
         if (/^(\*|\-|\+)\s/.test(line)) {
             const content = line.replace(/^(\*|\-|\+)\s/, '');
             return `<li class="markdown-list-item">${this.parseInline(content)}</li>`;
         }
 
-        // TODO Code blocks, blockquotes
-        
+        // Ordered Lists
+        if (/^\d+\.\s/.test(line)) {
+            const content = line.replace(/^\d+\.\s/, '');
+            return `<li class="markdown-ordered-list-item">${this.parseInline(content)}</li>`;
+        }
+
         // Line breaks
         if (line.trim() === '') {
             return '<br>';
@@ -49,5 +112,15 @@ class MarkdownConverter {
             .replace(/\*\*(.*?)\*\*/g, '<strong class="markdown-bold">$1</strong>') // Bold
             .replace(/\*(.*?)\*/g, '<em class="markdown-italic">$1</em>') // Italic
             .replace(/`(.*?)`/g, '<code class="markdown-code">$1</code>'); // Inline code
+    }
+
+    // Escape HTML for code blocks
+    escapeHtml(text) {
+        return text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
 }
