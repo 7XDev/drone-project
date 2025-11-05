@@ -42,8 +42,8 @@ main {
 .hyper-button {
     border-radius: 5px;
     transition: 0.1s;
-    padding: 0.5%;
-    width: 14%;
+    padding: 0.5rem;
+    width: 100%;
 }
 
 .hyper-button:hover {
@@ -53,20 +53,12 @@ main {
 .hyper-button-selected {
     border-radius: 5px;
     transition: 0.1s;
-    padding: 0.5%;
-    width: 14%;
+    padding: 0.5rem;
+    width: 100%;
 }
 
 .hyper-button-selected:hover {
     background-color: rgba(195, 220, 252, 0.5);
-}
-
-.topic-selector {
-    font-size: 17px;
-
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
 }
 
 .topic-selected {
@@ -78,8 +70,30 @@ main {
     opacity: 0.6;
 }
 
-.markdown-render-field {
-    margin-left: 20%;
-    position: absolute;
-    top: 12.7%;
+.content-container {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.topic-selector {
+    font-size: 17px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 0 0 auto;
+    width: 15%;
+    cursor: pointer;
+}
+
+.display-window {
+    flex: 1;
+    padding: 1rem;
+    min-height: 400px;
+}
+
+.right-panel {
+    flex: 0 0 20%;
+    padding: 1rem;
+    min-height: 400px;
 }
