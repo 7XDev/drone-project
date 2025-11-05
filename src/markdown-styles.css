@@ -1,0 +1,79 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* Headings */
+.markdown-heading {
+    font-weight: bold;
+    margin: 1em 0 0.5em;
+}
+
+.markdown-heading h1 {
+    font-size: 2em;
+}
+
+.markdown-heading h2 {
+    font-size: 1.75em;
+}
+
+.markdown-heading h3 {
+    font-size: 1.5em;
+}
+
+.markdown-heading h4 {
+    font-size: 1.25em;
+}
+
+.markdown-heading h5 {
+    font-size: 1em;
+}
+
+.markdown-heading h6 {
+    font-size: 0.875em;
+}
+
+/* Paragraphs */
+.markdown-paragraph {
+    margin: 0.5em 0;
+}
+
+/* Lists */
+.markdown-list {
+    list-style-type: disc;
+    margin: 0.5em 0 0.5em 1.5em;
+    padding: 0;
+}
+
+.markdown-list-item {
+    margin: 0.25em 0;
+}
+
+.markdown-ordered-list {
+    list-style-type: decimal;
+    margin: 0.5em 0 0.5em 1.5em;
+    padding: 0;
+}
+
+.markdown-ordered-list-item {
+    margin: 0.25em 0;
+}
+
+/* Inline Elements */
+.markdown-bold {
+    font-weight: bold;
+}
+
+.markdown-italic {
+    font-style: italic;
+}
+
+.markdown-code {
+    font-family: monospace;
+    background-color: #f4f4f4;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+}
