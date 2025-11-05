@@ -12,7 +12,6 @@ class ContentBrowser {
             return null;
         }
         this.contentStructure = await res.json();
-        console.log(this.contentStructure);
     }
 
     generateTopicsHTML(structure = this.contentStructure) {
@@ -31,6 +30,16 @@ class ContentBrowser {
 
         traverse(structure);
         return html;
+    }
+
+    changeCategoryVisibility(item, container) {
+        if (item.type === 'category') {
+            item.collapsed = !item.collapsed;
+        }
+
+        if (container) {
+            container.innerHTML = this.generateTopicsHTML();
+        }
     }
 
     async getStructure() {

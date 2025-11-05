@@ -12,8 +12,15 @@
             const browser = new ContentBrowser();
             await browser.fetchStructure('./content-structure.json');
 
-            const container = document.getElementById('topics-container');
+            const container = document.querySelector('.topics-container');
             container.innerHTML = browser.generateTopicsHTML();
+
+            // Example: Pass the item directly to toggle visibility
+            const miscellaneousCategory = browser.contentStructure.find(
+                item => item.name === 'Nature'
+            );
+
+            browser.changeCategoryVisibility(miscellaneousCategory, container);
         });
     </script>
 </head>
@@ -24,7 +31,7 @@
     </header>
 
     <main>
-        <div id="topics-container">
+        <div class="topics-container">
             <!-- Topics will be dynamically inserted here -->
         </div>
     </main>
