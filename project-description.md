@@ -62,3 +62,4 @@
   * A dynamic search bar for efficient navigation.
   * Interactive diagrams and videos to enhance learning.
   * A contact form for user feedback and inquiries.
+  * The frontend for the online coding-IDE that can be used to program the drones.
