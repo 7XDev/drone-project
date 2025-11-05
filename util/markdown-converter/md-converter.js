@@ -14,7 +14,52 @@ class MarkdownConverter {
     // Convert markdown text to HTML
     convert(md) {
         const lines = md.split('\n');
-        const htmlLines = lines.map(line => this.parseLine(line));
+        const htmlLines = [];
+        let inUnorderedList = false;
+        let inOrderedList = false;
+
+        for (const line of lines) {
+            if (/^(\*|\-|\+)\s/.test(line)) {
+                if (!inUnorderedList) {
+                    htmlLines.push('<ul class="markdown-list">');
+                    inUnorderedList = true;
+                }
+
+                if (inOrderedList) {
+                    htmlLines.push('</ol>');
+                    inOrderedList = false;
+                }
+                htmlLines.push(this.parseLine(line));
+            } else if (/^\d+\.\s/.test(line)) {
+                if (!inOrderedList) {
+                    htmlLines.push('<ol class="markdown-ordered-list-spaced">');
+                    inOrderedList = true;
+                }
+                if (inUnorderedList) {
+                    htmlLines.push('</ul>'); 
+                    inUnorderedList = false;
+                }
+                htmlLines.push(this.parseLine(line));
+            } else {
+                if (inUnorderedList) {
+                    htmlLines.push('</ul>');
+                    inUnorderedList = false;
+                }
+                if (inOrderedList) {
+                    htmlLines.push('</ol>');
+                    inOrderedList = false;
+                }
+                htmlLines.push(this.parseLine(line));
+            }
+        }
+
+        if (inUnorderedList) {
+            htmlLines.push('</ul>');
+        }
+        if (inOrderedList) {
+            htmlLines.push('</ol>');
+        }
+
         return htmlLines.join('\n');
     }
 
@@ -27,14 +72,20 @@ class MarkdownConverter {
             return `<h${level} class="markdown-heading">${this.parseInline(content)}</h${level}>`;
         }
 
-        // Lists
+        // Unordered Lists
         if (/^(\*|\-|\+)\s/.test(line)) {
             const content = line.replace(/^(\*|\-|\+)\s/, '');
             return `<li class="markdown-list-item">${this.parseInline(content)}</li>`;
         }
 
+        // Ordered Lists
+        if (/^\d+\.\s/.test(line)) {
+            const content = line.replace(/^\d+\.\s/, '');
+            return `<li class="markdown-ordered-list-item">${this.parseInline(content)}</li>`;
+        }
+
         // TODO Code blocks, blockquotes
-        
+
         // Line breaks
         if (line.trim() === '') {
             return '<br>';
