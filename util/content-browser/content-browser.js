@@ -22,7 +22,8 @@ class ContentBrowser {
             items.forEach(item => {
                 if (item.type === 'page') {
                     html += `<p class="topic-unselected hyper-button">${item.name}</p>`;
-                } else if (item.type === 'category' && item.children) {
+                } else if (item.type === 'category' && item.children && !item.collapsed) {
+                    html += `<p class="topic-category">${item.name}</p>`;
                     traverse(item.children);
                 }
             });
