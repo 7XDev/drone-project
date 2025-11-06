@@ -45,7 +45,7 @@
   {
     "type": "category",
     "name": "History",
-    "collapsed": true,
+    "collapsed": false,
     "children": [
       {
         "type": "page",
@@ -67,7 +67,7 @@
   {
     "type": "category",
     "name": "Nature",
-    "collapsed": true,
+    "collapsed": false,
     "children": [
       {
         "type": "page",
@@ -94,7 +94,7 @@
   {
     "type": "category",
     "name": "Miscellaneous",
-    "collapsed": true,
+    "collapsed": false,
     "children": [
       {
         "type": "page",

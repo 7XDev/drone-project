@@ -20,10 +20,17 @@ class ContentBrowser {
         const traverse = (items) => {
             items.forEach(item => {
                 if (item.type === 'page') {
-                    html += `<p class="topic-unselected hyper-button">${item.name}</p>`;
-                } else if (item.type === 'category' && item.children && !item.collapsed) {
-                    html += `<p class="topic-category">${item.name}</p>`;
-                    traverse(item.children);
+                    html += `<p class="topic-unselected topic-button" id="topic-button-${item.name}">${item.name}</p>`;
+                } else if (item.type === 'category' && !item.collapsed) {
+                    if (item.path) {
+                        html += `<p class="topic-category-topic topic-category-topic-button" id="topic-category-topic-${item.name}">${item.name}</p>`
+                    } else {
+                        html += `<p class="topic-category" id="topic-category-${item.name}">${item.name}</p>`;
+                    }
+                    
+                    if (item.children) {
+                        traverse(item.children);
+                    }
                 }
             });
         };
