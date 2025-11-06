@@ -54,5 +54,4 @@ class ContentBrowser {
     }
 }
 
-// Showcase purposes
 export default ContentBrowser;

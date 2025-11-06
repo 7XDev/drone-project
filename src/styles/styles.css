@@ -39,25 +39,26 @@ main {
     font-family: league-spartan;
 }
 
-.hyper-button {
+.topic-button {
     border-radius: 5px;
     transition: 0.1s;
     padding: 0.5rem;
     width: 100%;
+    cursor: pointer;
 }
 
-.hyper-button:hover {
+.topic-button:hover {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-.hyper-button-selected {
+.topic-button-selected {
     border-radius: 5px;
     transition: 0.1s;
     padding: 0.5rem;
     width: 100%;
 }
 
-.hyper-button-selected:hover {
+.topic-button-selected:hover {
     background-color: rgba(195, 220, 252, 0.5);
 }
 
@@ -70,10 +71,50 @@ main {
     opacity: 0.6;
 }
 
-.content-container {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
+/* Implement styles for headings */
+
+.topic-category-button {
+    border-radius: 5px;
+    transition: 0.1s;
+    padding: 0.5rem;
+    width: 100%;
+    cursor: pointer;
+}
+
+.topic-category-button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.topic-category-button-selected {
+    border-radius: 5px;
+    transition: 0.1s;
+    padding: 0.5rem;
+    width: 100%;
+}
+
+.topic-category-button-selected:hover {
+    background-color: rgba(195, 220, 252, 0.5);
+}
+
+.topic-category-selected {
+    opacity: 1;
+    color: rgb(44, 98, 245);
+}
+
+.topic-category-unselected {
+    opacity: 0.6;
+}
+
+.topic-category {
+    border-radius: 5px;
+    transition: 0.1s;
+    padding: 0.5rem;
+    width: 100%;
+    cursor: pointer;
+}
+
+.topic-category:hover {
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .topic-selector {
@@ -83,7 +124,12 @@ main {
     gap: 0.25rem;
     flex: 0 0 auto;
     width: 15%;
-    cursor: pointer;
+}
+
+.content-container {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
 }
 
 .display-window {
