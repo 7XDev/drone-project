@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
             topicCategoryButtons.forEach(btn => {
                 btn.classList.remove('topic-category-button-selected');
                 btn.classList.add('topic-category-button-unselected');
+                btn.dataset.toggled = 'false';
             });
 
             button.classList.remove('topic-unselected');
