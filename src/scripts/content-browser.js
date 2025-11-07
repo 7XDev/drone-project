@@ -34,16 +34,17 @@ class ContentBrowser {
                 if (item.type === 'page') {
                     // Generate HTML for individual pages
                     html += `<p class="topic-unselected topic-button" id="topic-button-${item.name}">${item.name}</p>`;
-                } else if (item.type === 'category' && !item.collapsed) {
+                } else if (item.type === 'category') {
                     // Generate HTML for categories that are not collapsed
                     if (item.path) {
                         html += `<p class="topic-category-button-unselected topic-category-button" id="topic-category-topic-${item.name}">${item.name}</p>`
-                    } else {
+                        console.log("Debug");
+                    } else if (!item.collapsed) {
                         html += `<p class="topic-category" id="topic-category-${item.name}">${item.name}</p>`;
                     }
 
                     // Recursively generate HTML for child items
-                    if (item.children) {
+                    if (item.children && !item.collapsed) {
                         traverse(item.children);
                     }
                 }
