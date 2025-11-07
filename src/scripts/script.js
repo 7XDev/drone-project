@@ -22,4 +22,10 @@ document.addEventListener("DOMContentLoaded", async (event) => {
             button.classList.add('topic-selected');
         });
     });
+
+    // Select first topic-button on load
+    if (topicButtons.length > 0) {
+        topicButtons[0].classList.remove('topic-unselected');
+        topicButtons[0].classList.add('topic-selected');
+    }
 }); 
