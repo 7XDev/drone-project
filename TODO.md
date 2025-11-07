@@ -8,6 +8,10 @@ This file is used to keep notes to each other after each coding session.
 
 Markus 07.11. 17:35:
 
+ - !!! topic-category-button initialization is kind of messed up. The button needs to clicks to work on the first click after that works. I might fix that tomorrow but you can try that if you want 
+ - !!! topic-category-button doesnt apply for some reason so maybe fix that if you want
+ - Using svg instead of unicode arrow now
+ - Improved style for topic-category-buttons
  - Fixed major performance issue with nested forEachs in script.js
  - Fixed topic generation issue in content-browser.js
  - Made toggle and detoggle in script.js also use functionality from content-browser.js
