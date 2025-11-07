@@ -23,7 +23,7 @@ class ContentBrowser {
                     html += `<p class="topic-unselected topic-button" id="topic-button-${item.name}">${item.name}</p>`;
                 } else if (item.type === 'category' && !item.collapsed) {
                     if (item.path) {
-                        html += `<p class="topic-category-topic-unselected topic-category-topic-button" id="topic-category-topic-${item.name}">${item.name}</p>`
+                        html += `<p class="topic-category-button-unselected topic-category-button" id="topic-category-topic-${item.name}">${item.name}</p>`
                     } else {
                         html += `<p class="topic-category" id="topic-category-${item.name}">${item.name}</p>`;
                     }

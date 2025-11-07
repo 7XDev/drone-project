@@ -21,7 +21,7 @@
   },
   {
     "type": "category",
-    "name": "Science",
+    "name": "🦢 Science(DROPDOWN)",
     "path": "test-browser/science.md",
     "collapsed": false,
     "children": [
