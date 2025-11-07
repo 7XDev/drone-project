@@ -85,6 +85,9 @@ main {
     width: 100%;
     cursor: pointer;
     margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .topic-category-button:hover {
@@ -136,4 +139,8 @@ main {
     flex: 0 0 20%;
     padding: 1rem;
     min-height: 400px;
+}
+
+.category-arrow {
+    margin-left: auto;
 }

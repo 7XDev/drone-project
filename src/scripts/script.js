@@ -62,15 +62,34 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 
     function onToggle(button) {
         console.log('Category toggled ON:', button.textContent);
+        const arrow = button.querySelector('.category-arrow');
+        arrow.style.transition = 'transform 0.3s ease';
+        arrow.style.transform = 'rotate(90deg)';
+        arrow.innerHTML = '→';
     }
 
     function onDeToggle(button) {
         console.log('Category toggled OFF:', button.textContent);
+        const arrow = button.querySelector('.category-arrow');
+        arrow.style.transition = 'transform 0.3s ease';
+        arrow.style.transform = 'rotate(0deg)';
+        arrow.innerHTML = '→';
     }
 
     // Select first topic-button on load
     if (topicButtons.length > 0) {
         topicButtons[0].classList.remove('topic-unselected');
         topicButtons[0].classList.add('topic-selected');
+    }
+    
+    //Add arrow to topic category buttons
+    if (topicCategoryButtons.length > 0) {
+        for(const button of topicCategoryButtons) {
+            const arrow = document.createElement('span');
+            arrow.classList.add('category-arrow');
+            arrow.id = 'category-arrow';
+            arrow.innerHTML = '→';
+            button.appendChild(arrow);
+        }
     }
 }); 
