@@ -14,12 +14,17 @@ let converter = new MarkdownConverter;
 let browserContainer;
 
 document.addEventListener("DOMContentLoaded", async (event) => {
-    // Get references to all topic buttons and category buttons in the sidebar
+    // Get reference to the topic browser container
     browserContainer = document.querySelector(".topic-selector");
+
+    // Fetch and load topic structure
+    await browser.fetchStructure('../../util/content-browser/content-structure.json'); // DEBUG_DATA
+    await refresh();
+
+    // Get references to all topic buttons and category buttons in the sidebar
     const topicButtons = document.querySelectorAll('.topic-button');
     const topicCategoryButtons = document.querySelectorAll('.topic-category-button'); 
 
-    await refresh();
     
     /**
      * Set up click handlers for individual topic buttons
@@ -97,6 +102,13 @@ document.addEventListener("DOMContentLoaded", async (event) => {
         const arrow = button.querySelector('.category-arrow');
         arrow.style.transition = 'transform 0.3s ease';
         arrow.style.transform = 'rotate(90deg)'; // Rotate arrow to point down
+
+        // Toggle category visibility
+        const categoryItem = browser.contentStructure.find(item => item.name === button.textContent);
+        if (categoryItem) {
+            browser.changeCategoryVisibility(categoryItem, browserContainer);
+        }
+        refresh();
     }
 
     /**
@@ -109,7 +121,12 @@ document.addEventListener("DOMContentLoaded", async (event) => {
         arrow.style.transition = 'transform 0.3s ease';
         arrow.style.transform = 'rotate(0deg)'; // Rotate arrow back to point right
 
-
+        // Toggle category visibility
+        const categoryItem = browser.contentStructure.find(item => item.name === button.textContent);
+        if (categoryItem) {
+            browser.changeCategoryVisibility(categoryItem, browserContainer);
+        }
+        refresh();
     }
 
     // Select first topic-button on load
@@ -131,10 +148,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 }); 
 
 // Refreshes MarkDown-Container and Topic-Container
-async function refresh() {
-    // Fetch and load topic structure
-    await browser.fetchStructure('../../util/content-browser/content-structure.json'); // DEBUG_DATA
-    
+async function refresh() {    
     // Populate container with the generated topics
     browserContainer.innerHTML = browser.generateTopicsHTML();
 }
