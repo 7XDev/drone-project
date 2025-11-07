@@ -1,33 +1,48 @@
+// Class to manage the content structure and its rendering
 class ContentBrowser {
-    contentStructure;
+    contentStructure; // Holds the hierarchical structure of topics and categories
 
+    // Constructor initializes an empty content structure
     constructor() {
         this.contentStructure = [];
     }
 
+    /**
+     * Fetches the content structure from a JSON file at the given path
+     * @param {string} path - Path to the JSON file containing the content structure
+     */
     async fetchStructure(path) {
         const res = await fetch(path);
         if (!res.ok) {
             console.error(`Failed to fetch content structure: ${res.statusText}`);
             return null;
         }
-        this.contentStructure = await res.json();
+        this.contentStructure = await res.json(); // Parse and store the content structure
     }
 
+    /**
+     * Generates HTML for the topics and categories based on the content structure
+     * @param {Array} structure - Optional parameter to provide a custom structure; defaults to the main content structure
+     * @returns {string} - HTML string representing the topics and categories
+     */
     generateTopicsHTML(structure = this.contentStructure) {
         let html = '';
 
+        // Recursive function to traverse the content structure and generate HTML
         const traverse = (items) => {
             items.forEach(item => {
                 if (item.type === 'page') {
+                    // Generate HTML for individual pages
                     html += `<p class="topic-unselected topic-button" id="topic-button-${item.name}">${item.name}</p>`;
                 } else if (item.type === 'category' && !item.collapsed) {
+                    // Generate HTML for categories that are not collapsed
                     if (item.path) {
                         html += `<p class="topic-category-button-unselected topic-category-button" id="topic-category-topic-${item.name}">${item.name}</p>`
                     } else {
                         html += `<p class="topic-category" id="topic-category-${item.name}">${item.name}</p>`;
                     }
-                    
+
+                    // Recursively generate HTML for child items
                     if (item.children) {
                         traverse(item.children);
                     }
@@ -35,20 +50,30 @@ class ContentBrowser {
             });
         };
 
-        traverse(structure);
+        traverse(structure); // Start traversal from the root structure
         return html;
     }
 
+    /**
+     * Toggles the visibility of a category (collapsed/expanded) and updates the container
+     * @param {Object} item - The category item to toggle
+     * @param {HTMLElement} container - The HTML container to update with the new structure
+     */
     changeCategoryVisibility(item, container) {
         if (item.type === 'category') {
-            item.collapsed = !item.collapsed;
+            item.collapsed = !item.collapsed; // Toggle the collapsed state
         }
 
         if (container) {
+            // Regenerate and update the HTML in the container
             container.innerHTML = this.generateTopicsHTML();
         }
     }
 
+    /**
+     * Returns the generated HTML for the current content structure
+     * @returns {string} - HTML string representing the topics and categories
+     */
     async getStructure() {
         return this.generateTopicsHTML();
     }
