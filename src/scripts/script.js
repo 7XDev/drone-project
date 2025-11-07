@@ -25,38 +25,54 @@ function setupEventListeners() {
     const topicButtons = document.querySelectorAll('.topic-button');
     const topicCategoryButtons = document.querySelectorAll('.topic-category-button'); 
 
-    /**
-     * Set up click handlers for individual topic buttons
-     */
-    topicButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // Deselect previously selected topic button (O(1))
-            if (currentlySelectedTopic) {
-                currentlySelectedTopic.classList.remove('topic-selected');
-                currentlySelectedTopic.classList.add('topic-unselected');
-            }
-
-            // Deselect previously selected category button (O(1))
-            if (currentlySelectedCategory) {
-                currentlySelectedCategory.classList.remove('topic-category-button-selected');
-                currentlySelectedCategory.classList.add('topic-category-button-unselected');
-                currentlySelectedCategory.dataset.toggled = 'false';
-                currentlySelectedCategory = null;
-            }
-
-            // Select the clicked topic button
-            button.classList.remove('topic-unselected');
-            button.classList.add('topic-selected');
-            currentlySelectedTopic = button;
-        });
+    // Add arrows to category buttons
+    topicCategoryButtons.forEach(button => {
+        if (!button.querySelector('.category-arrow')) {
+            const arrow = document.createElement('span');
+            arrow.classList.add('category-arrow');
+            arrow.innerHTML = '<img src="assets/img/arrow.svg" class="category-arrow" alt="arrow" width="15" height="15">';
+            button.appendChild(arrow);
+        }
     });
 
     /**
      * Set up click handlers for topic category buttons
      */
     topicCategoryButtons.forEach(button => {
-        // Initialize all category buttons as not toggled
-        button.dataset.toggled = 'false';
+        // Load the current state from content browser and apply it
+        const categoryItem = browser.contentStructure.find(item => 
+            item.type === 'category' && item.name === button.textContent
+        );
+        
+        if (categoryItem) {
+            const isExpanded = !categoryItem.collapsed;
+            button.dataset.toggled = isExpanded.toString();
+            
+            // Apply visual state based on actual data
+            if (isExpanded) {
+                button.classList.remove('topic-category-button-unselected');
+                button.classList.add('topic-category-button-selected');
+                currentlySelectedCategory = button;
+                
+                // Set arrow rotation for expanded state
+                const arrow = button.querySelector('.category-arrow');
+                if (arrow) {
+                    arrow.style.transform = 'rotate(90deg)';
+                }
+            } else {
+                button.classList.remove('topic-category-button-selected');
+                button.classList.add('topic-category-button-unselected');
+                
+                // Set arrow rotation for collapsed state
+                const arrow = button.querySelector('.category-arrow');
+                if (arrow) {
+                    arrow.style.transform = 'rotate(0deg)';
+                }
+            }
+        } else {
+            // Fallback: Initialize as not toggled if category not found
+            button.dataset.toggled = 'false';
+        }
         
         button.addEventListener('click', () => {
             // Check current toggle state before making changes
@@ -86,7 +102,6 @@ function setupEventListeners() {
                 }
             } else {
                 // Clicking a different category button
-                // Deselect previously selected category button (O(1))
                 if (currentlySelectedCategory) {
                     currentlySelectedCategory.classList.remove('topic-category-button-selected');
                     currentlySelectedCategory.classList.add('topic-category-button-unselected');
@@ -103,18 +118,32 @@ function setupEventListeners() {
         });
     });
 
-    // Add arrows to category buttons
-    topicCategoryButtons.forEach(button => {
-        if (!button.querySelector('.category-arrow')) {
-            const arrow = document.createElement('span');
-            arrow.classList.add('category-arrow');
-            arrow.innerHTML = '<img src="assets/img/arrow.svg" class="category-arrow" alt="arrow" width="15" height="15">';
-            button.appendChild(arrow);
-        }
+    /**
+     * Set up click handlers for individual topic buttons after category buttons
+     */
+    topicButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            if (currentlySelectedTopic) {
+                currentlySelectedTopic.classList.remove('topic-selected');
+                currentlySelectedTopic.classList.add('topic-unselected');
+            }
+
+            if (currentlySelectedCategory) {
+                currentlySelectedCategory.classList.remove('topic-category-button-selected');
+                currentlySelectedCategory.classList.add('topic-category-button-unselected');
+                currentlySelectedCategory.dataset.toggled = 'false';
+                currentlySelectedCategory = null;
+            }
+
+            // Select the clicked topic button
+            button.classList.remove('topic-unselected');
+            button.classList.add('topic-selected');
+            currentlySelectedTopic = button;
+        });
     });
 
-    // Select first topic-button on load if none selected
-    if (topicButtons.length > 0 && !currentlySelectedTopic) {
+    // Select first topic-button on load if none selected and no category is expanded
+    if (topicButtons.length > 0 && !currentlySelectedTopic && !currentlySelectedCategory) {
         topicButtons[0].classList.remove('topic-unselected');
         topicButtons[0].classList.add('topic-selected');
         currentlySelectedTopic = topicButtons[0];
@@ -128,8 +157,10 @@ function setupEventListeners() {
 function onToggle(button) {
     console.log('Category toggled ON:', button.textContent); // DEBUG_STATEMENT
     const arrow = button.querySelector('.category-arrow');
-    arrow.style.transition = 'transform 0.3s ease';
-    arrow.style.transform = 'rotate(90deg)'; // Rotate arrow to point down
+    if (arrow) {
+        arrow.style.transition = 'transform 0.3s ease';
+        arrow.style.transform = 'rotate(90deg)'; // Rotate arrow to point down
+    }
 
     // Toggle category visibility
     const categoryItem = browser.contentStructure.find(item => item.name === button.textContent);
@@ -146,8 +177,10 @@ function onToggle(button) {
 function onDeToggle(button) {
     console.log('Category toggled OFF:', button.textContent); // DEBUG_STATEMENT
     const arrow = button.querySelector('.category-arrow');
-    arrow.style.transition = 'transform 0.3s ease';
-    arrow.style.transform = 'rotate(0deg)'; // Rotate arrow back to point right
+    if (arrow) {
+        arrow.style.transition = 'transform 0.3s ease';
+        arrow.style.transform = 'rotate(0deg)'; // Rotate arrow back to point right
+    }
 
     // Toggle category visibility
     const categoryItem = browser.contentStructure.find(item => item.name === button.textContent);
