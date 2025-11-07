@@ -1,22 +1,22 @@
 [
   {
     "type": "page",
-    "name": "👋 History of Flight",
+    "name": "✈️ History of Flight",
     "path": "test-browser/history-of-flight.md"
   },
   {
     "type": "page",
-    "name": "👋 Solar System",
+    "name": "🪐 Solar System",
     "path": "test-browser/solar-system.md"
   },
   {
     "type": "page",
-    "name": "👋 Art of Origami",
+    "name": "🦢 Art of Origami",
     "path": "test-browser/art-of-origami.md"
   },
   {
     "type": "page",
-    "name": "👋 Basics of Photography",
+    "name": "� Basics of Photography",
     "path": "test-browser/basics-of-photography.md"
   },
   {
@@ -27,17 +27,17 @@
     "children": [
       {
         "type": "page",
-        "name": "👋 Space Exploration",
+        "name": "� Space Exploration",
         "path": "test-browser/space-exploration.md"
       },
       {
         "type": "page",
-        "name": "👋 Science of Baking",
+        "name": "🍰 Science of Baking",
         "path": "test-browser/science-of-baking.md"
       },
       {
         "type": "page",
-        "name": "👋 Science of Climate Change",
+        "name": "🌍 Science of Climate Change",
         "path": "test-browser/science-of-climate-change.md"
       }
     ]
@@ -49,17 +49,17 @@
     "children": [
       {
         "type": "page",
-        "name": "👋 Evolution of Computers",
+        "name": "� Evolution of Computers",
         "path": "test-browser/evolution-of-computers.md"
       },
       {
         "type": "page",
-        "name": "👋 World of Dinosaurs",
+        "name": "🦕 World of Dinosaurs",
         "path": "test-browser/world-of-dinosaurs.md"
       },
       {
         "type": "page",
-        "name": "👋 History of the Internet",
+        "name": "🌐 History of the Internet",
         "path": "test-browser/history-of-the-internet.md"
       }
     ]
@@ -71,22 +71,22 @@
     "children": [
       {
         "type": "page",
-        "name": "👋 Importance of Recycling",
+        "name": "♻️ Importance of Recycling",
         "path": "test-browser/importance-of-recycling.md"
       },
       {
         "type": "page",
-        "name": "👋 Beauty of Waterfalls",
+        "name": "� Beauty of Waterfalls",
         "path": "test-browser/beauty-of-waterfalls.md"
       },
       {
         "type": "page",
-        "name": "👋 World of Marine Life",
+        "name": "� World of Marine Life",
         "path": "test-browser/world-of-marine-life.md"
       },
       {
         "type": "page",
-        "name": "👋 Joy of Gardening",
+        "name": "🌱 Joy of Gardening",
         "path": "test-browser/joy-of-gardening.md"
       }
     ]
@@ -98,27 +98,27 @@
     "children": [
       {
         "type": "page",
-        "name": "👋 Art of Calligraphy",
+        "name": "✒️ Art of Calligraphy",
         "path": "test-browser/art-of-calligraphy.md"
       },
       {
         "type": "page",
-        "name": "👋 Basics of Chess",
+        "name": "♟️ Basics of Chess",
         "path": "test-browser/basics-of-chess.md"
       },
       {
         "type": "page",
-        "name": "👋 Wonders of the Human Brain",
+        "name": "🧠 Wonders of the Human Brain",
         "path": "test-browser/wonders-of-the-human-brain.md"
       },
       {
         "type": "page",
-        "name": "👋 Magic of Rainbows",
+        "name": "🌈 Magic of Rainbows",
         "path": "test-browser/magic-of-rainbows.md"
       },
       {
         "type": "page",
-        "name": "👋 Adventure of Mountaineering",
+        "name": "⛰️ Adventure of Mountaineering",
         "path": "test-browser/adventure-of-mountaineering.md"
       }
     ]
