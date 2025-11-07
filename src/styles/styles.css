@@ -68,6 +68,10 @@ main {
     color: rgb(44, 98, 245);
 }
 
+.topic-selected:hover {
+    background-color: rgba(195, 220, 252, 0.5);
+}
+
 .topic-unselected {
     opacity: 0.6;
 }
