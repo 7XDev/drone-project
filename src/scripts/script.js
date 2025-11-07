@@ -65,7 +65,6 @@ document.addEventListener("DOMContentLoaded", async (event) => {
         const arrow = button.querySelector('.category-arrow');
         arrow.style.transition = 'transform 0.3s ease';
         arrow.style.transform = 'rotate(90deg)';
-        arrow.innerHTML = '→';
     }
 
     function onDeToggle(button) {
@@ -73,7 +72,6 @@ document.addEventListener("DOMContentLoaded", async (event) => {
         const arrow = button.querySelector('.category-arrow');
         arrow.style.transition = 'transform 0.3s ease';
         arrow.style.transform = 'rotate(0deg)';
-        arrow.innerHTML = '→';
     }
 
     // Select first topic-button on load
@@ -88,7 +86,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
             const arrow = document.createElement('span');
             arrow.classList.add('category-arrow');
             arrow.id = 'category-arrow';
-            arrow.innerHTML = '→';
+            arrow.innerHTML = '<img src="assets/img/arrow.svg" class="category-arrow" alt="arrow" width="15" height="15">';
             button.appendChild(arrow);
         }
     }

@@ -76,8 +76,6 @@ main {
     opacity: 0.6;
 }
 
-/* Implement styles for headings */
-
 .topic-category-button {
     border-radius: 5px;
     transition: 0.1s;
@@ -96,6 +94,24 @@ main {
 
 .topic-category-button-unselected {
     opacity: 0.6;
+}
+
+.topic-category-button-selected .category-arrow {
+    opacity: 1;
+    color: rgb(44, 98, 245);
+}
+
+.category-arrow {
+    margin-left: auto;
+ }
+
+.category-arrow img {
+    filter: brightness(0) saturate(100%) invert(85%) sepia(15%) saturate(353%) hue-rotate(194deg) brightness(96%) contrast(92%);
+    transition: filter 0.3s ease;
+}
+
+.topic-category-button-selected .category-arrow img {
+    filter: brightness(0) saturate(100%) invert(25%) sepia(90%) saturate(2267%) hue-rotate(224deg) brightness(100%) contrast(95%);
 }
 
 .topic-category-button-selected {
@@ -139,8 +155,4 @@ main {
     flex: 0 0 20%;
     padding: 1rem;
     min-height: 400px;
-}
-
-.category-arrow {
-    margin-left: auto;
 }
