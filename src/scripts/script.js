@@ -11,7 +11,14 @@ let browser = new ContentBrowser;
 // Global markdown converter instance
 let converter = new MarkdownConverter;
 
+let browserContainer;
+
 document.addEventListener("DOMContentLoaded", async (event) => {
+    // Get references to all topic buttons and category buttons in the sidebar
+    browserContainer = document.querySelector(".topic-selector");
+    const topicButtons = document.querySelectorAll('.topic-button');
+    const topicCategoryButtons = document.querySelectorAll('.topic-category-button'); 
+
     await refresh();
     
     /**
@@ -86,7 +93,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
      * @param {HTMLElement} button - The category button that was toggled
      */
     function onToggle(button) {
-        console.log('Category toggled ON:', button.textContent);
+        console.log('Category toggled ON:', button.textContent); // DEBUG_STATEMENT
         const arrow = button.querySelector('.category-arrow');
         arrow.style.transition = 'transform 0.3s ease';
         arrow.style.transform = 'rotate(90deg)'; // Rotate arrow to point down
@@ -97,10 +104,12 @@ document.addEventListener("DOMContentLoaded", async (event) => {
      * @param {HTMLElement} button - The category button that was toggled
      */
     function onDeToggle(button) {
-        console.log('Category toggled OFF:', button.textContent);
+        console.log('Category toggled OFF:', button.textContent); // DEBUG_STATEMENT
         const arrow = button.querySelector('.category-arrow');
         arrow.style.transition = 'transform 0.3s ease';
         arrow.style.transform = 'rotate(0deg)'; // Rotate arrow back to point right
+
+
     }
 
     // Select first topic-button on load
@@ -124,13 +133,8 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 // Refreshes MarkDown-Container and Topic-Container
 async function refresh() {
     // Fetch and load topic structure
-    await browser.fetchStructure('../../util/content-browser/content-structure.json');
+    await browser.fetchStructure('../../util/content-browser/content-structure.json'); // DEBUG_DATA
     
-    // Find the container element and populate it with generated topic HTML
-    const browserContainer = document.querySelector(".topic-selector");
+    // Populate container with the generated topics
     browserContainer.innerHTML = browser.generateTopicsHTML();
-
-    // Get references to all topic buttons and category buttons in the sidebar
-    const topicButtons = document.querySelectorAll('.topic-button');
-    const topicCategoryButtons = document.querySelectorAll('.topic-category-button');
 }
