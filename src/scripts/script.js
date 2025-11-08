@@ -155,19 +155,19 @@ function setupEventListeners() {
  * @param {HTMLElement} button - The category button that was toggled
  */
 function onToggle(button) {
-    console.log('Category toggled ON:', button.textContent); // DEBUG_STATEMENT
-    const arrow = button.querySelector('.category-arrow');
-    if (arrow) {
-        arrow.style.transition = 'transform 0.3s ease';
-        arrow.style.transform = 'rotate(90deg)'; // Rotate arrow to point down
-    }
-
     // Toggle category visibility
     const categoryItem = browser.contentStructure.find(item => item.name === button.textContent);
     if (categoryItem) {
         browser.changeCategoryVisibility(categoryItem, browserContainer);
     }
     refresh();
+    
+    console.log('Category toggled ON:', button.textContent); // DEBUG_STATEMENT
+    const arrow = button.querySelector('.category-arrow');
+    if (arrow) {
+        arrow.style.transition = 'transform 0.3s ease';
+        arrow.style.transform = 'rotate(90deg)'; // Rotate arrow to point down
+    }
 }
 
 /**
@@ -175,19 +175,19 @@ function onToggle(button) {
  * @param {HTMLElement} button - The category button that was toggled
  */
 function onDeToggle(button) {
-    console.log('Category toggled OFF:', button.textContent); // DEBUG_STATEMENT
-    const arrow = button.querySelector('.category-arrow');
-    if (arrow) {
-        arrow.style.transition = 'transform 0.3s ease';
-        arrow.style.transform = 'rotate(0deg)'; // Rotate arrow back to point right
-    }
-
     // Toggle category visibility
     const categoryItem = browser.contentStructure.find(item => item.name === button.textContent);
     if (categoryItem) {
         browser.changeCategoryVisibility(categoryItem, browserContainer);
     }
     refresh();
+   
+    console.log('Category toggled OFF:', button.textContent); // DEBUG_STATEMENT
+    const arrow = button.querySelector('.category-arrow');
+    if (arrow) {
+        arrow.style.transition = 'transform 0.3s ease';
+        arrow.style.transform = 'rotate(0deg)'; // Rotate arrow back to point right
+    }
 }
 
 document.addEventListener("DOMContentLoaded", async (event) => {

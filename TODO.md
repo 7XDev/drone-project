@@ -27,8 +27,7 @@ This category will keep TODOs for each other so we don't run into issues where w
 
 | Task | Status |
 |------|--------|
-| Make each possible element for the MarkDown converter | Not started yet |
-| Add animations to the arrow, make the childern of topic-category-button have a margin-left & a line on the side like on gitbook | Not started yet |
+|      |        |
 
 ### Markus
 
