@@ -101,6 +101,58 @@ document.getElementById('signup-button').addEventListener('click', () => {
 - Custom analytics tracking before redirect
 - Modal dialogs or interactive elements
 
+### Custom Signature Blocks
+
+The converter supports custom signature blocks for semantic content highlighting with distinct visual styling.
+
+#### Signature Block Syntax
+
+**Positive Block (Green):**
+```markdown
+#+ This is a positive message
+```
+
+**Warning Block (Yellow):**
+```markdown
+#w This is a warning message
+```
+
+**Negative Block (Red):**
+```markdown
+#- This is a negative or error message
+```
+
+#### Usage Examples
+
+```markdown
+#+ Great job! Your configuration is working perfectly.
+#w Please note that this feature is experimental.
+#- Error: Unable to connect to the database.
+```
+
+#### Generated HTML Output
+
+```html
+<!-- Positive block -->
+<p class="markdown-positive">Great job! Your configuration is working perfectly.</p>
+
+<!-- Warning block -->
+<p class="markdown-warning">Please note that this feature is experimental.</p>
+
+<!-- Negative block -->
+<p class="markdown-negative">Error: Unable to connect to the database.</p>
+```
+
+#### Styling Guidelines
+
+These blocks are designed for semantic styling:
+
+- **`.markdown-positive`**: Typically styled with green background/border for success messages, confirmations, or positive feedback
+- **`.markdown-warning`**: Typically styled with yellow/orange background/border for warnings, cautions, or important notes
+- **`.markdown-negative`**: Typically styled with red background/border for errors, failures, or critical issues
+
+```
+
 ### Enhanced Image Rendering
 
 The converter provides enhanced image embedding capabilities beyond standard Markdown syntax.
@@ -172,6 +224,9 @@ All generated HTML elements include CSS classes for consistent styling:
 - `markdown-ordered-list-item`: Applied to ordered list items
 - `markdown-link`: Applied to all link elements
 - `markdown-button`: Applied to button-style link elements
+- `markdown-positive`: Applied to positive signature blocks (`#+`)
+- `markdown-warning`: Applied to warning signature blocks (`#w`)
+- `markdown-negative`: Applied to negative signature blocks (`#-`)
 - `markdown-image`: Applied to all image elements
 
 ## Usage

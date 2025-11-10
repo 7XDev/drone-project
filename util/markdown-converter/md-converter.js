@@ -79,6 +79,26 @@ class MarkdownConverter {
 
     // Detect and convert each line
     parseLine(line) {
+        // Custom signatures
+
+        // Positive Recommendation
+        if (/^#\+\s/.test(line)) {
+            const content = line.replace(/^#\+\s/, '');
+            return `<p class="markdown-positive">${this.parseInline(content)}</p>`;
+        }
+
+        // Warning
+        if (/^#w\s/.test(line)) {
+            const content = line.replace(/^#w\s/, '');
+            return `<p class="markdown-warning">${this.parseInline(content)}</p>`;
+        }
+
+        // Negative
+        if (/^#-\s/.test(line)) {
+            const content = line.replace(/^#-\s/, '');
+            return `<p class="markdown-negative">${this.parseInline(content)}</p>`;
+        }
+
         // Headings
         if (/^#{1,6}\s/.test(line)) {
             const level = line.match(/^#{1,6}/)[0].length;
