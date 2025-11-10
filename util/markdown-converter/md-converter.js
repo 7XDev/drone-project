@@ -127,6 +127,8 @@ class MarkdownConverter {
                 
                 return imgTag + ' />';
             }) // Images with optional dimensions
+            .replace(/\[\[([^\]]+)\]\(([^)]+)\)\]/g, '<span id="$2" class="markdown-button">$1</span>') // Button links with ID
+            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="markdown-link">$1</a>') // Links
             .replace(/\*\*(.*?)\*\*/g, '<strong class="markdown-bold">$1</strong>') // Bold
             .replace(/\*(.*?)\*/g, '<em class="markdown-italic">$1</em>') // Italic
             .replace(/`(.*?)`/g, '<code class="markdown-code">$1</code>'); // Inline code

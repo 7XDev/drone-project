@@ -16,12 +16,90 @@ The converter supports all standard Markdown elements including:
   - Bold text: `**bold**` or `__bold__`
   - Italic text: `*italic*` or `_italic_`
   - Inline code: `` `code` ``
+- **Links**: `[Link Text](URL)`
 - **Lists**:
   - Unordered lists: `*`, `-`, or `+` prefixes
   - Ordered lists: `1.`, `2.`, etc.
 - **Code Blocks**: Fenced with triple backticks (```)
 
 ## Extended Features
+
+### Links
+
+The converter supports standard Markdown link syntax for creating clickable hyperlinks.
+
+#### Link Syntax
+
+```markdown
+[Link Text](URL)
+```
+
+- **Link Text**: The visible text that will be displayed and clickable
+- **URL**: The destination URL (can be relative or absolute)
+
+**Examples:**
+```markdown
+[Visit GitHub](https://github.com)
+[Documentation](../docs/readme.md)
+[Contact Us](mailto:contact@example.com)
+[Internal Section](#section-name)
+```
+
+#### Generated HTML Output
+
+```html
+<a href="https://example.com" class="markdown-link">Link Text</a>
+```
+
+### Button Links with Custom IDs
+
+The converter supports custom button-style links with unique identifiers for JavaScript-controlled interactions.
+
+#### Button Link Syntax
+
+```markdown
+[[Button Text](id)]
+```
+
+- **Button Text**: The visible text displayed on the button
+- **ID**: A unique identifier for the button element
+
+**Examples:**
+```markdown
+[[Download PDF](download-btn)]
+[[Sign Up Now](signup-button)]
+[[Learn More](info-btn)]
+```
+
+#### Generated HTML Output
+
+```html
+<span id="download-btn" class="markdown-button">Download PDF</span>
+```
+
+#### JavaScript Integration
+
+Since the button generates only an ID and class without href attributes, you need to handle clicks in JavaScript:
+
+```javascript
+// Example click handler setup
+document.getElementById('download-btn').addEventListener('click', () => {
+    // Your custom logic here
+    window.open('./documents/manual.pdf', '_blank');
+});
+
+document.getElementById('signup-button').addEventListener('click', () => {
+    // Custom signup logic
+    handleSignup();
+});
+```
+
+**Use Cases:**
+- Call-to-action buttons with custom styling and behavior
+- Elements requiring complex JavaScript interactions
+- Buttons that need preprocessing before navigation
+- Custom analytics tracking before redirect
+- Modal dialogs or interactive elements
 
 ### Enhanced Image Rendering
 
@@ -92,6 +170,8 @@ All generated HTML elements include CSS classes for consistent styling:
 - `markdown-list-item`: Applied to unordered list items
 - `markdown-ordered-list-spaced`: Applied to ordered list containers
 - `markdown-ordered-list-item`: Applied to ordered list items
+- `markdown-link`: Applied to all link elements
+- `markdown-button`: Applied to button-style link elements
 - `markdown-image`: Applied to all image elements
 
 ## Usage
