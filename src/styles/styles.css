@@ -52,6 +52,14 @@ main {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
+.topic-under-category {
+    color: red;
+}
+
+.topic-under-category:hover {
+    background-color: rgba(255, 0, 0, 0.1);
+}
+
 .topic-button-selected {
     border-radius: 5px;
     transition: 0.1s;
