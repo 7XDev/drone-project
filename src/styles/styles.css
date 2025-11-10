@@ -103,7 +103,7 @@ main {
 
 .category-arrow {
     margin-left: auto;
- }
+}
 
 .category-arrow img {
     filter: brightness(0) saturate(100%) invert(85%) sepia(15%) saturate(353%) hue-rotate(194deg) brightness(96%) contrast(92%);

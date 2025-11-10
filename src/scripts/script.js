@@ -23,26 +23,24 @@ let currentlySelectedCategory = null;
 function setupEventListeners() {
     // Get fresh references to all topic buttons and category buttons
     const topicButtons = document.querySelectorAll('.topic-button');
-    const topicCategoryButtons = document.querySelectorAll('.topic-category-button'); 
+    const topicCategoryButtons = document.querySelectorAll('.topic-category-button');
 
-    // Add arrows to category buttons
+    /**
+     * Set up click handlers for topic category buttons
+     */
     topicCategoryButtons.forEach(button => {
+        console.log();
+        // Load the current state from content browser and apply it
+        const categoryItem = browser.contentStructure.find(item => 
+            item.type === 'category' && item.name === button.textContent
+        );
+
         if (!button.querySelector('.category-arrow')) {
             const arrow = document.createElement('span');
             arrow.classList.add('category-arrow');
             arrow.innerHTML = '<img src="assets/img/arrow.svg" class="category-arrow" alt="arrow" width="15" height="15">';
             button.appendChild(arrow);
         }
-    });
-
-    /**
-     * Set up click handlers for topic category buttons
-     */
-    topicCategoryButtons.forEach(button => {
-        // Load the current state from content browser and apply it
-        const categoryItem = browser.contentStructure.find(item => 
-            item.type === 'category' && item.name === button.textContent
-        );
         
         if (categoryItem) {
             const isExpanded = !categoryItem.collapsed;
@@ -58,7 +56,8 @@ function setupEventListeners() {
                 const arrow = button.querySelector('.category-arrow');
                 if (arrow) {
                     arrow.style.transform = 'rotate(90deg)';
-                }
+                    arrow.style.transition = 'transform 0.3s ease';
+               }
             } else {
                 button.classList.remove('topic-category-button-selected');
                 button.classList.add('topic-category-button-unselected');
@@ -67,6 +66,7 @@ function setupEventListeners() {
                 const arrow = button.querySelector('.category-arrow');
                 if (arrow) {
                     arrow.style.transform = 'rotate(0deg)';
+                    arrow.style.transition = 'transform 0.3s ease';
                 }
             }
         } else {
@@ -155,19 +155,19 @@ function setupEventListeners() {
  * @param {HTMLElement} button - The category button that was toggled
  */
 function onToggle(button) {
+    console.log('Category toggled ON:', button.textContent); // DEBUG_STATEMENT
+    // const arrow = button.querySelector('.category-arrow');
+    // if (arrow) {
+    //     arrow.style.transform = 'rotate(90deg)'; // Rotate arrow to point down
+    //     arrow.style.transition = 'transform 0.3s ease';
+    // }
+
     // Toggle category visibility
     const categoryItem = browser.contentStructure.find(item => item.name === button.textContent);
     if (categoryItem) {
         browser.changeCategoryVisibility(categoryItem, browserContainer);
     }
     refresh();
-    
-    console.log('Category toggled ON:', button.textContent); // DEBUG_STATEMENT
-    const arrow = button.querySelector('.category-arrow');
-    if (arrow) {
-        arrow.style.transition = 'transform 0.3s ease';
-        arrow.style.transform = 'rotate(90deg)'; // Rotate arrow to point down
-    }
 }
 
 /**
@@ -175,19 +175,20 @@ function onToggle(button) {
  * @param {HTMLElement} button - The category button that was toggled
  */
 function onDeToggle(button) {
+    console.log('Category toggled OFF:', button.textContent); // DEBUG_STATEMENT
+    // const arrow = button.querySelector('.category-arrow');
+    // if (arrow) {
+    //     console.log("Found arrow");
+    //     arrow.style.transform = 'rotate(0deg)'; // Rotate arrow back to point right
+    //     arrow.style.transition = 'transform 0.3s ease';
+    // }
+
     // Toggle category visibility
     const categoryItem = browser.contentStructure.find(item => item.name === button.textContent);
     if (categoryItem) {
         browser.changeCategoryVisibility(categoryItem, browserContainer);
     }
     refresh();
-   
-    console.log('Category toggled OFF:', button.textContent); // DEBUG_STATEMENT
-    const arrow = button.querySelector('.category-arrow');
-    if (arrow) {
-        arrow.style.transition = 'transform 0.3s ease';
-        arrow.style.transform = 'rotate(0deg)'; // Rotate arrow back to point right
-    }
 }
 
 document.addEventListener("DOMContentLoaded", async (event) => {
