@@ -27,7 +27,7 @@ This category will keep TODOs for each other so we don't run into issues where w
 
 | Task | Status |
 |------|--------|
-| Improve animations to topic-category-button | Not started yet |
+| Add animations to topic-category-button | Not started yet |
 | Add all possible ui-elements for markdown converter(styles) | Not started yet |
 | Implement Right-Panel-Container | Not started yet |
 
@@ -36,5 +36,5 @@ This category will keep TODOs for each other so we don't run into issues where w
 
 | Task | Status |
 |------|--------|
-| Add documentation for md-converter.js | Not started yet |
-| Add md-converter.js functionality for more items like buttons, links, images, special text, ... | Not started yet |
+| Add documentation for md-converter.js | In progress |
+| Add md-converter.js functionality for more items like buttons, links, images, special text, ... | In progress |
