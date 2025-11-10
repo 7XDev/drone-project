@@ -8,21 +8,22 @@
   <textarea id="input" rows="8" cols="40"># Hello Markdown</textarea>
   <div id="preview"></div>
 
-  <script src="md-converter.js"></script>
-  <script>
+  <script type="module">
+    import MarkdownConverter from './md-converter.js';
+
     const input = document.getElementById('input');
     const preview = document.getElementById('preview');
 
     const converter = new MarkdownConverter();
 
-    input.addEventListener('input', async () => {
+    function render() {
       const markdown = input.value;
       const html = converter.convert(markdown);
       preview.innerHTML = html;
-    });
+    }
 
-    // Trigger initial conversion
-    input.dispatchEvent(new Event('input'));
+    input.addEventListener('input', render);
+    render();
   </script>
 </body>
 </html>

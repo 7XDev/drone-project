@@ -33,5 +33,5 @@ This category will keep TODOs for each other so we don't run into issues where w
 
 | Task | Status |
 |------|--------|
-| Add documentation for md-converter.js | Not started yet |
-| Add md-converter.js functionality for more items like buttons, links, images, special text, ... | Not started yet |
+| Add documentation for md-converter.js | In progress |
+| Add md-converter.js functionality for more items like buttons, links, images, special text, ... | In progress |
