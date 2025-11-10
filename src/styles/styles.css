@@ -112,6 +112,7 @@ main {
 
 .category-arrow {
     margin-left: auto;
+    margin-right: 0.25rem;
 }
 
 .category-arrow img {
@@ -153,7 +154,7 @@ main {
 }
 
 .topic-selector::-webkit-scrollbar {
-  width: 3px;
+    width: 3px;
 }
 
 .topic-selector::-webkit-scrollbar-thumb {
