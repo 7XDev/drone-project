@@ -29,12 +29,17 @@ class ContentBrowser {
         let html = '';
 
         // Recursive function to traverse the content structure and generate HTML
-        const traverse = (items) => {
+        const traverse = (items, parentIsCategoryButton = false) => {
             items.forEach(item => {
                 if (item.type === 'page') {
                     // Generate HTML for individual pages
-                    html += `<p class="topic-unselected topic-button" id="topic-button-${item.name}">${item.name}</p>`;
+                    // Add special class only if direct parent is a category button (has path)
+                    const categoryClass = parentIsCategoryButton ? 'topic-under-category' : '';
+                    html += `<p class="topic-unselected topic-button ${categoryClass}" id="topic-button-${item.name}">${item.name}</p>`;
                 } else if (item.type === 'category') {
+                    // Check if this category is a category button (has path property)
+                    const isCategoryButton = !!item.path;
+                    
                     // Generate HTML for categories that are not collapsed
                     if (item.path) {
                         html += `<p class="topic-category-button-unselected topic-category-button" id="topic-category-topic-${item.name}">${item.name}</p>`
@@ -43,8 +48,9 @@ class ContentBrowser {
                     }
 
                     // Recursively generate HTML for child items
+                    // Pass true only if THIS category is a category button
                     if (item.children && !item.collapsed) {
-                        traverse(item.children);
+                        traverse(item.children, isCategoryButton);
                     }
                 }
             });

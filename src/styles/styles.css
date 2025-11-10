@@ -5,6 +5,8 @@
 
 body {
     background-color: white;
+    height: 100%;
+    overflow: hidden;
 }
 
 .header-logo {
@@ -50,6 +52,13 @@ main {
 
 .topic-button:hover {
     background-color: rgba(0, 0, 0, 0.1);
+}
+
+.topic-under-category {
+    margin-left: 1.15rem;
+    border-left: 2px solid rgba(44, 98, 245, 0.3);
+    padding-left: 1rem;
+    border-radius: 0px;
 }
 
 .topic-button-selected {
@@ -103,6 +112,7 @@ main {
 
 .category-arrow {
     margin-left: auto;
+    margin-right: 0.25rem;
 }
 
 .category-arrow img {
@@ -137,6 +147,22 @@ main {
     gap: 0.25rem;
     flex: 0 0 auto;
     width: 15%;
+    overflow-y: auto;
+    max-height: calc(100vh - 120px); /* max-height minus header height */
+    overflow-x: hidden;
+    padding-right: 1rem;
+}
+
+.topic-selector::-webkit-scrollbar {
+    width: 3px;
+}
+
+.topic-selector::-webkit-scrollbar-thumb {
+  background: #bebebe;
+}
+
+.topic-selector::-webkit-scrollbar-thumb:hover {
+  background: #999999;
 }
 
 .content-container {
