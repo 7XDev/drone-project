@@ -5,6 +5,8 @@
 
 body {
     background-color: white;
+    height: 100%;
+    overflow: hidden;
 }
 
 .header-logo {
@@ -144,6 +146,22 @@ main {
     gap: 0.25rem;
     flex: 0 0 auto;
     width: 15%;
+    overflow-y: auto;
+    max-height: calc(100vh - 120px); /* max-height minus header height */
+    overflow-x: hidden;
+    padding-right: 1rem;
+}
+
+.topic-selector::-webkit-scrollbar {
+  width: 3px;
+}
+
+.topic-selector::-webkit-scrollbar-thumb {
+  background: #bebebe;
+}
+
+.topic-selector::-webkit-scrollbar-thumb:hover {
+  background: #999999;
 }
 
 .content-container {
