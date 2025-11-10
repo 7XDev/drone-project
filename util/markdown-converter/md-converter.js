@@ -109,6 +109,24 @@ class MarkdownConverter {
     // Handle inline markdown elements
     parseInline(text) {
         return text
+            .replace(/!\[([^\]]*)\]\(([^)]+)\)(\(([^)]+)\))?/g, (match, alt, src, _, dimensions) => {
+                let imgTag = `<img src="${src}" alt="${alt}" class="markdown-image"`;
+                
+                if (dimensions) {
+                    // Parse dimensions like "300x200" or "300" (width only)
+                    const dimMatch = dimensions.match(/^(\d+)(?:x(\d+))?$/);
+                    if (dimMatch) {
+                        const width = dimMatch[1];
+                        const height = dimMatch[2];
+                        imgTag += ` width="${width}"`;
+                        if (height) {
+                            imgTag += ` height="${height}"`;
+                        }
+                    }
+                }
+                
+                return imgTag + ' />';
+            }) // Images with optional dimensions
             .replace(/\*\*(.*?)\*\*/g, '<strong class="markdown-bold">$1</strong>') // Bold
             .replace(/\*(.*?)\*/g, '<em class="markdown-italic">$1</em>') // Italic
             .replace(/`(.*?)`/g, '<code class="markdown-code">$1</code>'); // Inline code
