@@ -35,7 +35,7 @@ class ContentBrowser {
                     // Generate HTML for individual pages
                     // Add special class only if direct parent is a category button (has path)
                     const categoryClass = parentIsCategoryButton ? 'topic-under-category' : '';
-                    html += `<p class="topic-unselected topic-button ${categoryClass}" id="topic-button-${item.name}">${item.name}</p>`;
+                    html += `<p class="topic-unselected topic-button ${categoryClass}" id="topic-button-${item.name}" data-path="${item.path}">${item.name}</p>`;
                 } else if (item.type === 'category') {
                     // Check if this category is a category button (has path property)
                     const isCategoryButton = !!item.path;

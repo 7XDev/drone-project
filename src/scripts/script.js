@@ -141,7 +141,7 @@ async function setupEventListeners() {
             button.classList.add('topic-selected');
             currentlySelectedTopic = button;
 
-            const md = await converter.loadMarkdown('../../util/content-browser/test-content/art-of-calligraphy.md');
+            const md = await converter.loadMarkdown('assets/' + button.dataset.path);
             const html = converter.convert(md);
             preview.innerHTML = html;
         });
@@ -153,7 +153,7 @@ async function setupEventListeners() {
         topicButtons[0].classList.add('topic-selected');
         currentlySelectedTopic = topicButtons[0];
 
-        const md = await converter.loadMarkdown('../../util/content-browser/test-content/art-of-calligraphy.md');
+        const md = await converter.loadMarkdown('assets/' + topicButtons[0].dataset.path);
         const html = converter.convert(md);
         preview.innerHTML = html;
     }
@@ -205,7 +205,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     browserContainer = document.querySelector(".topic-selector");
 
     // Fetch and load topic structure
-    await browser.fetchStructure('../../util/content-browser/content-structure.json'); // DEBUG_DATA
+    await browser.fetchStructure('assets/content/content-structure.json'); // DEBUG_DATA
     await refresh();
 }); 
 
