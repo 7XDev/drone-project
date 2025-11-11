@@ -10,6 +10,7 @@ let browser = new ContentBrowser;
 
 // Global markdown converter instance
 let converter = new MarkdownConverter;
+const preview = document.getElementById('markdown-container');
 
 let browserContainer;
 
@@ -20,7 +21,7 @@ let currentlySelectedCategory = null;
 /**
  * Set up click handlers for all buttons - called after each refresh
  */
-function setupEventListeners() {
+async function setupEventListeners() {
     // Get fresh references to all topic buttons and category buttons
     const topicButtons = document.querySelectorAll('.topic-button');
     const topicCategoryButtons = document.querySelectorAll('.topic-category-button');
@@ -122,7 +123,7 @@ function setupEventListeners() {
      * Set up click handlers for individual topic buttons after category buttons
      */
     topicButtons.forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', async () => {
             if (currentlySelectedTopic) {
                 currentlySelectedTopic.classList.remove('topic-selected');
                 currentlySelectedTopic.classList.add('topic-unselected');
@@ -139,6 +140,10 @@ function setupEventListeners() {
             button.classList.remove('topic-unselected');
             button.classList.add('topic-selected');
             currentlySelectedTopic = button;
+
+            const md = await converter.loadMarkdown('../../util/content-browser/test-content/art-of-calligraphy.md');
+            const html = converter.convert(md);
+            preview.innerHTML = html;
         });
     });
 
@@ -147,6 +152,10 @@ function setupEventListeners() {
         topicButtons[0].classList.remove('topic-unselected');
         topicButtons[0].classList.add('topic-selected');
         currentlySelectedTopic = topicButtons[0];
+
+        const md = await converter.loadMarkdown('../../util/content-browser/test-content/art-of-calligraphy.md');
+        const html = converter.convert(md);
+        preview.innerHTML = html;
     }
 }
 
