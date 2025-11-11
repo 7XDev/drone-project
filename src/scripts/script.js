@@ -19,6 +19,25 @@ let currentlySelectedTopic = null;
 let currentlySelectedCategory = null;
 
 /**
+ * Recursively find a category by name in the content structure
+ * @param {Array} structure - The content structure to search
+ * @param {string} name - The name of the category to find
+ * @returns {Object|null} - The category item or null if not found
+ */
+function findCategoryByName(structure, name) {
+    for (const item of structure) {
+        if (item.type === 'category' && item.name === name) {
+            return item;
+        }
+        if (item.children) {
+            const found = findCategoryByName(item.children, name);
+            if (found) return found;
+        }
+    }
+    return null;
+}
+
+/**
  * Set up click handlers for all buttons - called after each refresh
  */
 async function setupEventListeners() {
@@ -32,9 +51,7 @@ async function setupEventListeners() {
     topicCategoryButtons.forEach(button => {
         console.log();
         // Load the current state from content browser and apply it
-        const categoryItem = browser.contentStructure.find(item => 
-            item.type === 'category' && item.name === button.textContent
-        );
+        const categoryItem = findCategoryByName(browser.contentStructure, button.textContent);
 
         if (!button.querySelector('.category-arrow')) {
             const arrow = document.createElement('span');
@@ -172,7 +189,7 @@ function onToggle(button) {
     // }
 
     // Toggle category visibility
-    const categoryItem = browser.contentStructure.find(item => item.name === button.textContent);
+    const categoryItem = findCategoryByName(browser.contentStructure, button.textContent);
     if (categoryItem) {
         browser.changeCategoryVisibility(categoryItem, browserContainer);
     }
@@ -193,7 +210,7 @@ function onDeToggle(button) {
     // }
 
     // Toggle category visibility
-    const categoryItem = browser.contentStructure.find(item => item.name === button.textContent);
+    const categoryItem = findCategoryByName(browser.contentStructure, button.textContent);
     if (categoryItem) {
         browser.changeCategoryVisibility(categoryItem, browserContainer);
     }
