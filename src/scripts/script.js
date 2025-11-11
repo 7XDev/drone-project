@@ -18,6 +18,34 @@ let browserContainer;
 let currentlySelectedTopic = null;
 let currentlySelectedCategory = null;
 
+async function GetMarkdownHeaders(path) {
+    const headings = [];
+    let id = 0;
+    const markdown = await converter.loadMarkdown(path);
+    const lines = markdown.split('\n');
+
+    for(const line of lines) {
+        const match = line.match(/^(#{1,6})\s+(.+)$/);
+
+        if(match) {
+            const text = match[2].trim();
+            headings.push({ text, id });
+            id++;
+        }
+    }
+
+    return headings;
+}
+
+async function GenerateHtmlRightHeader(headings) {
+    let html = '<ul class="right-panel-list">';
+    headings.forEach(heading => {
+        html += `<li class="right-bar-items"><a href="#${heading.id}">${heading.text}</a></li>`;
+    });
+    html += '</ul>';
+    return html;
+}
+
 /**
  * Set up click handlers for all buttons - called after each refresh
  */
@@ -144,6 +172,10 @@ async function setupEventListeners() {
             const md = await converter.loadMarkdown('assets/' + button.dataset.path);
             const html = converter.convert(md);
             preview.innerHTML = html;
+
+            const rightPanelHeader = document.getElementById("right-panel-header");
+            const headings = await GetMarkdownHeaders('assets/' + button.dataset.path);
+            rightPanelHeader.innerHTML = await GenerateHtmlRightHeader(headings);
         });
     });
 

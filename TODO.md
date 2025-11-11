@@ -28,8 +28,6 @@ This category will keep TODOs for each other so we don't run into issues where w
 | Task | Status |
 |------|--------|
 | Add animations to topic-category-button | Not started yet |
-| Add all possible ui-elements for markdown converter(styles) | Not started yet |
-| Implement Right-Panel-Container | Not started yet |
 
 
 ### Markus
