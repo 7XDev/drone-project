@@ -74,29 +74,46 @@ class MarkdownConverter {
             htmlLines.push('</pre>');
         }
 
-        return htmlLines.join('\n');
+        return this.processSignatureBlocks(htmlLines.join('\n'));
     }
 
     // Detect and convert each line
     parseLine(line) {
         // Custom signatures
-
-        // Positive Recommendation
-        if (/^#\+\s/.test(line)) {
-            const content = line.replace(/^#\+\s/, '');
-            return `<p class="markdown-positive">${this.parseInline(content)}</p>`;
+        if (/^#\+h\s/.test(line)) {
+            const content = line.replace(/^#\+h\s/, '');
+            return `SIGNATURE_START:positive:heading:${this.parseInline(content)}`;
+        }
+        if (/^#\+b\s/.test(line)) {
+            const content = line.replace(/^#\+b\s/, '');
+            return `SIGNATURE_START:positive:body:${this.parseInline(content)}`;
         }
 
-        // Warning
-        if (/^#w\s/.test(line)) {
-            const content = line.replace(/^#w\s/, '');
-            return `<p class="markdown-warning">${this.parseInline(content)}</p>`;
+        if (/^#wh\s/.test(line)) {
+            const content = line.replace(/^#wh\s/, '');
+            return `SIGNATURE_START:warning:heading:${this.parseInline(content)}`;
+        }
+        if (/^#wb\s/.test(line)) {
+            const content = line.replace(/^#wb\s/, '');
+            return `SIGNATURE_START:warning:body:${this.parseInline(content)}`;
         }
 
-        // Negative
-        if (/^#-\s/.test(line)) {
-            const content = line.replace(/^#-\s/, '');
-            return `<p class="markdown-negative">${this.parseInline(content)}</p>`;
+        if (/^#-h\s/.test(line)) {
+            const content = line.replace(/^#-h\s/, '');
+            return `SIGNATURE_START:negative:heading:${this.parseInline(content)}`;
+        }
+        if (/^#-b\s/.test(line)) {
+            const content = line.replace(/^#-b\s/, '');
+            return `SIGNATURE_START:negative:body:${this.parseInline(content)}`;
+        }
+
+        if (/^#ih\s/.test(line)) {
+            const content = line.replace(/^#ih\s/, '');
+            return `SIGNATURE_START:info:heading:${this.parseInline(content)}`;
+        }
+        if (/^#ib\s/.test(line)) {
+            const content = line.replace(/^#ib\s/, '');
+            return `SIGNATURE_START:info:body:${this.parseInline(content)}`;
         }
 
         // Headings
@@ -162,6 +179,70 @@ class MarkdownConverter {
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
+    }
+
+    // Process and merge signature blocks
+    processSignatureBlocks(html) {
+        const lines = html.split('\n');
+        const result = [];
+        let currentSignature = null;
+
+        for (const line of lines) {
+            if (line.startsWith('SIGNATURE_START:')) {
+                const [, type, part, content] = line.split(':');
+                
+                if (currentSignature && currentSignature.type === type) {
+                    // Add to existing signature
+                    if (part === 'heading') {
+                        currentSignature.heading = content;
+                    } else if (part === 'body') {
+                        currentSignature.bodies.push(content);
+                    }
+                } else {
+                    // Finish previous signature if exists
+                    if (currentSignature) {
+                        result.push(this.generateSignatureHTML(currentSignature));
+                    }
+                    
+                    // Start new signature
+                    currentSignature = {
+                        type: type,
+                        heading: part === 'heading' ? content : null,
+                        bodies: part === 'body' ? [content] : []
+                    };
+                }
+            } else {
+                // Finish current signature if exists
+                if (currentSignature) {
+                    result.push(this.generateSignatureHTML(currentSignature));
+                    currentSignature = null;
+                }
+                result.push(line);
+            }
+        }
+
+        // Finish final signature if exists
+        if (currentSignature) {
+            result.push(this.generateSignatureHTML(currentSignature));
+        }
+
+        return result.join('\n');
+    }
+
+    // Generate HTML for a signature block
+    generateSignatureHTML(signature) {
+        let html = `<div class="markdown-${signature.type}">`;
+        
+        if (signature.heading) {
+            html += `<h4 class="markdown-signature-heading">${signature.heading}</h4>`;
+        }
+        
+        for (const body of signature.bodies) {
+            html += `<p class="markdown-signature-body">${body}</p>`;
+        }
+        
+        html += '</div>';
+        return html;
     }
 }
 
