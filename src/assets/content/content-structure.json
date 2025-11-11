@@ -1,0 +1,121 @@
+[
+  {
+    "type": "page",
+    "name": "🚁 Drones",
+    "path": "content/drone-show.md"
+  },
+  {
+    "type": "category",
+    "name": "📋 Prerequisites",
+    "collapsed": false,
+    "children": [
+      {
+        "type": "page",
+        "name": "💰 Budget",
+        "path": "content/budget.md"
+      },
+      {
+        "type": "category",
+        "name": "🔧 Parts List",
+        "collapsed": false,
+        "children": [
+          {
+            "type": "page",
+            "name": "🛒 Where to Order",
+            "path": "content/where-to-order.md"
+          }
+        ]
+      },
+      {
+        "type": "category",
+        "name": "💻 Software List",
+        "collapsed": false,
+        "children": [
+          {
+            "type": "page",
+            "name": "⚙️ Software Setup",
+            "path": "content/software-setup.md"
+          }
+        ]
+      },
+      {
+        "type": "page",
+        "name": "🎓 Skills Needed",
+        "path": "content/skills-needed.md"
+      },
+      {
+        "type": "page",
+        "name": "⚠️ Safety and Legal Preparations",
+        "path": "content/safety-legal.md"
+      }
+    ]
+  },
+  {
+    "type": "category",
+    "name": "🔨 Assembly",
+    "collapsed": false,
+    "children": [
+      {
+        "type": "page",
+        "name": "🛡️ Safety Checks",
+        "path": "content/safety-checks.md"
+      },
+      {
+        "type": "page",
+        "name": "✅ Functionality Checks",
+        "path": "content/functionality-checks.md"
+      },
+      {
+        "type": "page",
+        "name": "🔧 Assembly Steps",
+        "path": "content/assembly-steps.md"
+      }
+    ]
+  },
+  {
+    "type": "category",
+    "name": "💻 Programming",
+    "collapsed": false,
+    "children": [
+      {
+        "type": "category",
+        "name": "🤖 Programming the Drone Itself",
+        "collapsed": false,
+        "children": [
+          {
+            "type": "page",
+            "name": "📦 Uploading Precompiled Versions",
+            "path": "content/precompiled-versions.md"
+          },
+          {
+            "type": "page",
+            "name": "💾 Accessing and Flashing Source Code",
+            "path": "content/flashing-source-code.md"
+          }
+        ]
+      },
+      {
+        "type": "category",
+        "name": "🎮 Programming Movement",
+        "collapsed": false,
+        "children": [
+          {
+            "type": "page",
+            "name": "🕹️ Control Setup",
+            "path": "content/control-setup.md"
+          },
+          {
+            "type": "page",
+            "name": "✈️ Raw Flight",
+            "path": "content/raw-flight.md"
+          },
+          {
+            "type": "page",
+            "name": "👥 Following Flight",
+            "path": "content/following-flight.md"
+          }
+        ]
+      }
+    ]
+  }
+]
