@@ -30,7 +30,7 @@
       {
         "type": "category",
         "name": "💻 Software List",
-        "path": "content/software-list",
+        "path": "content/software-list.md",
         "collapsed": true,
         "children": [
           {

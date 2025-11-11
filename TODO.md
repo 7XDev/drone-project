@@ -36,6 +36,7 @@ This category will keep TODOs for each other so we don't run into issues where w
 |------|--------|
 | Add documentation for md-converter.js | Finished |
 | Add md-converter.js functionality for more items like buttons, links, images, special text, ... | Finished |
+| Fix codeblock detection in md-converter.js | Not started yet |
 
 
 ## Extra Features
