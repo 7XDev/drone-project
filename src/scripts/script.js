@@ -167,7 +167,7 @@ function setupEventListenersForNewElements() {
         // Initialize state
         button.dataset.toggled = 'false';
         
-        button.addEventListener('click', () => {
+        button.addEventListener('click', async () => {
             const isToggled = button.dataset.toggled === 'true';
             const isSameButton = currentlySelectedCategory === button;
             
@@ -187,7 +187,7 @@ function setupEventListenersForNewElements() {
                     onDeToggle(button);
                 } else {
                     button.dataset.toggled = 'true';
-                    onToggle(button);
+                    await onToggle(button);
                 }
             } else {
                 if (currentlySelectedCategory) {
@@ -200,7 +200,7 @@ function setupEventListenersForNewElements() {
                 button.classList.add('topic-category-button-selected');
                 button.dataset.toggled = 'true';
                 currentlySelectedCategory = button;
-                onToggle(button);
+                await onToggle(button);
             }
         });
     });
@@ -297,7 +297,7 @@ async function setupEventListeners() {
             button.dataset.toggled = 'false';
         }
         
-        button.addEventListener('click', () => {
+        button.addEventListener('click', async () => {
             // Check current toggle state before making changes
             const isToggled = button.dataset.toggled === 'true';
             const isSameButton = currentlySelectedCategory === button;
@@ -321,7 +321,7 @@ async function setupEventListeners() {
                 } else {
                     // Expand (keep selected)
                     button.dataset.toggled = 'true';
-                    onToggle(button);
+                    await onToggle(button);
                 }
             } else {
                 // Clicking a different category button
@@ -336,7 +336,7 @@ async function setupEventListeners() {
                 button.classList.add('topic-category-button-selected');
                 button.dataset.toggled = 'true';
                 currentlySelectedCategory = button;
-                onToggle(button);
+                await onToggle(button);
             }
         });
     });
@@ -395,7 +395,7 @@ async function setupEventListeners() {
  * Handle category expansion - rotates arrow to indicate expanded state
  * @param {HTMLElement} button - The category button that was toggled
  */
-function onToggle(button) {
+async function onToggle(button) {
     console.log('Category toggled ON:', button.textContent); // DEBUG_STATEMENT
     const arrow = button.querySelector('.category-arrow');
     if (arrow) {
@@ -407,6 +407,17 @@ function onToggle(button) {
     const categoryItem = findCategoryByName(browser.contentStructure, button.textContent);
     if (categoryItem) {
         categoryItem.collapsed = !categoryItem.collapsed; // Toggle the collapsed state
+        
+        // If this category has a path, load its markdown content
+        if (categoryItem.path) {
+            const md = await converter.loadMarkdown('assets/' + categoryItem.path);
+            const html = converter.convert(md);
+            preview.innerHTML = html;
+
+            const rightPanelHeader = document.getElementById("right-panel-header");
+            const headings = await GetMarkdownHeaders('assets/' + categoryItem.path);
+            rightPanelHeader.innerHTML = await GenerateHtmlRightHeader(headings);
+        }
         
         // Generate HTML for just this category's children
         const childrenHTML = generateCategoryChildrenHTML(categoryItem);
