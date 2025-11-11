@@ -49,7 +49,7 @@
 ## **6. Milestones**
 
 * The project will be developed in the following stages:
-  * **Week 1:** Develop the header section and main layout.
+  * **Week 1:** Develop the header section and main layout, start working on utilities for markdown conversion and navigation.
   * **Week 2:** Implement navigation pane logic and create templates for pages.
   * **Week 3:** Establish page linking, integrate search functionality and start implementing content.
   * **Week 4:** Finalize content and perform testing.
