@@ -17,7 +17,8 @@
       {
         "type": "category",
         "name": "🔧 Parts List",
-        "collapsed": false,
+        "path": "content/parts-list.md",
+        "collapsed": true,
         "children": [
           {
             "type": "page",
@@ -29,7 +30,8 @@
       {
         "type": "category",
         "name": "💻 Software List",
-        "collapsed": false,
+        "path": "content/software-list",
+        "collapsed": true,
         "children": [
           {
             "type": "page",
@@ -56,14 +58,22 @@
     "collapsed": false,
     "children": [
       {
-        "type": "page",
-        "name": "🛡️ Safety Checks",
-        "path": "content/safety-checks.md"
-      },
-      {
-        "type": "page",
-        "name": "✅ Functionality Checks",
-        "path": "content/functionality-checks.md"
+        "type": "category",
+        "name": "⏱️ Before Building",
+        "path": "content/before-building.md",
+        "collapsed": false,
+        "children": [
+          {
+            "type": "page",
+            "name": "🛡️ Safety Checks",
+            "path": "content/safety-checks.md"
+          },
+          {
+            "type": "page",
+            "name": "✅ Functionality Checks",
+            "path": "content/functionality-checks.md"
+          }
+        ]
       },
       {
         "type": "page",
@@ -80,6 +90,7 @@
       {
         "type": "category",
         "name": "🤖 Programming the Drone Itself",
+        "path": "content/programming-drone.md",
         "collapsed": false,
         "children": [
           {
@@ -97,6 +108,7 @@
       {
         "type": "category",
         "name": "🎮 Programming Movement",
+        "path": "content/programming-movement.md",
         "collapsed": false,
         "children": [
           {
