@@ -217,11 +217,6 @@ async function setupEventListeners() {
      * Set up click handlers for topic category buttons
      */
     topicCategoryButtons.forEach(button => {
-        // Skip if this button already has event listeners
-        if (button.hasAttribute('data-has-listener')) {
-            return;
-        }
-        
         button.setAttribute('data-has-listener', 'true');
         console.log();
         // Load the current state from content browser and apply it
@@ -322,11 +317,6 @@ async function setupEventListeners() {
      * Set up click handlers for individual topic buttons after category buttons
      */
     topicButtons.forEach(button => {
-        // Skip if this button already has event listeners
-        if (button.hasAttribute('data-has-listener')) {
-            return;
-        }
-        
         button.setAttribute('data-has-listener', 'true');
         
         button.addEventListener('click', async () => {
