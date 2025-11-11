@@ -286,11 +286,11 @@ class MarkdownConverter {
         let html = `<div class="markdown-${signature.type}">`;
         
         if (signature.heading) {
-            html += `<h4 class="markdown-signature-heading">${signature.heading}</h4>`;
+            html += `<h4 class="markdown-${signature.type}-heading">${signature.heading}</h4>`;
         }
         
         for (const body of signature.bodies) {
-            html += `<p class="markdown-signature-body">${body}</p>`;
+            html += `<p class="markdown-${signature.type}-body">${body}</p>`;
         }
         
         html += '</div>';
