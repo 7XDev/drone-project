@@ -188,6 +188,10 @@ async function setupEventListeners() {
         const md = await converter.loadMarkdown('assets/' + topicButtons[0].dataset.path);
         const html = converter.convert(md);
         preview.innerHTML = html;
+
+        const rightPanelHeader = document.getElementById("right-panel-header");
+        const headings = await GetMarkdownHeaders('assets/' + topicButtons[0].dataset.path);
+        rightPanelHeader.innerHTML = await GenerateHtmlRightHeader(headings);
     }
 }
 
