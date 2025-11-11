@@ -198,9 +198,6 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     // Fetch and load topic structure
     await browser.fetchStructure('../../util/content-browser/content-structure.json'); // DEBUG_DATA
     await refresh();
-
-    // Setup initial event listeners
-    setupEventListeners();
 }); 
 
 // Refreshes MarkDown-Container and Topic-Container
