@@ -42,4 +42,5 @@ This category will keep TODOs for each other so we don't run into issues where w
 
 ## Extra Features
 
- - add icons for md-converter.js warning, positive, negative and info boxes
+ - Add icons for md-converter.js warning, positive, negative and info boxes
+ - Add search functionality

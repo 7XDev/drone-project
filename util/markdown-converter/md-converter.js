@@ -18,6 +18,8 @@ class MarkdownConverter {
         let inUnorderedList = false;
         let inOrderedList = false;
         let inCodeBlock = false;
+        let inTable = false;
+        let tableHeaders = [];
 
         for (const line of lines) {
             if (/^```/.test(line)) {
@@ -30,6 +32,45 @@ class MarkdownConverter {
                 }
             } else if (inCodeBlock) {
                 htmlLines.push(this.escapeHtml(line));
+            } else if (this.isTableRow(line)) {
+                // Handle table rows
+                if (!inTable) {
+                    // Close any open lists
+                    if (inUnorderedList) {
+                        htmlLines.push('</ul>');
+                        inUnorderedList = false;
+                    }
+                    if (inOrderedList) {
+                        htmlLines.push('</ol>');
+                        inOrderedList = false;
+                    }
+                    
+                    // Check if next line is separator to determine if this is a header
+                    const nextLineIndex = lines.indexOf(line) + 1;
+                    const nextLine = nextLineIndex < lines.length ? lines[nextLineIndex] : '';
+                    
+                    if (this.isTableSeparator(nextLine)) {
+                        // This is a header row
+                        htmlLines.push('<table class="markdown-table">');
+                        htmlLines.push('<thead>');
+                        htmlLines.push(this.parseTableRow(line, true));
+                        htmlLines.push('</thead>');
+                        htmlLines.push('<tbody>');
+                        inTable = true;
+                        tableHeaders = this.extractTableHeaders(line);
+                    } else {
+                        // This is a regular table without headers
+                        htmlLines.push('<table class="markdown-table">');
+                        htmlLines.push('<tbody>');
+                        htmlLines.push(this.parseTableRow(line, false));
+                        inTable = true;
+                    }
+                } else {
+                    // Continue table rows
+                    if (!this.isTableSeparator(line)) {
+                        htmlLines.push(this.parseTableRow(line, false));
+                    }
+                }
             } else if (/^(\*|\-|\+)\s/.test(line)) {
                 if (!inUnorderedList) {
                     htmlLines.push('<ul class="markdown-list">');
@@ -52,6 +93,12 @@ class MarkdownConverter {
                 }
                 htmlLines.push(this.parseLine(line));
             } else {
+                if (inTable) {
+                    htmlLines.push('</tbody>');
+                    htmlLines.push('</table>');
+                    inTable = false;
+                    tableHeaders = [];
+                }
                 if (inUnorderedList) {
                     htmlLines.push('</ul>');
                     inUnorderedList = false;
@@ -72,6 +119,10 @@ class MarkdownConverter {
         }
         if (inCodeBlock) {
             htmlLines.push('</pre>');
+        }
+        if (inTable) {
+            htmlLines.push('</tbody>');
+            htmlLines.push('</table>');
         }
 
         return this.processSignatureBlocks(htmlLines.join('\n'));
@@ -166,6 +217,7 @@ class MarkdownConverter {
             }) // Images with optional dimensions
             .replace(/\[\[([^\]]+)\]\(([^)]+)\)\]/g, '<span id="$2" class="markdown-button">$1</span>') // Button links with ID
             .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="markdown-link">$1</a>') // Links
+            .replace(/~~(.*?)~~/g, '<del class="markdown-strikethrough">$1</del>') // Strikethrough
             .replace(/\*\*(.*?)\*\*/g, '<strong class="markdown-bold">$1</strong>') // Bold
             .replace(/\*(.*?)\*/g, '<em class="markdown-italic">$1</em>') // Italic
             .replace(/`(.*?)`/g, '<code class="markdown-code">$1</code>'); // Inline code
@@ -242,6 +294,36 @@ class MarkdownConverter {
         }
         
         html += '</div>';
+        return html;
+    }
+
+    // Check if line is a table row
+    isTableRow(line) {
+        return line.trim().includes('|') && line.trim().length > 0;
+    }
+
+    // Check if line is a table separator (|---|---|)
+    isTableSeparator(line) {
+        return /^\s*\|[\s\-\|:]+\|\s*$/.test(line);
+    }
+
+    // Extract table headers for reference
+    extractTableHeaders(line) {
+        return line.split('|').map(cell => cell.trim()).filter(cell => cell.length > 0);
+    }
+
+    // Parse a table row into HTML
+    parseTableRow(line, isHeader) {
+        const cells = line.split('|').map(cell => cell.trim()).filter(cell => cell.length > 0);
+        const tag = isHeader ? 'th' : 'td';
+        const className = isHeader ? 'markdown-table-header' : 'markdown-table-cell';
+        
+        let html = '<tr class="markdown-table-row">';
+        for (const cell of cells) {
+            html += `<${tag} class="${className}">${this.parseInline(cell)}</${tag}>`;
+        }
+        html += '</tr>';
+        
         return html;
     }
 }

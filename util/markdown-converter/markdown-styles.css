@@ -77,6 +77,11 @@ body {
     font-style: italic;
 }
 
+.markdown-strikethrough {
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
 .markdown-code {
     font-family: monospace;
     background-color: #f4f4f4;
@@ -197,6 +202,42 @@ body {
     height: auto;
     border-radius: 5px;
     margin: 0.5rem 0;
+}
+
+/* Tables */
+.markdown-table {
+    border-collapse: collapse;
+    width: auto;
+    margin: 1rem 0;
+    font-family: 'league-spartan', Arial, sans-serif;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+}
+
+.markdown-table-header {
+    background-color: #f3f4f6;
+    color: #374151;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-weight: 700;
+    border: 1px solid #d1d5db;
+    white-space: nowrap;
+}
+
+.markdown-table-cell {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    background-color: white;
+    white-space: nowrap;
+}
+
+.markdown-table-row:nth-child(even) .markdown-table-cell {
+    background-color: #fbfbfb;
+}
+
+.markdown-table-row:hover .markdown-table-cell {
+    background-color: #f3f4f6;
+    transition: background-color 0.1s;
 }
 
 /* Animation */
