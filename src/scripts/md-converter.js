@@ -1,5 +1,7 @@
 class MarkdownConverter {
-    constructor() {}
+    constructor() {
+        this.headingCount = 0;
+    }
 
     // Load markdown content from a given path
     async loadMarkdown(path) {
@@ -13,6 +15,7 @@ class MarkdownConverter {
 
     // Convert markdown text to HTML
     convert(md) {
+        this.headingCount = 0; // Reset counter for each conversion
         const lines = md.split('\n');
         const htmlLines = [];
         let inUnorderedList = false;
@@ -171,7 +174,8 @@ class MarkdownConverter {
         if (/^#{1,6}\s/.test(line)) {
             const level = line.match(/^#{1,6}/)[0].length;
             const content = line.replace(/^#{1,6}\s/, '');
-            return `<h${level} class="markdown-heading">${this.parseInline(content)}</h${level}>`;
+            const headingId = this.headingCount++;
+            return `<h${level} class="markdown-heading" id="${headingId}" >${this.parseInline(content)}</h${level}>`;
         }
 
         // Unordered Lists
