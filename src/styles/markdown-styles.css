@@ -84,7 +84,7 @@ body {
 
 .markdown-code {
     font-family: monospace;
-    background-color: #f4f4f4;
+    background-color: var(--md-inline-code-bg);
     padding: 0.2em 0.4em;
     border-radius: 4px;
 }
@@ -92,8 +92,8 @@ body {
 /* Code Blocks */
 .markdown-code-block {
     font-family: monospace;
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
+    background-color: var(--md-code-block-bg);
+    border: 1px solid var(--md-code-block-border);
     border-radius: 5px;
     padding: 1rem;
     margin: 1rem 0;

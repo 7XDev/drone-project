@@ -6,6 +6,17 @@
     <link rel="stylesheet" href="./styles/styles.css"/>
     <link rel="stylesheet" href="./styles/markdown-styles.css">
     <link rel="icon" href="./assets/img/camera-drone.svg" type="image/svg+xml">
+    
+    <!-- Apply dark mode immediately before body renders to prevent flashbang -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme === "dark") {
+                document.documentElement.classList.add("dark-mode");
+            }
+        })();
+    </script>
+
     <script type="module" src="./scripts/script.js"></script>
     <script type="module" src="./scripts/md-converter.js"></script>
     <script type="module" src="./scripts/content-browser.js"></script>
@@ -17,6 +28,7 @@
          <div class="header-logo">
             <img src="assets/img/camera-drone.svg" class="header-image" alt="Drone Logo">
             <p class="header-text">Drones Documentation</p>
+            <button id="lightDarkToggle" onclick="lightDarkModeToggle()">Dark Mode</button>
          </div>
     </header>
 

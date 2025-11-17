@@ -29,7 +29,7 @@ This category will keep TODOs for each other so we don't run into issues where w
 |------|--------|
 | Add copy text button to markdown-viewer | Not started Yet |
 | Add button at the bottom to switch to next topic | Not started Yet |
-| Implement Darkmode | Not started Yet |
+| Implement Darkmode | Done |
 
 
 ### Markus

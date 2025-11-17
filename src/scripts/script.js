@@ -37,6 +37,23 @@ async function GetMarkdownHeaders(path) {
     return headings;
 }
 
+function lightDarkModeToggle() {
+    const html = document.documentElement;
+    const toggleButton = document.getElementById("lightDarkToggle");
+
+    html.classList.toggle("dark-mode");
+
+    if (html.classList.contains("dark-mode")) {
+        toggleButton.textContent = "Light Mode";
+        localStorage.setItem("theme", "dark");
+    } else {
+        toggleButton.textContent = "Dark Mode";
+        localStorage.setItem("theme", "light");
+    }
+}
+
+window.lightDarkModeToggle = lightDarkModeToggle;
+
 async function GenerateHtmlRightHeader(headings) {
     let html = '<ul class="right-bar-list">';
     headings.forEach(heading => {
@@ -490,6 +507,7 @@ function onDeToggle(button) {
 }
 
 document.addEventListener("DOMContentLoaded", async (event) => {
+    
     // Get reference to the topic browser container
     browserContainer = document.querySelector(".topic-selector");
 
@@ -499,6 +517,14 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     await refresh();
     
     selectInitialLoadedTopic('assets/content/drone-show.md');
+
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+        const toggleButton = document.getElementById("lightDarkToggle");
+        if (toggleButton) {
+            toggleButton.textContent = "Light Mode";
+        }
+    }   
 }); 
 
 // Refreshes MarkDown-Container and Topic-Container
