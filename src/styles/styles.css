@@ -332,6 +332,7 @@ main {
 }
 
 .copy-button {
+    position: static;
     background-color: var(--button-bg);
     color: var(--button-text);
     border: 1px solid var(--border-color);
@@ -343,6 +344,9 @@ main {
     margin-left: auto;
     margin-right: 24%;
     transition: background-color 0.2s ease, transform 0.1s ease;
+    margin-left: 1.3rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .copy-button:hover {
