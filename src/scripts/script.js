@@ -575,12 +575,19 @@ function selectInitialLoadedTopic(path) {
         preview.innerHTML = html;
     });
 
+    // const rightPanelHeader = document.getElementById("right-panel-header");
+    // getMarkdownHeaders(path).then(headings => {
+    //     generateHtmlRightHeader(headings).then(html => {
+    //         rightPanelHeader.innerHTML = html;
+    //         setupRightPanelListeners(rightPanelHeader);
+    //     });
+    // });
+
     const rightPanelHeader = document.getElementById("right-panel-header");
     getMarkdownHeaders(path).then(headings => {
-        generateHtmlRightHeader(headings).then(html => {
-            rightPanelHeader.innerHTML = html;
-            setupRightPanelListeners(rightPanelHeader);
-        });
+        const html = generateHtmlRightHeader(headings);
+        rightPanelHeader.innerHTML = html;
+        setupRightPanelListeners(rightPanelHeader);
     });
 
     const dataPath = path.replace('assets/', '');
