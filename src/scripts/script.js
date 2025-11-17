@@ -23,15 +23,15 @@ let currentlySelectedCategory = null;
  * @param {Path} path 
  * @returns 
  */
-async function GetMarkdownHeaders(path) {
+async function getMarkdownHeaders(path) {
     let headings = [];
     let id = 0;
     let markdown = await converter.loadMarkdown(path);
     
     for (let line of markdown.split('\n')) {
-        // let match = line.match(/^(#{1,6})\s+(.+)$/);
+        let match = line.match(/^(#{1,6})\s+(.+)$/);
 
-        if (line.match(/^(#{1,6})\s+(.+)$/)) {
+        if ((line.match(/^(#{1,6})\s+(.+)$/))) {
             const text = match[2].trim();
             headings.push({ text, id });
             id++;
@@ -415,7 +415,7 @@ async function setupEventListeners() {
             preview.innerHTML = html;
 
             const rightPanelHeader = document.getElementById("right-panel-header");
-            const headings = await GetMarkdownHeaders('assets/' + button.dataset.path);
+            const headings = await getMarkdownHeaders('assets/' + button.dataset.path);
             rightPanelHeader.innerHTML = await GenerateHtmlRightHeader(headings);
             setupRightPanelListeners(rightPanelHeader);
         });
@@ -433,7 +433,7 @@ async function setupEventListeners() {
         preview.innerHTML = html;
 
         const rightPanelHeader = document.getElementById("right-panel-header");
-        const headings = await GetMarkdownHeaders('assets/' + topicButtons[0].dataset.path);
+        const headings = await getMarkdownHeaders('assets/' + topicButtons[0].dataset.path);
         rightPanelHeader.innerHTML = await GenerateHtmlRightHeader(headings);
         setupRightPanelListeners(rightPanelHeader);
     }
@@ -464,7 +464,7 @@ async function onToggle(button) {
             preview.innerHTML = html;
 
             const rightPanelHeader = document.getElementById("right-panel-header");
-            const headings = await GetMarkdownHeaders('assets/' + categoryItem.path);
+            const headings = await getMarkdownHeaders('assets/' + categoryItem.path);
             rightPanelHeader.innerHTML = await GenerateHtmlRightHeader(headings);
             setupRightPanelListeners(rightPanelHeader);
         }
@@ -562,7 +562,7 @@ function selectInitialLoadedTopic(path) {
     });
 
     const rightPanelHeader = document.getElementById("right-panel-header");
-    GetMarkdownHeaders(path).then(headings => {
+    getMarkdownHeaders(path).then(headings => {
         GenerateHtmlRightHeader(headings).then(html => {
             rightPanelHeader.innerHTML = html;
             setupRightPanelListeners(rightPanelHeader);
