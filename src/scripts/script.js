@@ -5,6 +5,9 @@ import ContentBrowser from './content-browser.js';
 // Global variable to track the currently opened page path
 let currentPagePath = "";
 
+// Global variable to store current markdown content
+let currentMarkdownContent = ""; // for copy button
+
 // Global content browser instance
 let browser = new ContentBrowser;
 
@@ -266,6 +269,7 @@ function setupEventListenersForNewElements() {
             currentlySelectedTopic = button;
 
             const md = await converter.loadMarkdown('assets/' + button.dataset.path);
+            currentMarkdownContent = md; // for copy button
             const html = converter.convert(md);
             preview.innerHTML = html;
         });
@@ -405,6 +409,7 @@ async function setupEventListeners() {
             currentlySelectedTopic = button;
 
             const md = await converter.loadMarkdown('assets/' + button.dataset.path);
+            currentMarkdownContent = md; // for copy button
             const html = converter.convert(md);
             preview.innerHTML = html;
 
@@ -422,6 +427,7 @@ async function setupEventListeners() {
         currentlySelectedTopic = topicButtons[0];
 
         const md = await converter.loadMarkdown('assets/' + topicButtons[0].dataset.path);
+        currentMarkdownContent = md; // for copy button
         const html = converter.convert(md);
         preview.innerHTML = html;
 
@@ -452,6 +458,7 @@ async function onToggle(button) {
         // If this category has a path, load its markdown content
         if (categoryItem.path) {
             const md = await converter.loadMarkdown('assets/' + categoryItem.path);
+            currentMarkdownContent = md; // for copy button
             const html = converter.convert(md);
             preview.innerHTML = html;
 
@@ -506,6 +513,17 @@ function onDeToggle(button) {
     }
 }
 
+async function copyButtonTrigger() {
+    try {
+        await navigator.clipboard.writeText(currentMarkdownContent);
+    } catch (err) {
+        console.error('Failed to copy text: ', err);
+    }
+};
+
+// Make function available globally for onclick handler
+window.copyButtonTrigger = copyButtonTrigger;
+
 document.addEventListener("DOMContentLoaded", async (event) => {
     
     // Get reference to the topic browser container
@@ -537,6 +555,7 @@ async function refresh() {
 
 function selectInitialLoadedTopic(path) {
     converter.loadMarkdown(path).then(md => {
+        currentMarkdownContent = md; // for copy button
         const html = converter.convert(md);
         preview.innerHTML = html;
     });

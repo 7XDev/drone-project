@@ -91,7 +91,7 @@ body {
 }
 
 main {
-    margin-top: 2%;
+    margin-top: 1rem;
     margin-left: 8%;
     font-family: league-spartan;
 }
@@ -323,4 +323,33 @@ main {
 
 .markdown-code-block pre {
     background-color: var(--md-code-bg-color);
+}
+
+.top-line {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.copy-button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--border-color);
+    padding: 0.4rem 0.75rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: league-spartan;
+    font-size: 14px;
+    margin-left: auto;
+    margin-right: 24%;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.copy-button:hover {
+    background-color: var(--hover-bg);
+    transform: scale(1.025);
+}
+
+.copy-button:active {
+    transform: scale(0.95);
 }
