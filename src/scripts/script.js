@@ -38,7 +38,7 @@ async function GetMarkdownHeaders(path) {
 }
 
 async function GenerateHtmlRightHeader(headings) {
-    let html = '<ul class="right-panel-list">';
+    let html = '<ul class="right-bar-list">';
     headings.forEach(heading => {
         html += `<li class="right-bar-items"><a href="#${heading.id}">${heading.text}</a></li>`;
     });
