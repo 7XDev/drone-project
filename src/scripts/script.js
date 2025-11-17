@@ -18,6 +18,12 @@ let browserContainer;
 let currentlySelectedTopic = null;
 let currentlySelectedCategory = null;
 
+// Assign mode switch variable to the button for improved onclick event
+window.lightDarkModeToggle = lightDarkModeToggle;
+
+// Make function available globally for onclick handler
+window.copyButtonTrigger = copyButtonTrigger;
+
 /**
  * Gets all the markdown headings to display in the right panel
  * @param {Path} path 
@@ -29,9 +35,10 @@ async function getMarkdownHeaders(path) {
     let markdown = await converter.loadMarkdown(path);
     
     for (let line of markdown.split('\n')) {
-        let match = line.match(/^(#{1,6})\s+(.+)$/);
+        let match = line.match(/^(#{1,6})\s+(.+)$/);    // Look for heading in line
 
         if ((line.match(/^(#{1,6})\s+(.+)$/))) {
+            // Add match to heading array
             const text = match[2].trim();
             headings.push({ text, id });
             id++;
@@ -41,12 +48,16 @@ async function getMarkdownHeaders(path) {
     return headings;
 }
 
+/**
+ * Toggle between light mode and dark mode
+ */
 function lightDarkModeToggle() {
     const html = document.documentElement;
     const toggleButton = document.getElementById("lightDarkToggle");
 
-    html.classList.toggle("dark-mode");
+    html.classList.toggle("dark-mode"); // Change page appearance
 
+    // Toggle mode switch button content
     if (html.classList.contains("dark-mode")) {
         toggleButton.textContent = "Light Mode";
         localStorage.setItem("theme", "dark");
@@ -56,9 +67,12 @@ function lightDarkModeToggle() {
     }
 }
 
-window.lightDarkModeToggle = lightDarkModeToggle;
-
-async function GenerateHtmlRightHeader(headings) {
+/**
+ * Generate the header list with the buttons to skip to certain header in the right hand side bar
+ * @param {HTMLHeadElement[]} headings Array containing the headers 
+ * @returns The generated html
+ */
+function generateHtmlRightHeader(headings) {
     let html = '<ul class="right-bar-list">';
     headings.forEach(heading => {
         html += `<li class="right-bar-items"><a href="#${heading.id}">${heading.text}</a></li>`;
@@ -416,7 +430,7 @@ async function setupEventListeners() {
 
             const rightPanelHeader = document.getElementById("right-panel-header");
             const headings = await getMarkdownHeaders('assets/' + button.dataset.path);
-            rightPanelHeader.innerHTML = await GenerateHtmlRightHeader(headings);
+            rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
             setupRightPanelListeners(rightPanelHeader);
         });
     });
@@ -434,7 +448,7 @@ async function setupEventListeners() {
 
         const rightPanelHeader = document.getElementById("right-panel-header");
         const headings = await getMarkdownHeaders('assets/' + topicButtons[0].dataset.path);
-        rightPanelHeader.innerHTML = await GenerateHtmlRightHeader(headings);
+        rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
         setupRightPanelListeners(rightPanelHeader);
     }
 }
@@ -465,7 +479,7 @@ async function onToggle(button) {
 
             const rightPanelHeader = document.getElementById("right-panel-header");
             const headings = await getMarkdownHeaders('assets/' + categoryItem.path);
-            rightPanelHeader.innerHTML = await GenerateHtmlRightHeader(headings);
+            rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
             setupRightPanelListeners(rightPanelHeader);
         }
         
@@ -514,6 +528,9 @@ function onDeToggle(button) {
     }
 }
 
+/* 
+Trigger the copy button to copy the current page content into the clipboard
+**/
 async function copyButtonTrigger() {
     try {
         await navigator.clipboard.writeText(currentMarkdownContent);
@@ -521,9 +538,6 @@ async function copyButtonTrigger() {
         console.error('Failed to copy text: ', err);
     }
 };
-
-// Make function available globally for onclick handler
-window.copyButtonTrigger = copyButtonTrigger;
 
 document.addEventListener("DOMContentLoaded", async (event) => {
     
@@ -563,7 +577,7 @@ function selectInitialLoadedTopic(path) {
 
     const rightPanelHeader = document.getElementById("right-panel-header");
     getMarkdownHeaders(path).then(headings => {
-        GenerateHtmlRightHeader(headings).then(html => {
+        generateHtmlRightHeader(headings).then(html => {
             rightPanelHeader.innerHTML = html;
             setupRightPanelListeners(rightPanelHeader);
         });
