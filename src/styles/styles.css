@@ -11,10 +11,8 @@
     --hover-bg: rgba(0, 0, 0, 0.1);
     --button-bg: #f0f0f0;
     --button-text: black;
-    --md-code-bg-color: #f5f5f5;
-    --md-inline-code-bg: #f4f4f4;
-    --md-code-block-bg: #f8f9fa;
-    --md-code-block-border: #e9ecef;
+    --topic-selected-color: rgb(44, 98, 245);
+    --topic-selected-hover-bg: rgba(195, 220, 252, 0.5);
 }
 
 :root.dark-mode {
@@ -25,10 +23,8 @@
     --hover-bg: rgba(255, 255, 255, 0.1);
     --button-bg: #2d2d2d;
     --button-text: #e0e0e0;
-    --md-code-bg-color: #2d2d2d;
-    --md-inline-code-bg: #2d2d2d;
-    --md-code-block-bg: #2d2d2d;
-    --md-code-block-border: #3d3d3d;
+    --topic-selected-color: rgb(79, 128, 235);
+    --topic-selected-hover-bg: rgba(79, 128, 235, 0.2);
 }
 
 body {
@@ -158,16 +154,16 @@ main {
 }
 
 .topic-button-selected:hover {
-    background-color: rgba(195, 220, 252, 0.5);
+    background-color: var(--topic-selected-hover-bg);
 }
 
 .topic-selected {
     opacity: 1;
-    color: rgb(44, 98, 245);
+    color: var(--topic-selected-color);
 }
 
 .topic-selected:hover {
-    background-color: rgba(195, 220, 252, 0.5);
+    background-color: var(--topic-selected-hover-bg);
 }
 
 .topic-unselected {
@@ -187,7 +183,7 @@ main {
 }
 
 .topic-category-button:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: var(--hover-bg);
 }
 
 .topic-category-button-unselected {
@@ -196,7 +192,7 @@ main {
 
 .topic-category-button-selected .category-arrow {
     opacity: 1;
-    color: rgb(44, 98, 245);
+    color: var(--topic-selected-color);
 }
 
 .category-arrow {
@@ -215,11 +211,11 @@ main {
 
 .topic-category-button-selected {
     opacity: 1;
-    color: rgb(44, 98, 245);
+    color: var(--topic-selected-color);
 }
 
 .topic-category-button-selected:hover {
-    background-color: rgba(195, 220, 252, 0.5);
+    background-color: var(--topic-selected-hover-bg);
 }
 
 .topic-category {
