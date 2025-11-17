@@ -47,6 +47,28 @@ async function GenerateHtmlRightHeader(headings) {
 }
 
 /**
+ * Set up event listeners for right panel navigation links to scroll within the display window
+ * @param {HTMLElement} rightPanelHeader - The right panel header element containing the links
+ */
+function setupRightPanelListeners(rightPanelHeader) {
+    const links = rightPanelHeader.querySelectorAll('a');
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                const container = document.querySelector('.display-window');
+                const rect = targetElement.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
+                const scrollTop = container.scrollTop + (rect.top - containerRect.top);
+                container.scrollTo({ top: scrollTop, behavior: 'smooth' });
+            }
+        });
+    });
+}
+
+/**
  * Recursively find a category by name in the content structure
  * @param {Array} structure - The content structure to search
  * @param {string} name - The name of the category to find
@@ -372,6 +394,7 @@ async function setupEventListeners() {
             const rightPanelHeader = document.getElementById("right-panel-header");
             const headings = await GetMarkdownHeaders('assets/' + button.dataset.path);
             rightPanelHeader.innerHTML = await GenerateHtmlRightHeader(headings);
+            setupRightPanelListeners(rightPanelHeader);
         });
     });
 
@@ -388,6 +411,7 @@ async function setupEventListeners() {
         const rightPanelHeader = document.getElementById("right-panel-header");
         const headings = await GetMarkdownHeaders('assets/' + topicButtons[0].dataset.path);
         rightPanelHeader.innerHTML = await GenerateHtmlRightHeader(headings);
+        setupRightPanelListeners(rightPanelHeader);
     }
 }
 
@@ -417,6 +441,7 @@ async function onToggle(button) {
             const rightPanelHeader = document.getElementById("right-panel-header");
             const headings = await GetMarkdownHeaders('assets/' + categoryItem.path);
             rightPanelHeader.innerHTML = await GenerateHtmlRightHeader(headings);
+            setupRightPanelListeners(rightPanelHeader);
         }
         
         // Generate HTML for just this category's children
@@ -494,6 +519,7 @@ function selectInitialLoadedTopic(path) {
     GetMarkdownHeaders(path).then(headings => {
         GenerateHtmlRightHeader(headings).then(html => {
             rightPanelHeader.innerHTML = html;
+            setupRightPanelListeners(rightPanelHeader);
         });
     });
 
