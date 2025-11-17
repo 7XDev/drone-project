@@ -470,7 +470,10 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 
     // Fetch and load topic structure
     await browser.fetchStructure('assets/content/content-structure.json'); // DEBUG_DATA
+
     await refresh();
+    
+    selectInitialLoadedTopic('assets/content/drone-show.md');
 }); 
 
 // Refreshes MarkDown-Container and Topic-Container
@@ -479,4 +482,24 @@ async function refresh() {
     browserContainer.innerHTML = browser.generateTopicsHTML();
     // Re-setup event listeners after DOM regeneration
     setupEventListeners();
+}
+
+function selectInitialLoadedTopic(path) {
+    converter.loadMarkdown(path).then(md => {
+        const html = converter.convert(md);
+        preview.innerHTML = html;
+    });
+
+    const rightPanelHeader = document.getElementById("right-panel-header");
+    GetMarkdownHeaders(path).then(headings => {
+        GenerateHtmlRightHeader(headings).then(html => {
+            rightPanelHeader.innerHTML = html;
+        });
+    });
+
+    const dataPath = path.replace('assets/', '');
+    const targetButton = document.querySelector(`[data-path="${dataPath}"]`);
+    targetButton.classList.remove('topic-unselected');
+    targetButton.classList.add('topic-selected');
+    currentlySelectedTopic = targetButton;
 }
