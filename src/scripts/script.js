@@ -2,9 +2,6 @@
 import MarkdownConverter from './md-converter.js';
 import ContentBrowser from './content-browser.js';
 
-// Global variable to track the currently opened page path
-let currentPagePath = "";
-
 // Global variable to store current markdown content
 let currentMarkdownContent = ""; // for copy button
 
@@ -21,16 +18,20 @@ let browserContainer;
 let currentlySelectedTopic = null;
 let currentlySelectedCategory = null;
 
+/**
+ * Gets all the markdown headings to display in the right panel
+ * @param {Path} path 
+ * @returns 
+ */
 async function GetMarkdownHeaders(path) {
-    const headings = [];
+    let headings = [];
     let id = 0;
-    const markdown = await converter.loadMarkdown(path);
-    const lines = markdown.split('\n');
+    let markdown = await converter.loadMarkdown(path);
+    
+    for (let line of markdown.split('\n')) {
+        // let match = line.match(/^(#{1,6})\s+(.+)$/);
 
-    for(const line of lines) {
-        const match = line.match(/^(#{1,6})\s+(.+)$/);
-
-        if(match) {
+        if (line.match(/^(#{1,6})\s+(.+)$/)) {
             const text = match[2].trim();
             headings.push({ text, id });
             id++;
