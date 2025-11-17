@@ -27,18 +27,16 @@ This category will keep TODOs for each other so we don't run into issues where w
 
 | Task | Status |
 |------|--------|
-| Add copy text button to markdown-viewer | Not started Yet |
-| Add button at the bottom to switch to next topic | Not started Yet |
-| Implement Darkmode | Done |
+| Add copy text button to markdown-viewer | Not started yet |
+| Add button at the bottom to switch to next topic | Not started yet |
 
 
 ### Markus
 
 | Task | Status |
 |------|--------|
-| Add documentation for md-converter.js | Finished |
-| Add md-converter.js functionality for more items like buttons, links, images, special text, ... | Finished |
 | Fix codeblock detection in md-converter.js | Not started yet |
+| Fix content selection including multiple add glitch | Not started yet |
 
 
 ## Extra Features
