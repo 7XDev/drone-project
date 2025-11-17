@@ -23,21 +23,14 @@ Markus 07.11. 17:35:
 
 This category will keep TODOs for each other so we don't run into issues where we both work on the exact same feature.
 
+**Migrate to GitHub issues**
+
 ### Florian
 
-| Task | Status |
-|------|--------|
-| Add copy text button to markdown-viewer | Not started yet |
-| Add button at the bottom to switch to next topic | Not started yet |
-
-
-### Markus
-
-| Task | Status |
-|------|--------|
-| Fix codeblock detection in md-converter.js | Not started yet |
-| Fix content selection including multiple add glitch | Not started yet |
-
+| Task | Status | Priority 1-5 |
+|------|--------|--------------|
+| Add copy text button to markdown-viewer | Not started yet | 1 |
+| Add button at the bottom to switch to next topic | Not started yet | 1 | 
 
 ## Extra Features
 
