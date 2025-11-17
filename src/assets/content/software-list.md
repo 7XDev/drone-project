@@ -13,11 +13,16 @@ The following software tools are required or recommended for working with the dr
 **Linux Installation:**
 1. Download the AppImage or DEB package from the respective website.
 2. For AppImage:
-   <pre class="markdown-code-block">chmod +x &lt;filename&gt;.AppImage
-./&lt;filename&gt;.AppImage</pre>
+```
+chmod +x <filename>
+./filename.AppImage
+```
+
 3. For DEB:
-   <pre class="markdown-code-block">sudo dpkg -i &lt;filename&gt;.deb
-sudo apt-get install -f</pre>
+```
+sudo dpkg -i <filename>.deb
+sudo apt-get install -f
+```
 
 ## Optional Software
 
@@ -29,12 +34,18 @@ sudo apt-get install -f</pre>
 **Linux Installation:**
 1. Download the DEB or RPM package from the [official website](https://code.visualstudio.com/).
 2. For DEB:
-   <pre class="markdown-code-block">sudo dpkg -i code_&lt;version&gt;.deb
-sudo apt-get install -f</pre>
+```
+sudo dpkg -i code_<version>.deb
+sudo apt-get install -f
+```
 3. For RPM:
-   <pre class="markdown-code-block">sudo rpm -i code-&lt;version&gt;.rpm</pre>
+```
+sudo rpm -i code-<version>.rpm
+```
 4. Alternatively, install via Snap:
-   <pre class="markdown-code-block">sudo snap install --classic code</pre>
+```
+sudo snap install --classic code
+```
 
 ## Development Tools
 
@@ -46,8 +57,10 @@ sudo apt-get install -f</pre>
 - **Download Link:** [GCC](https://gcc.gnu.org/)
 
 **Linux Installation:**
-<pre class="markdown-code-block">sudo apt update
-sudo apt install build-essential</pre>
+```
+sudo apt update
+sudo apt install build-essential
+```
 
 #### ESP-IDF
 **Purpose:** Flash modified software onto the drone.
@@ -56,13 +69,21 @@ sudo apt install build-essential</pre>
 
 **Linux Installation:**
 1. Clone the repository:
-   <pre class="markdown-code-block">git clone --recursive https://github.com/espressif/esp-idf.git</pre>
+```
+git clone --recursive https://github.com/espressif/esp-idf.git
+```
 2. Navigate to the directory:
-   <pre class="markdown-code-block">cd esp-idf</pre>
+```
+cd esp-idf
+```
 3. Run the installation script:
-   <pre class="markdown-code-block">./install.sh</pre>
+```
+./install.sh
+```
 4. Set up the environment:
-   <pre class="markdown-code-block">. ./export.sh</pre>
+```
+. ./export.sh
+```
 
 ### Using C++
 
@@ -74,8 +95,14 @@ sudo apt install build-essential</pre>
 **Linux Installation:**
 1. Download the tarball from the [official website](https://www.arduino.cc/en/software).
 2. Extract the tarball:
-   <pre class="markdown-code-block">tar -xvf arduino-ide-&lt;version&gt;-linux64.tar.xz</pre>
+```
+tar -xvf arduino-ide-<version>-linux64.tar.xz
+```
 3. Navigate to the extracted folder:
-   <pre class="markdown-code-block">cd arduino-ide-&lt;version&gt;</pre>
+```
+cd arduino-ide-<version>
+```
 4. Run the installer:
-   <pre class="markdown-code-block">sudo ./install.sh</pre>
+```
+sudo ./install.sh
+```
