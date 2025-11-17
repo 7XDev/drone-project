@@ -23,14 +23,7 @@ Markus 07.11. 17:35:
 
 This category will keep TODOs for each other so we don't run into issues where we both work on the exact same feature.
 
-**Migrate to GitHub issues**
-
-### Florian
-
-| Task | Status | Priority 1-5 |
-|------|--------|--------------|
-| Add copy text button to markdown-viewer | Not started yet | 1 |
-| Add button at the bottom to switch to next topic | Not started yet | 1 | 
+**Migrate to GitHub issues** 
 
 ## Extra Features
 
