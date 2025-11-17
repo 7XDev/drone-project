@@ -483,25 +483,39 @@ async function onToggle(button) {
             setupRightPanelListeners(rightPanelHeader);
         }
         
-        // Generate HTML for just this category's children
-        const childrenHTML = generateCategoryChildrenHTML(categoryItem);
-        
-        // Insert the children HTML after this button
-        const nextSibling = button.nextElementSibling;
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = childrenHTML;
-        
-        // Insert all children after the button
-        while (tempDiv.firstChild) {
-            if (nextSibling) {
-                browserContainer.insertBefore(tempDiv.firstChild, nextSibling);
-            } else {
-                browserContainer.appendChild(tempDiv.firstChild);
-            }
+        // Check if children already exist in the DOM to prevent duplicates
+        // Check if any of this category's children are already in the DOM
+        let hasExistingChildren = false;
+        if (categoryItem.children && categoryItem.children.length > 0) {
+            const firstChild = categoryItem.children[0];
+            const firstChildId = firstChild.type === 'page' 
+                ? `topic-button-${firstChild.name}` 
+                : (firstChild.path ? `topic-category-topic-${firstChild.name}` : `topic-category-${firstChild.name}`);
+            hasExistingChildren = document.getElementById(firstChildId) !== null;
         }
         
-        // Set up event listeners for the newly added elements
-        setupEventListenersForNewElements();
+        // Only insert children if they don't already exist
+        if (!hasExistingChildren) {
+            // Generate HTML for just this category's children
+            const childrenHTML = generateCategoryChildrenHTML(categoryItem);
+            
+            // Insert the children HTML after this button
+            const nextSibling = button.nextElementSibling;
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = childrenHTML;
+            
+            // Insert all children after the button
+            while (tempDiv.firstChild) {
+                if (nextSibling) {
+                    browserContainer.insertBefore(tempDiv.firstChild, nextSibling);
+                } else {
+                    browserContainer.appendChild(tempDiv.firstChild);
+                }
+            }
+            
+            // Set up event listeners for the newly added elements
+            setupEventListenersForNewElements();
+        }
     }
 }
 
@@ -574,14 +588,6 @@ function selectInitialLoadedTopic(path) {
         const html = converter.convert(md);
         preview.innerHTML = html;
     });
-
-    // const rightPanelHeader = document.getElementById("right-panel-header");
-    // getMarkdownHeaders(path).then(headings => {
-    //     generateHtmlRightHeader(headings).then(html => {
-    //         rightPanelHeader.innerHTML = html;
-    //         setupRightPanelListeners(rightPanelHeader);
-    //     });
-    // });
 
     const rightPanelHeader = document.getElementById("right-panel-header");
     getMarkdownHeaders(path).then(headings => {
