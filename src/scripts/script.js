@@ -140,22 +140,22 @@ function generateCategoryChildrenHTML(categoryItem) {
                 // Check if this category is a category button (has path property)
                 const isCategoryButton = !!item.path;
                 
-                // Generate HTML for categories that are not collapsed
+                // Generate HTML for all categories - let DOM state management handle visibility
                 if (item.path) {
                     html += `<p class="topic-category-button-unselected topic-category-button" id="topic-category-topic-${item.name}">${item.name}</p>`
-                } else if (!item.collapsed) {
+                } else {
                     html += `<p class="topic-category" id="topic-category-${item.name}">${item.name}</p>`;
                 }
 
-                // Recursively generate HTML for child items
-                if (item.children && !item.collapsed) {
+                // Always include children in HTML generation - DOM will control visibility
+                if (item.children) {
                     traverse(item.children, isCategoryButton);
                 }
             }
         });
     };
 
-    if (categoryItem.children && !categoryItem.collapsed) {
+    if (categoryItem.children) {
         traverse(categoryItem.children, !!categoryItem.path);
     }
     
@@ -226,7 +226,6 @@ function setupEventListenersForNewElements() {
         
         button.addEventListener('click', async () => {
             const isToggled = button.dataset.toggled === 'true';
-            const isSameButton = currentlySelectedCategory === button;
             
             // Deselect previously selected topic button (O(1))
             if (currentlySelectedTopic) {
@@ -235,24 +234,18 @@ function setupEventListenersForNewElements() {
                 currentlySelectedTopic = null;
             }
 
-            if (isSameButton) {
-                if (isToggled) {
-                    button.classList.remove('topic-category-button-selected');
-                    button.classList.add('topic-category-button-unselected');
-                    button.dataset.toggled = 'false';
+            // Toggle this category independently
+            if (isToggled) {
+                // Collapse this category
+                button.classList.remove('topic-category-button-selected');
+                button.classList.add('topic-category-button-unselected');
+                button.dataset.toggled = 'false';
+                if (currentlySelectedCategory === button) {
                     currentlySelectedCategory = null;
-                    onDeToggle(button);
-                } else {
-                    button.dataset.toggled = 'true';
-                    await onToggle(button);
                 }
+                onDeToggle(button);
             } else {
-                if (currentlySelectedCategory) {
-                    currentlySelectedCategory.classList.remove('topic-category-button-selected');
-                    currentlySelectedCategory.classList.add('topic-category-button-unselected');
-                    currentlySelectedCategory.dataset.toggled = 'false';
-                }
-
+                // Expand this category
                 button.classList.remove('topic-category-button-unselected');
                 button.classList.add('topic-category-button-selected');
                 button.dataset.toggled = 'true';
@@ -272,12 +265,8 @@ function setupEventListenersForNewElements() {
                 currentlySelectedTopic.classList.add('topic-unselected');
             }
 
-            if (currentlySelectedCategory) {
-                currentlySelectedCategory.classList.remove('topic-category-button-selected');
-                currentlySelectedCategory.classList.add('topic-category-button-unselected');
-                currentlySelectedCategory.dataset.toggled = 'false';
-                currentlySelectedCategory = null;
-            }
+            // Clear the currently selected category for content display tracking
+            currentlySelectedCategory = null;
 
             button.classList.remove('topic-unselected');
             button.classList.add('topic-selected');
@@ -287,6 +276,11 @@ function setupEventListenersForNewElements() {
             currentMarkdownContent = md; // for copy button
             const html = converter.convert(md);
             preview.innerHTML = html;
+
+            const rightPanelHeader = document.getElementById("right-panel-header");
+            const headings = await getMarkdownHeaders('assets/' + button.dataset.path);
+            rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
+            setupRightPanelListeners(rightPanelHeader);
         });
     });
 }
@@ -317,13 +311,24 @@ async function setupEventListeners() {
         
         if (categoryItem) {
             const isExpanded = !categoryItem.collapsed;
-            button.dataset.toggled = isExpanded.toString();
             
-            // Apply visual state based on actual data
-            if (isExpanded) {
+            // Check if children exist in DOM to determine actual UI state
+            let hasChildrenInDOM = false;
+            if (categoryItem.children && categoryItem.children.length > 0) {
+                const firstChild = categoryItem.children[0];
+                const firstChildId = firstChild.type === 'page' 
+                    ? `topic-button-${firstChild.name}` 
+                    : (firstChild.path ? `topic-category-topic-${firstChild.name}` : `topic-category-${firstChild.name}`);
+                hasChildrenInDOM = document.getElementById(firstChildId) !== null;
+            }
+            
+            // Set button state based on whether children are visible in DOM
+            button.dataset.toggled = hasChildrenInDOM.toString();
+            
+            // Apply visual state based on DOM state (not data structure)
+            if (hasChildrenInDOM) {
                 button.classList.remove('topic-category-button-unselected');
                 button.classList.add('topic-category-button-selected');
-                currentlySelectedCategory = button;
                 
                 // Set arrow rotation for expanded state without animation on initial load
                 const arrow = button.querySelector('.category-arrow');
@@ -358,7 +363,6 @@ async function setupEventListeners() {
         button.addEventListener('click', async () => {
             // Check current toggle state before making changes
             const isToggled = button.dataset.toggled === 'true';
-            const isSameButton = currentlySelectedCategory === button;
             
             // Deselect previously selected topic button (O(1))
             if (currentlySelectedTopic) {
@@ -367,29 +371,18 @@ async function setupEventListeners() {
                 currentlySelectedTopic = null;
             }
 
-            // If clicking the same category button that's already selected
-            if (isSameButton) {
-                if (isToggled) {
-                    // Collapse and deselect
-                    button.classList.remove('topic-category-button-selected');
-                    button.classList.add('topic-category-button-unselected');
-                    button.dataset.toggled = 'false';
+            // Toggle this category independently
+            if (isToggled) {
+                // Collapse this category
+                button.classList.remove('topic-category-button-selected');
+                button.classList.add('topic-category-button-unselected');
+                button.dataset.toggled = 'false';
+                if (currentlySelectedCategory === button) {
                     currentlySelectedCategory = null;
-                    onDeToggle(button);
-                } else {
-                    // Expand (keep selected)
-                    button.dataset.toggled = 'true';
-                    await onToggle(button);
                 }
+                onDeToggle(button);
             } else {
-                // Clicking a different category button
-                if (currentlySelectedCategory) {
-                    currentlySelectedCategory.classList.remove('topic-category-button-selected');
-                    currentlySelectedCategory.classList.add('topic-category-button-unselected');
-                    currentlySelectedCategory.dataset.toggled = 'false';
-                }
-
-                // Select the clicked category button
+                // Expand this category
                 button.classList.remove('topic-category-button-unselected');
                 button.classList.add('topic-category-button-selected');
                 button.dataset.toggled = 'true';
@@ -411,12 +404,8 @@ async function setupEventListeners() {
                 currentlySelectedTopic.classList.add('topic-unselected');
             }
 
-            if (currentlySelectedCategory) {
-                currentlySelectedCategory.classList.remove('topic-category-button-selected');
-                currentlySelectedCategory.classList.add('topic-category-button-unselected');
-                currentlySelectedCategory.dataset.toggled = 'false';
-                currentlySelectedCategory = null;
-            }
+            // Clear the currently selected category for content display tracking
+            currentlySelectedCategory = null;
 
             // Select the clicked topic button
             button.classList.remove('topic-unselected');
@@ -465,11 +454,9 @@ async function onToggle(button) {
         arrow.style.transition = 'transform 0.3s ease';
     }
 
-    // Toggle category visibility in data structure
+    // Find category but don't modify its collapsed state
     const categoryItem = findCategoryByName(browser.contentStructure, button.textContent);
     if (categoryItem) {
-        categoryItem.collapsed = !categoryItem.collapsed; // Toggle the collapsed state
-        
         // If this category has a path, load its markdown content
         if (categoryItem.path) {
             const md = await converter.loadMarkdown('assets/' + categoryItem.path);
@@ -484,7 +471,6 @@ async function onToggle(button) {
         }
         
         // Check if children already exist in the DOM to prevent duplicates
-        // Check if any of this category's children are already in the DOM
         let hasExistingChildren = false;
         if (categoryItem.children && categoryItem.children.length > 0) {
             const firstChild = categoryItem.children[0];
@@ -532,12 +518,10 @@ function onDeToggle(button) {
         arrow.style.transition = 'transform 0.3s ease';
     }
 
-    // Toggle category visibility in data structure
+    // Find category but don't modify its collapsed state - only manage DOM
     const categoryItem = findCategoryByName(browser.contentStructure, button.textContent);
     if (categoryItem) {
-        categoryItem.collapsed = !categoryItem.collapsed; // Toggle the collapsed state
-        
-        // Remove all children elements that belong to this category
+        // Remove all children elements that belong to this category from DOM only
         removeCategoryChildren(button, categoryItem);
     }
 }
