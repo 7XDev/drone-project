@@ -167,6 +167,17 @@ class MarkdownConverter {
             return `SIGNATURE_START:info:body:${this.parseInline(content)}`;
         }
 
+        if (/^#bh\(([^)]+)\)\s/.test(line)) {
+            const match = line.match(/^#bh\(([^)]+)\)\s(.*)$/);
+            const id = match[1];
+            const content = match[2];
+            return `SIGNATURE_START:button:heading:${this.parseInline(content)}:${id}`;
+        }
+        if (/^#bb\s/.test(line)) {
+            const content = line.replace(/^#bb\s/, '');
+            return `SIGNATURE_START:button:body:${this.parseInline(content)}`;
+        }
+
         // Headings
         if (/^#{1,6}\s/.test(line)) {
             const level = line.match(/^#{1,6}/)[0].length;
@@ -241,12 +252,17 @@ class MarkdownConverter {
 
         for (const line of lines) {
             if (line.startsWith('SIGNATURE_START:')) {
-                const [, type, part, content] = line.split(':');
+                const parts = line.split(':');
+                const type = parts[1];
+                const part = parts[2];
+                const content = parts[3];
+                const id = parts[4]; // For button signatures with ID
                 
                 if (currentSignature && currentSignature.type === type) {
                     // Add to existing signature
                     if (part === 'heading') {
                         currentSignature.heading = content;
+                        if (id) currentSignature.id = id;
                     } else if (part === 'body') {
                         currentSignature.bodies.push(content);
                     }
@@ -260,7 +276,8 @@ class MarkdownConverter {
                     currentSignature = {
                         type: type,
                         heading: part === 'heading' ? content : null,
-                        bodies: part === 'body' ? [content] : []
+                        bodies: part === 'body' ? [content] : [],
+                        id: id || null
                     };
                 }
             } else {
@@ -283,18 +300,35 @@ class MarkdownConverter {
 
     // Generate HTML for a signature block
     generateSignatureHTML(signature) {
-        let html = `<div class="markdown-${signature.type}">`;
-        
-        if (signature.heading) {
-            html += `<h4 class="markdown-signature-heading">${signature.heading}</h4>`;
+        if (signature.type === 'button') {
+            // Special handling for button signatures
+            let html = `<div class="markdown-button-container"${signature.id ? ` id="${signature.id}"` : ''}>`;
+            
+            if (signature.heading) {
+                html += `<div class="markdown-button-heading">${signature.heading}</div>`;
+            }
+            
+            for (const body of signature.bodies) {
+                html += `<div class="markdown-button-body">${body}</div>`;
+            }
+            
+            html += '</div>';
+            return html;
+        } else {
+            // Standard signature handling for other types
+            let html = `<div class="markdown-${signature.type}">`;
+            
+            if (signature.heading) {
+                html += `<h4 class="markdown-signature-heading">${signature.heading}</h4>`;
+            }
+            
+            for (const body of signature.bodies) {
+                html += `<p class="markdown-signature-body">${body}</p>`;
+            }
+            
+            html += '</div>';
+            return html;
         }
-        
-        for (const body of signature.bodies) {
-            html += `<p class="markdown-signature-body">${body}</p>`;
-        }
-        
-        html += '</div>';
-        return html;
     }
 
     // Check if line is a table row
