@@ -237,19 +237,19 @@ function setupEventListenersForNewElements() {
             // Toggle this category independently
             if (isToggled) {
                 // Collapse this category
-                button.classList.remove('topic-category-button-selected');
-                button.classList.add('topic-category-button-unselected');
+                button.classList.remove('topic-category-button-expanded');
+                button.classList.add('topic-category-button-collapsed');
                 button.dataset.toggled = 'false';
                 if (currentlySelectedCategory === button) {
+                    currentlySelectedCategory.classList.remove('topic-category-button-selected');
                     currentlySelectedCategory = null;
                 }
                 onDeToggle(button);
             } else {
                 // Expand this category
-                button.classList.remove('topic-category-button-unselected');
-                button.classList.add('topic-category-button-selected');
+                button.classList.remove('topic-category-button-collapsed');
+                button.classList.add('topic-category-button-expanded');
                 button.dataset.toggled = 'true';
-                currentlySelectedCategory = button;
                 await onToggle(button);
             }
         });
@@ -266,7 +266,10 @@ function setupEventListenersForNewElements() {
             }
 
             // Clear the currently selected category for content display tracking
-            currentlySelectedCategory = null;
+            if (currentlySelectedCategory) {
+                currentlySelectedCategory.classList.remove('topic-category-button-selected');
+                currentlySelectedCategory = null;
+            }
 
             button.classList.remove('topic-unselected');
             button.classList.add('topic-selected');
@@ -327,8 +330,8 @@ async function setupEventListeners() {
             
             // Apply visual state based on DOM state (not data structure)
             if (hasChildrenInDOM) {
-                button.classList.remove('topic-category-button-unselected');
-                button.classList.add('topic-category-button-selected');
+                button.classList.remove('topic-category-button-collapsed');
+                button.classList.add('topic-category-button-expanded');
                 
                 // Set arrow rotation for expanded state without animation on initial load
                 const arrow = button.querySelector('.category-arrow');
@@ -341,8 +344,8 @@ async function setupEventListeners() {
                     }, 10);
                }
             } else {
-                button.classList.remove('topic-category-button-selected');
-                button.classList.add('topic-category-button-unselected');
+                button.classList.remove('topic-category-button-expanded');
+                button.classList.add('topic-category-button-collapsed');
                 
                 // Set arrow rotation for collapsed state without animation on initial load
                 const arrow = button.querySelector('.category-arrow');
@@ -374,19 +377,19 @@ async function setupEventListeners() {
             // Toggle this category independently
             if (isToggled) {
                 // Collapse this category
-                button.classList.remove('topic-category-button-selected');
-                button.classList.add('topic-category-button-unselected');
+                button.classList.remove('topic-category-button-expanded');
+                button.classList.add('topic-category-button-collapsed');
                 button.dataset.toggled = 'false';
                 if (currentlySelectedCategory === button) {
+                    currentlySelectedCategory.classList.remove('topic-category-button-selected');
                     currentlySelectedCategory = null;
                 }
                 onDeToggle(button);
             } else {
                 // Expand this category
-                button.classList.remove('topic-category-button-unselected');
-                button.classList.add('topic-category-button-selected');
+                button.classList.remove('topic-category-button-collapsed');
+                button.classList.add('topic-category-button-expanded');
                 button.dataset.toggled = 'true';
-                currentlySelectedCategory = button;
                 await onToggle(button);
             }
         });
@@ -405,7 +408,10 @@ async function setupEventListeners() {
             }
 
             // Clear the currently selected category for content display tracking
-            currentlySelectedCategory = null;
+            if (currentlySelectedCategory) {
+                currentlySelectedCategory.classList.remove('topic-category-button-selected');
+                currentlySelectedCategory = null;
+            }
 
             // Select the clicked topic button
             button.classList.remove('topic-unselected');
@@ -457,8 +463,17 @@ async function onToggle(button) {
     // Find category but don't modify its collapsed state
     const categoryItem = findCategoryByName(browser.contentStructure, button.textContent);
     if (categoryItem) {
-        // If this category has a path, load its markdown content
+        // If this category has a path, load its markdown content and mark as selected
         if (categoryItem.path) {
+            // Clear previous category selection
+            if (currentlySelectedCategory && currentlySelectedCategory !== button) {
+                currentlySelectedCategory.classList.remove('topic-category-button-selected');
+            }
+            
+            // Mark this category as selected for content display
+            button.classList.add('topic-category-button-selected');
+            currentlySelectedCategory = button;
+            
             const md = await converter.loadMarkdown('assets/' + categoryItem.path);
             currentMarkdownContent = md; // for copy button
             const html = converter.convert(md);

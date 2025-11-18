@@ -42,7 +42,7 @@ class ContentBrowser {
                     
                     // Generate HTML for categories that are not collapsed
                     if (item.path) {
-                        html += `<p class="topic-category-button-unselected topic-category-button" id="topic-category-topic-${item.name}">${item.name}</p>`
+                        html += `<p class="topic-category-button-collapsed topic-category-button" id="topic-category-topic-${item.name}">${item.name}</p>`
                     } else if (!item.collapsed) {
                         html += `<p class="topic-category" id="topic-category-${item.name}">${item.name}</p>`;
                     }
