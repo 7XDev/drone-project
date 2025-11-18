@@ -17,6 +17,8 @@
     --md-negative-color: rgb(153, 27, 27);
     --md-info-bg: rgba(59, 130, 246, 0.1);
     --md-info-color: rgb(30, 64, 175);
+    --md-button-container: rgb(231, 231, 231);
+    --md-button-container-hover: rgb(190, 190, 190);
 }
 
 :root.dark-mode {
@@ -32,6 +34,8 @@
     --md-negative-color: rgb(252, 165, 165);
     --md-info-bg: rgba(59, 130, 246, 0.2);
     --md-info-color: rgb(147, 197, 253);
+    --md-button-container: rgb(47, 47, 47);
+    --md-button-container-hover: rgb(88, 88, 88);
 }
 
 /* General Styles */
@@ -328,4 +332,21 @@ body {
 .markdown-table-row:hover .markdown-table-cell {
     background-color: #f3f4f6;
     transition: background-color 0.1s;
+}
+
+.markdown-button-container {
+    padding: 1rem;
+    border: solid 2px var(--md-button-container);
+    width: fit-content;
+    border-radius: 5px;
+    transition: ease-in-out 0.2s;
+}
+
+.markdown-button-container:hover {
+    border: solid 2px var(--md-button-container-hover);
+}
+
+.markdown-button-heading {
+    font-weight: 600;
+    font-size: larger;
 }
