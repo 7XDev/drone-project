@@ -4,11 +4,11 @@
 #wb This page will be subject to noticeable changes over the course of development.
 #wb Various information on this page will be updated as the project progresses.
 
-# Software
+## Software
 
 There are **no expenses** for any of the software used while building and deploying the drones.
 
-# Hardware
+## Hardware
 
 Below is the estimated cost for all the hardware components required to build the drone project:
 

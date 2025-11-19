@@ -2,6 +2,10 @@
 
 This page contains every part needed for creating the drone project:
 
+#wh Notice
+#wb We can not guarantee that the parts listed are available for your location.
+#wb Exact details like weight and price may differ.
+
 ## Drone Hub
 
 - **[Raspberry Pi Zero 2 W](https://www.amazon.de/Raspberry-Pi-Zero-2-W/dp/B09KLVX4RT/ref=sr_1_1_mod_primary_new?__mk_de_DE=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=17Q1A3ZWG351D&dib=eyJ2IjoiMSJ9.fncIJs8H7j2XX5cd0eT7d3AjmUY436hcVsWnkpGsMFLCdck6H8iTqFPYzZZTzS35PVbsBcSgaQCwwDC9GGLg21Z8Ad-IekKZmwmht1oIGH9mJGX-KSkmG1fVeBX5qFdZ1ROAECBY7d30ytYHsxfKgd3vZGiud_LqoQXkxmQg8LpfcR69V0dUMJlJAEUbRCOE6DXbxlM6DKVZSVL1ISPZLVrOAidOWX-11VO6Gq6Ew0o.wLZesEI1L7EekWr2VHgOpzE98Rta8FEjqJWESYWISQk&dib_tag=se&keywords=raspberry+pi+zero2b&qid=1763538573&sbo=RZvfv%2F%2FHxDF%2BO5021pAnSA%3D%3D&sprefix=raspberry+pi+zero2b%2Caps%2C103&sr=8-1)** (~ 23€, ~9g): This is the "brain" of the drone. It’s a small computer that handles communication between drones and processes commands. Think of it as the control center for the entire system.

@@ -10,16 +10,16 @@
     "collapsed": false,
     "children": [
       {
-        "type": "page",
-        "name": "💰 Budget",
-        "path": "content/budget.md"
-      },
-      {
         "type": "category",
         "name": "🔧 Parts List",
         "path": "content/parts-list.md",
         "collapsed": true,
         "children": [
+          {
+            "type": "page",
+            "name": "💰 Budget",
+            "path": "content/budget.md"
+          },
           {
             "type": "page",
             "name": "🛒 Where to Order",
