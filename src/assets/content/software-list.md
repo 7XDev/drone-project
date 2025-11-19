@@ -106,3 +106,5 @@ cd arduino-ide-<version>
 ```
 sudo ./install.sh
 ```
+
+

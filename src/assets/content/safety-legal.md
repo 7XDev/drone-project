@@ -40,3 +40,5 @@ Operating drones comes with responsibilities to ensure safety and compliance wit
 
 ### Insurance
 Consider obtaining liability insurance to cover potential damages caused by the drone.
+
+
