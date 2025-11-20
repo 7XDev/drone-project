@@ -35,3 +35,5 @@ Below is the estimated cost for all the hardware components required to build th
 The total cost for building one drone is approximately **190€**, depending on the number of components purchased and shipping costs.
 
 
+#end
+

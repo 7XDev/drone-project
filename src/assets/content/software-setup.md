@@ -36,4 +36,6 @@ Your Arduino IDE is now ready to program the microcontroller.
 
 With these tools installed, you’re ready to start programming and debugging your drone’s software.
 
+#end
+
 
