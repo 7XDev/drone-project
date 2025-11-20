@@ -202,6 +202,14 @@ class MarkdownConverter {
             return '<br>';
         }
 
+        // End signature
+        if (line.trim() === '#end') {
+            return `<div class="markdown-end-container">
+                        <a class="markdown-end-previous">Previous</a>
+                        <a class="markdown-end-next">Next</a>
+                    </div>`;
+        }
+
         return `<p class="markdown-paragraph">${this.parseInline(line)}</p>`;
     }
 
