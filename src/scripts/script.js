@@ -562,7 +562,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 
     await refresh();
     
-    selectInitialLoadedTopic('assets/content/drone-show.md');
+    selectInitialLoadedTopic('assets/content/introduction.md');
 
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "dark") {
