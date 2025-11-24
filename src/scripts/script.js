@@ -35,9 +35,11 @@ async function getMarkdownHeaders(path) {
     let markdown = await converter.loadMarkdown(path);
     
     for (let line of markdown.split('\n')) {
+        // Trim line to remove any trailing whitespace including \r on Windows
+        line = line.trim();
         let match = line.match(/^(#{1,6})\s+(.+)$/);    // Look for heading in line
 
-        if ((line.match(/^(#{1,6})\s+(.+)$/))) {
+        if (match) {
             // Add match to heading array
             const text = match[2].trim();
             headings.push({ text, id });
