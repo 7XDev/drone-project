@@ -9,7 +9,7 @@ let currentMarkdownContent = ""; // for copy button
 let browser = new ContentBrowser;
 
 // Global markdown converter instance
-let converter = new MarkdownConverter;
+let converter;
 const preview = document.getElementById('markdown-container');
 
 let browserContainer;
@@ -594,6 +594,10 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     // Fetch and load topic structure
     await browser.fetchStructure('assets/content/content-structure.json'); // DEBUG_DATA
 
+    // Generate the flat structure and pass it to the MarkdownConverter
+    const flatStructure = browser.flattenStructure();
+    converter = new MarkdownConverter(flatStructure);
+    
     await refresh();
     
     selectInitialLoadedTopic('assets/content/introduction.md');
@@ -607,4 +611,4 @@ document.addEventListener("DOMContentLoaded", async (event) => {
             copyButton.innerHTML = '<img class="lightmode-icon" src="assets/img/copy.svg"></img><span class="darkmode-text">Copy</span>';
         }
     }  
-}); 
+});
