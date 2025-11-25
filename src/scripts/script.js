@@ -594,7 +594,6 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     await refresh();
     
     selectInitialLoadedTopic('assets/content/introduction.md');
-    browser.flattenStructure();
 
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "dark") {
