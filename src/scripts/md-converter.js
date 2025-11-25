@@ -1,6 +1,10 @@
 class MarkdownConverter {
-    constructor() {
+    headingCount;
+    flatStructure;
+
+    constructor(flatStructure) {
         this.headingCount = 0;
+        this.flatStructure = flatStructure;
     }
 
     // Load markdown content from a given path

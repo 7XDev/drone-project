@@ -90,7 +90,6 @@ class ContentBrowser {
      * @returns {Array} - Flat array of items with their paths
      */
     flattenStructure(structure = this.contentStructure) {
-        console.log(structure);
         const flatStructure = [];
 
         // Recursive function to traverse the structure and flatten it
@@ -109,7 +108,6 @@ class ContentBrowser {
         };
 
         traverse(structure); // Start traversal from the root structure
-        console.log(flatStructure);
         return flatStructure;
     }
 }
