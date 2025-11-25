@@ -282,7 +282,7 @@ function setupEventListenersForNewElements() {
 
             const md = await converter.loadMarkdown('assets/' + button.dataset.path);
             currentMarkdownContent = md; // for copy button
-            const html = converter.convert(md);
+            const html = converter.convert(md, button.dataset.path);
             preview.innerHTML = html;
 
             const rightPanelHeader = document.getElementById("right-panel-header");
@@ -425,7 +425,7 @@ async function setupEventListeners() {
 
             const md = await converter.loadMarkdown('assets/' + button.dataset.path);
             currentMarkdownContent = md; // for copy button
-            const html = converter.convert(md);
+            const html = converter.convert(md, button.dataset.Path);
             preview.innerHTML = html;
 
             const rightPanelHeader = document.getElementById("right-panel-header");
@@ -443,7 +443,7 @@ async function setupEventListeners() {
 
         const md = await converter.loadMarkdown('assets/' + topicButtons[0].dataset.path);
         currentMarkdownContent = md; // for copy button
-        const html = converter.convert(md);
+        const html = converter.convert(md, topicButtons[0].dataset.path);
         preview.innerHTML = html;
 
         const rightPanelHeader = document.getElementById("right-panel-header");
@@ -481,7 +481,8 @@ async function onToggle(button) {
             
             const md = await converter.loadMarkdown('assets/' + categoryItem.path);
             currentMarkdownContent = md; // for copy button
-            const html = converter.convert(md);
+            console.log("hhh")
+            const html = converter.convert(md, categoryItem.path);
             preview.innerHTML = html;
 
             const rightPanelHeader = document.getElementById("right-panel-header");
@@ -568,7 +569,7 @@ async function refresh() {
 function selectInitialLoadedTopic(path) {
     converter.loadMarkdown(path).then(md => {
         currentMarkdownContent = md; // for copy button
-        const html = converter.convert(md);
+        const html = converter.convert(md, path.replace('assets/', ''));
         preview.innerHTML = html;
     });
 
@@ -597,6 +598,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     // Generate the flat structure and pass it to the MarkdownConverter
     const flatStructure = browser.flattenStructure();
     converter = new MarkdownConverter(flatStructure);
+    console.log(flatStructure)
     
     await refresh();
     

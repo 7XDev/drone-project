@@ -18,7 +18,8 @@ class MarkdownConverter {
     }
 
     // Convert markdown text to HTML
-    convert(md) {
+    convert(md, path) {
+        console.log(path);
         this.headingCount = 0;
         const lines = md.split('\n');
         const htmlLines = [];
