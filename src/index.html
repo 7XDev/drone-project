@@ -28,7 +28,10 @@
          <div class="header-logo">
             <img src="assets/img/camera-drone.svg" class="header-image" alt="Drone Logo">
             <p class="header-text">Drones Documentation</p>
-            <button id="lightDarkToggle" onclick="lightDarkModeToggle()">Dark Mode</button>
+            <button id="lightDarkToggle" onclick="lightDarkModeToggle()">
+                <img class="darkmode-icon" src="assets/img/light.svg"></img>
+                <span class="darkmode-text">Dark Mode</span>
+            </button>
          </div>
     </header>
 
@@ -45,7 +48,10 @@
                 </div>
             </div>
             <div class="right-panel">
-                <button class="copy-button" onclick="copyButtonTrigger()">Copy</button>
+                <button class="copy-button" id="copyButton" onclick="copyButtonTrigger()">
+                    <img class="darkmode-icon" src="assets/img/copy.svg"></img>
+                    <span class="darkmode-text">Copy</span>
+                </button>
                 <div id="right-panel-header">
             </div>
         </div>

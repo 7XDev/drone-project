@@ -56,15 +56,18 @@ async function getMarkdownHeaders(path) {
 function lightDarkModeToggle() {
     const html = document.documentElement;
     const toggleButton = document.getElementById("lightDarkToggle");
+    const copyButton = document.getElementById("copyButton");
 
     html.classList.toggle("dark-mode"); // Change page appearance
 
     // Toggle mode switch button content
     if (html.classList.contains("dark-mode")) {
-        toggleButton.textContent = "Light Mode";
+        toggleButton.innerHTML = '<img class="lightmode-icon" src="assets/img/dark.svg"><span class="darkmode-text">Light Mode</span>';
+        copyButton.innerHTML = '<img class="lightmode-icon" src="assets/img/copy.svg"></img><span class="darkmode-text">Copy</span>';
         localStorage.setItem("theme", "dark");
     } else {
-        toggleButton.textContent = "Dark Mode";
+        toggleButton.innerHTML = '<img class="darkmode-icon" src="assets/img/light.svg"><span class="darkmode-text">Dark Mode</span>';
+        copyButton.innerHTML = '<img class="darkmode-icon" src="assets/img/copy.svg"></img><span class="darkmode-text">Copy</span>';
         localStorage.setItem("theme", "light");
     }
 }
@@ -595,11 +598,13 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     
     selectInitialLoadedTopic('assets/content/introduction.md');
 
-    const savedTheme = localStorage.getItem("theme");
+   const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "dark") {
         const toggleButton = document.getElementById("lightDarkToggle");
+        const copyButton = document.getElementById("copyButton");
         if (toggleButton) {
-            toggleButton.textContent = "Light Mode";
+            toggleButton.innerHTML = '<img class="lightmode-icon" src="assets/img/dark.svg"><span class="darkmode-text">Light Mode</span>';
+            copyButton.innerHTML = '<img class="lightmode-icon" src="assets/img/copy.svg"></img><span class="darkmode-text">Copy</span>';
         }
-    }   
+    }  
 }); 

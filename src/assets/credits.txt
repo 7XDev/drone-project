@@ -1,3 +1,8 @@
 <a href="https://www.flaticon.com/free-icons/camera-drone" title="camera drone icons">Camera drone icons created by vectorsmarket15 - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/next" title="next icons">Next icons created by Roundicons - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by shin_icons - Flaticon</a>
+
+Icons:(Copy,Dark,White)
+<a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by shin_icons - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/mode" title="mode icons">Mode icons created by amoghdesign - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/dark" title="dark icons">Dark icons created by adriansyah - Flaticon</a>
