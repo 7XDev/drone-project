@@ -209,8 +209,12 @@ class MarkdownConverter {
         // End signature
         if (line.trim() === '#end') {
             return `<div class="markdown-end-container">
-                        <a class="markdown-end-previous">Previous</a>
-                        <a class="markdown-end-next">Next</a>
+                        <div class="markdown-end-previous">
+                            <p>Previous</p>
+                        </div>
+                        <div class="markdown-end-next">
+                            <p>Next</p>
+                        </div>
                     </div>`;
         }
 

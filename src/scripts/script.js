@@ -557,30 +557,6 @@ async function copyButtonTrigger() {
     }
 };
 
-document.addEventListener("DOMContentLoaded", async (event) => {
-    
-    // Get reference to the topic browser container
-    browserContainer = document.querySelector(".topic-selector");
-
-    // Fetch and load topic structure
-    await browser.fetchStructure('assets/content/content-structure.json'); // DEBUG_DATA
-
-    await refresh();
-    
-    selectInitialLoadedTopic('assets/content/introduction.md');
-
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
-        const toggleButton = document.getElementById("lightDarkToggle");
-        const copyButton = document.getElementById("copyButton");
-        if (toggleButton) {
-            toggleButton.innerHTML = '<img class="lightmode-icon" src="assets/img/dark.svg"><span class="darkmode-text">Light Mode</span>';
-            copyButton.innerHTML = '<img class="lightmode-icon" src="assets/img/copy.svg"></img><span class="darkmode-text">Copy</span>';
-
-        }
-    }   
-}); 
-
 // Refreshes MarkDown-Container and Topic-Container
 async function refresh() {    
     // Populate container with the generated topics
@@ -609,3 +585,27 @@ function selectInitialLoadedTopic(path) {
     targetButton.classList.add('topic-selected');
     currentlySelectedTopic = targetButton;
 }
+
+document.addEventListener("DOMContentLoaded", async (event) => {
+    
+    // Get reference to the topic browser container
+    browserContainer = document.querySelector(".topic-selector");
+
+    // Fetch and load topic structure
+    await browser.fetchStructure('assets/content/content-structure.json'); // DEBUG_DATA
+
+    await refresh();
+    
+    selectInitialLoadedTopic('assets/content/introduction.md');
+    browser.flattenStructure();
+
+   const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+        const toggleButton = document.getElementById("lightDarkToggle");
+        const copyButton = document.getElementById("copyButton");
+        if (toggleButton) {
+            toggleButton.innerHTML = '<img class="lightmode-icon" src="assets/img/dark.svg"><span class="darkmode-text">Light Mode</span>';
+            copyButton.innerHTML = '<img class="lightmode-icon" src="assets/img/copy.svg"></img><span class="darkmode-text">Copy</span>';
+        }
+    }  
+}); 
