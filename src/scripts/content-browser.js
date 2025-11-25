@@ -83,6 +83,35 @@ class ContentBrowser {
     async getStructure() {
         return this.generateTopicsHTML();
     }
+
+    /**
+     * Flattens the hierarchical content structure into a flat array of items with their paths
+     * @param {Array} structure - Optional parameter to provide a custom structure; defaults to the main content structure
+     * @returns {Array} - Flat array of items with their paths
+     */
+    flattenStructure(structure = this.contentStructure) {
+        console.log(structure);
+        const flatStructure = [];
+
+        // Recursive function to traverse the structure and flatten it
+        const traverse = (items, parentPath = '') => {
+            items.forEach(item => {
+                const currentPath = parentPath ? `${parentPath}/${item.name}` : item.name;
+
+                if (item.type === 'page') {
+                    // Add pages to the flat array with their full path
+                    flatStructure.push(item.path);
+                } else if (item.type === 'category' && item.children) {
+                    // Recursively traverse categories
+                    traverse(item.children, currentPath);
+                }
+            });
+        };
+
+        traverse(structure); // Start traversal from the root structure
+        console.log(flatStructure);
+        return flatStructure;
+    }
 }
 
 export default ContentBrowser;
