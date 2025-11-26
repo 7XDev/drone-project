@@ -219,16 +219,21 @@ class MarkdownConverter {
         if (line.trim() === '#end') {
             let item = `<div class="markdown-end-container">`;
 
-            // if previous item exists
+            // If previous item exists
             if (this.currentPageIndex !== 0) {
-                item += `<div class="markdown-end-previous"><p>Previous</p></div>`;
+                const previousPath = this.flatStructure[this.currentPageIndex - 1];
+                item += `<div class="markdown-end-previous" data-path="${previousPath}">
+                            <p>Previous</p>
+                         </div>`;
             }
-
+        
+            // If next item exists
             if (this.currentPageIndex !== this.flatStructure.length - 1) {
-                item += `<div class="markdown-end-next"><p>Next</p></div>`;
+                const nextPath = this.flatStructure[this.currentPageIndex + 1];
+                item += `<div class="markdown-end-next" data-path="${nextPath}">
+                            <p>Next</p>
+                         </div>`;
             }
-
-            item += `</div>`
 
             return item;
         }
