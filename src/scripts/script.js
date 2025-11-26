@@ -289,6 +289,99 @@ function setupEventListenersForNewElements() {
             const headings = await getMarkdownHeaders('assets/' + button.dataset.path);
             rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
             setupRightPanelListeners(rightPanelHeader);
+            setupEndButtonListeners();
+        });
+    });
+}
+
+/**
+ * Set up event listeners for Previous/Next navigation buttons
+ */
+function setupEndButtonListeners() {
+    const endPreviousButtons = document.querySelectorAll('.markdown-end-previous');
+    const endNextButtons = document.querySelectorAll('.markdown-end-next');
+
+    endPreviousButtons.forEach(button => {
+        button.addEventListener('click', async () => {
+            const path = button.dataset.path;
+            if (path) {
+                // Find and select the corresponding topic button
+                const targetButton = document.querySelector(`[data-path="${path}"]`);
+                if (targetButton) {
+                    // Deselect current topic
+                    if (currentlySelectedTopic) {
+                        currentlySelectedTopic.classList.remove('topic-selected');
+                        currentlySelectedTopic.classList.add('topic-unselected');
+                    }
+
+                    // Clear the currently selected category
+                    if (currentlySelectedCategory) {
+                        currentlySelectedCategory.classList.remove('topic-category-button-selected');
+                        currentlySelectedCategory = null;
+                    }
+
+                    // Select the new topic button
+                    targetButton.classList.remove('topic-unselected');
+                    targetButton.classList.add('topic-selected');
+                    currentlySelectedTopic = targetButton;
+
+                    // Load and display the content
+                    const md = await converter.loadMarkdown('assets/' + path);
+                    currentMarkdownContent = md;
+                    const html = converter.convert(md, path);
+                    preview.innerHTML = html;
+
+                    const rightPanelHeader = document.getElementById("right-panel-header");
+                    const headings = await getMarkdownHeaders('assets/' + path);
+                    rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
+                    setupRightPanelListeners(rightPanelHeader);
+
+                    // Re-setup event listeners for new end buttons
+                    setupEndButtonListeners();
+                }
+            }
+        });
+    });
+
+    endNextButtons.forEach(button => {
+        button.addEventListener('click', async () => {
+            const path = button.dataset.path;
+            if (path) {
+                // Find and select the corresponding topic button
+                const targetButton = document.querySelector(`[data-path="${path}"]`);
+                if (targetButton) {
+                    // Deselect current topic
+                    if (currentlySelectedTopic) {
+                        currentlySelectedTopic.classList.remove('topic-selected');
+                        currentlySelectedTopic.classList.add('topic-unselected');
+                    }
+
+                    // Clear the currently selected category
+                    if (currentlySelectedCategory) {
+                        currentlySelectedCategory.classList.remove('topic-category-button-selected');
+                        currentlySelectedCategory = null;
+                    }
+
+                    // Select the new topic button
+                    targetButton.classList.remove('topic-unselected');
+                    targetButton.classList.add('topic-selected');
+                    currentlySelectedTopic = targetButton;
+
+                    // Load and display the content
+                    const md = await converter.loadMarkdown('assets/' + path);
+                    currentMarkdownContent = md;
+                    const html = converter.convert(md, path);
+                    preview.innerHTML = html;
+
+                    const rightPanelHeader = document.getElementById("right-panel-header");
+                    const headings = await getMarkdownHeaders('assets/' + path);
+                    rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
+                    setupRightPanelListeners(rightPanelHeader);
+
+                    // Re-setup event listeners for new end buttons
+                    setupEndButtonListeners();
+                }
+            }
         });
     });
 }
@@ -431,6 +524,7 @@ async function setupEventListeners() {
             const headings = await getMarkdownHeaders('assets/' + button.dataset.path);
             rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
             setupRightPanelListeners(rightPanelHeader);
+            setupEndButtonListeners();
         });
     });
 
@@ -449,97 +543,13 @@ async function setupEventListeners() {
         const headings = await getMarkdownHeaders('assets/' + topicButtons[0].dataset.path);
         rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
         setupRightPanelListeners(rightPanelHeader);
+        setupEndButtonListeners();
     }
 
     /**
      * Set up click handlers for Previous/Next navigation buttons
      */
-    const endPreviousButtons = document.querySelectorAll('.markdown-end-previous');
-    const endNextButtons = document.querySelectorAll('.markdown-end-next');
-
-    endPreviousButtons.forEach(button => {
-        button.addEventListener('click', async () => {
-            const path = button.dataset.path;
-            if (path) {
-                // Find and select the corresponding topic button
-                const targetButton = document.querySelector(`[data-path="${path}"]`);
-                if (targetButton) {
-                    // Deselect current topic
-                    if (currentlySelectedTopic) {
-                        currentlySelectedTopic.classList.remove('topic-selected');
-                        currentlySelectedTopic.classList.add('topic-unselected');
-                    }
-
-                    // Clear the currently selected category
-                    if (currentlySelectedCategory) {
-                        currentlySelectedCategory.classList.remove('topic-category-button-selected');
-                        currentlySelectedCategory = null;
-                    }
-
-                    // Select the new topic button
-                    targetButton.classList.remove('topic-unselected');
-                    targetButton.classList.add('topic-selected');
-                    currentlySelectedTopic = targetButton;
-
-                    // Load and display the content
-                    const md = await converter.loadMarkdown('assets/' + path);
-                    currentMarkdownContent = md;
-                    const html = converter.convert(md, path);
-                    preview.innerHTML = html;
-
-                    const rightPanelHeader = document.getElementById("right-panel-header");
-                    const headings = await getMarkdownHeaders('assets/' + path);
-                    rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
-                    setupRightPanelListeners(rightPanelHeader);
-
-                    // Re-setup event listeners for new end buttons
-                    await setupEventListeners();
-                }
-            }
-        });
-    });
-
-    endNextButtons.forEach(button => {
-        button.addEventListener('click', async () => {
-            const path = button.dataset.path;
-            if (path) {
-                // Find and select the corresponding topic button
-                const targetButton = document.querySelector(`[data-path="${path}"]`);
-                if (targetButton) {
-                    // Deselect current topic
-                    if (currentlySelectedTopic) {
-                        currentlySelectedTopic.classList.remove('topic-selected');
-                        currentlySelectedTopic.classList.add('topic-unselected');
-                    }
-
-                    // Clear the currently selected category
-                    if (currentlySelectedCategory) {
-                        currentlySelectedCategory.classList.remove('topic-category-button-selected');
-                        currentlySelectedCategory = null;
-                    }
-
-                    // Select the new topic button
-                    targetButton.classList.remove('topic-unselected');
-                    targetButton.classList.add('topic-selected');
-                    currentlySelectedTopic = targetButton;
-
-                    // Load and display the content
-                    const md = await converter.loadMarkdown('assets/' + path);
-                    currentMarkdownContent = md;
-                    const html = converter.convert(md, path);
-                    preview.innerHTML = html;
-
-                    const rightPanelHeader = document.getElementById("right-panel-header");
-                    const headings = await getMarkdownHeaders('assets/' + path);
-                    rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
-                    setupRightPanelListeners(rightPanelHeader);
-
-                    // Re-setup event listeners for new end buttons
-                    await setupEventListeners();
-                }
-            }
-        });
-    });
+    setupEndButtonListeners();
 }
 
 /**
@@ -576,6 +586,7 @@ async function onToggle(button) {
             const headings = await getMarkdownHeaders('assets/' + categoryItem.path);
             rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
             setupRightPanelListeners(rightPanelHeader);
+            setupEndButtonListeners();
         }
         
         // Check if children already exist in the DOM to prevent duplicates
