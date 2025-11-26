@@ -62,7 +62,7 @@ body {
     transform: scale(0.95);
 }
 
-.darkmode-icon {
+.icon {
     width: 16px;
     height: 16px;
 }
@@ -73,7 +73,7 @@ body {
     filter: brightness(0) saturate(100%) invert(100%);
 }
 
-.darkmode-text {
+.icon-text {
     line-height: 1;
 }.header-logo {
     margin-left: 8%;
