@@ -97,10 +97,11 @@ class ContentBrowser {
             items.forEach(item => {
                 const currentPath = parentPath ? `${parentPath}/${item.name}` : item.name;
 
-                if (item.type === 'page') {
-                    // Add pages to the flat array with their full path
-                    flatStructure.push(item.path);
-                } else if (item.type === 'category' && item.children) {
+                if (item.path) {
+                    flatStructure.push(item.path); 
+                }
+
+                if (item.type === 'category' && item.children) {
                     // Recursively traverse categories
                     traverse(item.children, currentPath);
                 }

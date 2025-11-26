@@ -1,9 +1,11 @@
 class MarkdownConverter {
     headingCount;
     flatStructure;
+    currentPageIndex;
 
     constructor(flatStructure) {
         this.headingCount = 0;
+        this.currentPageIndex = 0;
         this.flatStructure = flatStructure;
     }
 
@@ -19,7 +21,9 @@ class MarkdownConverter {
 
     // Convert markdown text to HTML
     convert(md, path) {
-        console.log(path);
+        this.currentPageIndex = this.flatStructure.indexOf(path);
+
+        // Set up values for different conversion conditions
         this.headingCount = 0;
         const lines = md.split('\n');
         const htmlLines = [];
@@ -213,14 +217,20 @@ class MarkdownConverter {
 
         // End signature
         if (line.trim() === '#end') {
-            return `<div class="markdown-end-container">
-                        <div class="markdown-end-previous">
-                            <p>Previous</p>
-                        </div>
-                        <div class="markdown-end-next">
-                            <p>Next</p>
-                        </div>
-                    </div>`;
+            let item = `<div class="markdown-end-container">`;
+
+            // if previous item exists
+            if (this.currentPageIndex !== 0) {
+                item += `<div class="markdown-end-previous"><p>Previous</p></div>`;
+            }
+
+            if (this.currentPageIndex !== this.flatStructure.length - 1) {
+                item += `<div class="markdown-end-next"><p>Next</p></div>`;
+            }
+
+            item += `</div>`
+
+            return item;
         }
 
         return `<p class="markdown-paragraph">${this.parseInline(line)}</p>`;

@@ -306,7 +306,6 @@ async function setupEventListeners() {
      */
     topicCategoryButtons.forEach(button => {
         button.setAttribute('data-has-listener', 'true');
-        console.log();
         // Load the current state from content browser and apply it
         const categoryItem = findCategoryByName(browser.contentStructure, button.textContent);
 
@@ -425,7 +424,7 @@ async function setupEventListeners() {
 
             const md = await converter.loadMarkdown('assets/' + button.dataset.path);
             currentMarkdownContent = md; // for copy button
-            const html = converter.convert(md, button.dataset.Path);
+            const html = converter.convert(md, button.dataset.path);
             preview.innerHTML = html;
 
             const rightPanelHeader = document.getElementById("right-panel-header");
@@ -458,7 +457,6 @@ async function setupEventListeners() {
  * @param {HTMLElement} button - The category button that was toggled
  */
 async function onToggle(button) {
-    console.log('Category toggled ON:', button.textContent); // DEBUG_STATEMENT
     const arrow = button.querySelector('.category-arrow');
     if (arrow) {
         arrow.style.transform = 'rotate(90deg)'; // Rotate arrow to point down
@@ -481,7 +479,6 @@ async function onToggle(button) {
             
             const md = await converter.loadMarkdown('assets/' + categoryItem.path);
             currentMarkdownContent = md; // for copy button
-            console.log("hhh")
             const html = converter.convert(md, categoryItem.path);
             preview.innerHTML = html;
 
@@ -531,10 +528,8 @@ async function onToggle(button) {
  * @param {HTMLElement} button - The category button that was toggled
  */
 function onDeToggle(button) {
-    console.log('Category toggled OFF:', button.textContent); // DEBUG_STATEMENT
     const arrow = button.querySelector('.category-arrow');
     if (arrow) {
-        console.log("Found arrow");
         arrow.style.transform = 'rotate(0deg)'; // Rotate arrow back to point right
         arrow.style.transition = 'transform 0.3s ease';
     }
@@ -598,7 +593,6 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     // Generate the flat structure and pass it to the MarkdownConverter
     const flatStructure = browser.flattenStructure();
     converter = new MarkdownConverter(flatStructure);
-    console.log(flatStructure)
     
     await refresh();
     
