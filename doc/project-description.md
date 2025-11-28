@@ -30,7 +30,6 @@
   * `prerequisites` → Details on budget, parts, software, and skills needed.
   * `assembly` → Step-by-step assembly instructions.
   * `programming` → Comprehensive programming guide.
-  * `applications` → Exploration of various drone applications, including shows, recreational flying, and educational uses.
 
 ---
 
@@ -43,6 +42,8 @@
   * A responsive design to ensure compatibility with various devices.
 
 * Colors, fonts, and shapes will be chosen to enhance readability and visual appeal.
+
+<img width="925" height="699" alt="image" src="https://github.com/user-attachments/assets/ff463b7d-08eb-4c3e-9639-2cf52d6a05c7" />
 
 ---
 
