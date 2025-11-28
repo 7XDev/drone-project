@@ -27,30 +27,34 @@ The website will feature a series of webpages that outline the various steps inv
 
 To ensure the successful development of the website, the following milestones have been identified. Each milestone represents a critical step in the project and includes detailed objectives:
 
-1. **Develop the Header Section:**
+1. **Explore The Aim OfTthe Project:**
+   - Settle on the exact goal of the AeroMesh Drones.
+   - Discover potential sponsorship options by presenting the project to different companies.
+
+2. **Develop the Header Section:**
    - Create the header layout, ensuring it is visually appealing and responsive.
    - Implement placeholder functionality for the search bar, which will be enhanced in later stages.
 
-2. **Design the Main Page Layout:**
+3. **Design the Main Page Layout:**
    - Develop the structure of the main content area, including placeholders for text, images, and diagrams.
    - Ensure the layout is responsive and adapts seamlessly to different screen sizes.
 
-3. **Implement Navigation Pane Logic:**
+4. **Implement Navigation Pane Logic:**
    - Design and implement the sidebar navigation pane.
    - Ensure categories and subcategories are dynamically loaded and can be expanded or collapsed.
    - Add functionality to highlight the active step or category.
 
-4. **Create Templates for Categories and Pages:**
+5. **Create Templates for Categories and Pages:**
    - Develop reusable templates for categories and individual pages.
    - Ensure templates include placeholders for icons, titles, and content.
    - Standardize the design to maintain consistency across the website.
 
-5. **Establish Page Linking with JavaScript:**
+6. **Establish Page Linking with JavaScript:**
    - Implement JavaScript logic to enable seamless navigation between pages.
    - Add "Next" and "Previous" buttons at the bottom of each page, linking to the appropriate steps.
    - Ensure links are dynamically updated based on the website structure.
 
-6. **Integrate Search Functionality with JavaScript:**
+7. **Integrate Search Functionality with JavaScript:**
    - Develop a robust search algorithm to index terms, steps, and categories.
    - Implement a user-friendly search interface in the header.
    - Ensure search results are displayed dynamically and link to the relevant pages.
