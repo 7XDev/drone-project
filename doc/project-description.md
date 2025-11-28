@@ -2,13 +2,13 @@
 
 ## **1. Project Title**
 
-* Drone Guide: A Comprehensive Resource for Building and Operating Drones
+* AeroMesh Drones: A comprehensive resource for building and operating drones to map out image depth maps.
 
 ---
 
 ## **2. Project Idea**
 
-* This website is designed to provide detailed guidance on building and 3D printing drones, utilizing control software to operate them, and exploring various applications, including drone shows, recreational flying, and educational projects. It will include step-by-step instructions, diagrams, and resources to help users construct, program, and operate drones effectively.
+* This website is designed to provide detailed guidance on building and 3D printing drones, utilizing control software to operate them, and exploring various applications, of mapping out image depth maps. It will include step-by-step instructions, diagrams, and resources to help users construct, program, and operate drones effectively.
 
 ---
 
@@ -17,7 +17,7 @@
 * The primary audience for this website includes:
   * Drone enthusiasts and hobbyists.
   * Students and educators interested in STEM projects.
-  * Professionals exploring drone applications in various fields.
+  * Professionals exploring drone applications for mapping out areas.
 
 * The website will be particularly helpful for those who are new to drone building and programming, offering clear and accessible guidance.
 
@@ -29,7 +29,7 @@
   * `index` → Home page with an overview of the project.
   * `prerequisites` → Details on budget, parts, software, and skills needed.
   * `assembly` → Step-by-step assembly instructions.
-  * `programming` → Comprehensive programming guide.
+  * `programming` → Comprehensive programming guide and operation guide.
 
 ---
 
