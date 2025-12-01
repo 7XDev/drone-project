@@ -73,7 +73,16 @@ body {
     filter: brightness(0) saturate(100%) invert(100%);
 }
 
+.darkmode-icon {
+    width: 16px;
+    height: 16px;
+}
+
 .icon-text {
+    line-height: 1;
+}
+
+.darkmode-text {
     line-height: 1;
 }.header-logo {
     margin-left: 8%;
