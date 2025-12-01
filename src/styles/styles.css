@@ -391,3 +391,24 @@ main {
 .copy-button:active {
     transform: scale(0.95);
 }
+
+footer {
+    position: fixed;
+    bottom: 0.75rem;
+    right: 1.5rem;
+    font-family: league-spartan;
+    font-size: 13px;
+    z-index: 1000;
+}
+
+footer a {
+    color: var(--text-color);
+    text-decoration: none;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+footer a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
