@@ -404,6 +404,8 @@ footer {
     font-family: league-spartan;
     font-size: 13px;
     z-index: 1000;
+    display: flex;
+    gap: 1.5rem;
 }
 
 footer a {
