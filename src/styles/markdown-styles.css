@@ -254,6 +254,22 @@ body {
     filter: brightness(0) saturate(100%) invert(19%) sepia(95%) saturate(2733%) hue-rotate(224deg) brightness(91%) contrast(95%);
 }
 
+:root.dark-mode .markdown-positive .markdown-signature-header .icon {
+    filter: brightness(0) saturate(100%) invert(79%) sepia(23%) saturate(864%) hue-rotate(88deg) brightness(96%) contrast(89%);
+}
+
+:root.dark-mode .markdown-warning .markdown-signature-header .icon {
+    filter: brightness(0) saturate(100%) invert(80%) sepia(47%) saturate(565%) hue-rotate(360deg) brightness(102%) contrast(98%);
+}
+
+:root.dark-mode .markdown-negative .markdown-signature-header .icon {
+    filter: brightness(0) saturate(100%) invert(84%) sepia(17%) saturate(1078%) hue-rotate(308deg) brightness(102%) contrast(98%);
+}
+
+:root.dark-mode .markdown-info .markdown-signature-header .icon {
+    filter: brightness(0) saturate(100%) invert(75%) sepia(26%) saturate(741%) hue-rotate(188deg) brightness(101%) contrast(98%);
+}
+
 .markdown-positive-heading {
     background-color: rgba(34, 197, 94, 0.2);
     margin: -0.5rem -0.75rem 0.25rem -0.75rem;
