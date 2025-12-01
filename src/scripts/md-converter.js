@@ -1,12 +1,14 @@
 class MarkdownConverter {
     headingCount;
     flatStructure;
+    contentStructure;
     currentPageIndex;
 
-    constructor(flatStructure) {
+    constructor(flatStructure, contentStructure = []) {
         this.headingCount = 0;
         this.currentPageIndex = 0;
         this.flatStructure = flatStructure;
+        this.contentStructure = contentStructure;
     }
 
     // Load markdown content from a given path
@@ -222,16 +224,20 @@ class MarkdownConverter {
             // If previous item exists
             if (this.currentPageIndex !== 0) {
                 const previousPath = this.flatStructure[this.currentPageIndex - 1];
+                const previousName = this.getPageName(previousPath);
                 item += `<div class="markdown-end-previous" data-path="${previousPath}">
-                            <p>Previous</p>
+                            <p class="markdown-end-label">Previous</p>
+                            <p class="markdown-end-title">${previousName}</p>
                          </div>`;
             }
         
             // If next item exists
             if (this.currentPageIndex !== this.flatStructure.length - 1) {
                 const nextPath = this.flatStructure[this.currentPageIndex + 1];
+                const nextName = this.getPageName(nextPath);
                 item += `<div class="markdown-end-next" data-path="${nextPath}">
-                            <p>Next</p>
+                            <p class="markdown-end-label">Next</p>
+                            <p class="markdown-end-title">${nextName}</p>
                          </div>`;
             }
 
@@ -376,6 +382,23 @@ class MarkdownConverter {
             html += '</div>';
             return html;
         }
+    }
+
+    // Get page name from path by searching content structure
+    getPageName(path) {
+        const findName = (items) => {
+            for (const item of items) {
+                if (item.path === path) {
+                    return item.name;
+                }
+                if (item.children) {
+                    const found = findName(item.children);
+                    if (found) return found;
+                }
+            }
+            return null;
+        };
+        return findName(this.contentStructure) || 'Unknown Page';
     }
 
     // Check if line is a table row

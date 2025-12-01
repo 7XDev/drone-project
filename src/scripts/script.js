@@ -693,7 +693,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 
     // Generate the flat structure and pass it to the MarkdownConverter
     const flatStructure = browser.flattenStructure();
-    converter = new MarkdownConverter(flatStructure);
+    converter = new MarkdownConverter(flatStructure, browser.contentStructure);
     
     await refresh();
     
