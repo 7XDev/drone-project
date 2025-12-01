@@ -397,7 +397,6 @@ body {
     height: 2.5rem;
     text-align: center;
     border-radius: 5px;
-    transition: all 0.3s ease-in-out;
     cursor: pointer;
     transform-origin: center;
     display: flex;
@@ -408,8 +407,8 @@ body {
 
 .markdown-end-previous:hover,
 .markdown-end-next:hover {
-    font-size: 1.4rem;
-    transition: font-size 0.2s ease-in-out;
+    border-color: var(--md-button-container-hover);
+    opacity: 0.9;
 }
 
 .markdown-end-previous {
