@@ -4,4 +4,4 @@ This project aims to create a comprehensive website that provides detailed guida
 
 # Website Layout
 
-<img width="925" height="699" alt="image" src="https://github.com/user-attachments/assets/ff463b7d-08eb-4c3e-9639-2cf52d6a05c7" />
+<img width="923" height="697" alt="image" src="https://github.com/user-attachments/assets/d600755b-af2d-4ec9-9c97-279d2f0540ae" />
