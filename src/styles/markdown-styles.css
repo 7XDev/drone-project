@@ -34,8 +34,8 @@
     --md-negative-color: rgb(252, 165, 165);
     --md-info-bg: rgba(59, 130, 246, 0.2);
     --md-info-color: rgb(147, 197, 253);
-    --md-button-container: rgb(47, 47, 47);
-    --md-button-container-hover: rgb(88, 88, 88);
+    --md-button-container: rgb(80, 80, 80);
+    --md-button-container-hover: rgb(120, 120, 120);
 }
 
 /* General Styles */
