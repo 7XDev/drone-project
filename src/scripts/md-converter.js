@@ -355,7 +355,18 @@ class MarkdownConverter {
             let html = `<div class="markdown-${signature.type}">`;
             
             if (signature.heading) {
+                html += `<div class="markdown-signature-header">`;
+                if (signature.type === 'positive') {
+                    html += `<img class="icon" src="assets/img/circle-check.svg" alt="positive-icon"></img>`;
+                } else if (signature.type === 'warning') {
+                    html += `<img class="icon" src="assets/img/triangle-exclamation.svg" alt="warning-icon"></img>`;
+                } else if (signature.type === 'negative') {
+                    html += `<img class="icon" src="assets/img/circle-xmark.svg" alt="negative-icon"></img>`;
+                } else if (signature.type === 'info') {
+                    html += `<img class="icon" src="assets/img/circle-info.svg" alt="info-icon"></img>`;
+                }
                 html += `<h4 class="markdown-signature-heading">${signature.heading}</h4>`;
+                html += `</div>`;
             }
             
             for (const body of signature.bodies) {

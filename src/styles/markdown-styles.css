@@ -220,10 +220,38 @@ body {
     color: inherit;
 }
 
+.markdown-signature-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .markdown-signature-body {
     margin: 0;
     font-weight: 400;
     opacity: 0.9;
+}
+
+.markdown-signature-header .icon {
+    height: 16px;
+    width: 16px;
+    margin-top: -0.37rem;
+}
+
+.markdown-positive .markdown-signature-header .icon {
+    filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(106deg) brightness(91%) contrast(97%);
+}
+
+.markdown-warning .markdown-signature-header .icon {
+    filter: brightness(0) saturate(100%) invert(41%) sepia(94%) saturate(1263%) hue-rotate(13deg) brightness(94%) contrast(91%);
+}
+
+.markdown-negative .markdown-signature-header .icon {
+    filter: brightness(0) saturate(100%) invert(15%) sepia(73%) saturate(3607%) hue-rotate(347deg) brightness(89%) contrast(88%);
+}
+
+.markdown-info .markdown-signature-header .icon {
+    filter: brightness(0) saturate(100%) invert(19%) sepia(95%) saturate(2733%) hue-rotate(224deg) brightness(91%) contrast(95%);
 }
 
 .markdown-positive-heading {
