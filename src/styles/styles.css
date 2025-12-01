@@ -223,7 +223,7 @@ main {
 .topic-category-button-expanded {
     opacity: 1;
     color: var(--text-color);
-}x
+}
 
 .topic-category-button-selected {
     opacity: 1;
