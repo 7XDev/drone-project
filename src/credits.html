@@ -20,6 +20,16 @@
     <script type="module" src="./scripts/script.js"></script>
     <script type="module" src="./scripts/md-converter.js"></script>
     <script type="module" src="./scripts/content-browser.js"></script>
+    <script type="module">
+        import MarkdownConverter from './scripts/md-converter.js';
+        
+        document.addEventListener("DOMContentLoaded", async () => {
+            const converter = new MarkdownConverter([], []);
+            const md = await converter.loadMarkdown('assets/content/credits.md');
+            const html = converter.convert(md, 'content/credits.md');
+            document.getElementById('markdown-container').innerHTML = html;
+        });
+    </script>
     <title>Drones Documentation</title>
 </head>
 
@@ -38,41 +48,10 @@
     <div class="side-line"></div>
 
     <main>
-        <div class="creditsContainer">
-            <h2>Credits:</h2>
-            <h3>Flaticon Icons:</h3>
-            <ul>
-                <li>
-                    <a href="https://www.flaticon.com/free-icons/camera-drone" title="camera drone icons">Camera drone icons created by vectorsmarket15 - Flaticon</a>
-                </li>
-                <li>
-                    <a href="https://www.flaticon.com/free-icons/next" title="next icons">Next icons created by Roundicons - Flaticon</a>
-                </li>
-                <li>
-                    <a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by shin_icons - Flaticon</a>
-                </li>
-                <li>
-                    <a href="https://www.flaticon.com/free-icons/mode" title="mode icons">Mode icons created by amoghdesign - Flaticon</a>
-                </li>
-                <li>
-                    <a href="https://www.flaticon.com/free-icons/dark" title="dark icons">Dark icons created by adriansyah - Flaticon</a>
-                </li>
-                <li>
-                    <a href="https://www.flaticon.com/free-icons/wrong" title="wrong icons">Wrong icons created by I Wayan Wika - Flaticon</a>
-                </li>
-            </ul>
-            <h3>FontAwesome Icons:</h3>
-            <ul>
-                <li>
-                    Negative Icon: <a href="https://ka-p.fontawesome.com/releases/v6.6.0/svgs/regular/triangle-exclamation.svg?v=2&token=a463935e93">Triangle Exclamation</a>
-                </li>
-                <li>
-                    Positive Icon: <a href="https://ka-p.fontawesome.com/releases/v6.6.0/svgs/regular/circle-check.svg?v=2&token=a463935e93">Circle Check</a>
-                </li>
-                <li>
-                    Info Icon: <a href="https://ka-p.fontawesome.com/releases/v6.6.0/svgs/regular/circle-info.svg?v=2&token=a463935e93">Circle Info</a>
-                </li>
-            </ul>
+        <div class="display-window">
+            <div id="markdown-container">
+                <!-- Loading of MarkDown content will be placed here -->
+            </div>
         </div>
     </main>
     <footer>
