@@ -1,3 +1,5 @@
+// Comment to commit on new branch
+
 // Import necessary modules for content browsing and markdown conversion
 import MarkdownConverter from './md-converter.js';
 import ContentBrowser from './content-browser.js';
@@ -62,12 +64,12 @@ function lightDarkModeToggle() {
 
     // Toggle mode switch button content
     if (html.classList.contains("dark-mode")) {
-        toggleButton.innerHTML = '<img class="lightmode-icon" src="assets/img/dark.svg"><span class="darkmode-text">Light Mode</span>';
-        copyButton.innerHTML = '<img class="lightmode-icon" src="assets/img/copy.svg"></img><span class="darkmode-text">Copy</span>';
+        toggleButton.innerHTML = '<img class="icon" src="assets/img/dark.svg"><span class="icon-text">Light Mode</span>';
+        copyButton.innerHTML = '<img class="icon" src="assets/img/copy.svg"></img><span class="icon-text">Copy</span>';
         localStorage.setItem("theme", "dark");
     } else {
-        toggleButton.innerHTML = '<img class="darkmode-icon" src="assets/img/light.svg"><span class="darkmode-text">Dark Mode</span>';
-        copyButton.innerHTML = '<img class="darkmode-icon" src="assets/img/copy.svg"></img><span class="darkmode-text">Copy</span>';
+        toggleButton.innerHTML = '<img class="icon" src="assets/img/light.svg"><span class="icon-text">Dark Mode</span>';
+        copyButton.innerHTML = '<img class="icon" src="assets/img/copy.svg"></img><span class="icon-text">Copy</span>';
         localStorage.setItem("theme", "light");
     }
 }
@@ -704,8 +706,8 @@ document.addEventListener("DOMContentLoaded", async (event) => {
         const toggleButton = document.getElementById("lightDarkToggle");
         const copyButton = document.getElementById("copyButton");
         if (toggleButton) {
-            toggleButton.innerHTML = '<img class="lightmode-icon" src="assets/img/dark.svg"><span class="darkmode-text">Light Mode</span>';
-            copyButton.innerHTML = '<img class="lightmode-icon" src="assets/img/copy.svg"></img><span class="darkmode-text">Copy</span>';
+            toggleButton.innerHTML = '<img class="icon" src="assets/img/dark.svg"><span class="icon-text">Light Mode</span>';
+            copyButton.innerHTML = '<img class="icon" src="assets/img/copy.svg"></img><span class="icon-text">Copy</span>';
         }
     }  
 });

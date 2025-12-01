@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="./styles/markdown-styles.css">
     <link rel="icon" href="./assets/img/camera-drone.svg" type="image/svg+xml">
     
-    <!-- Apply dark mode immediately before body renders to prevent flashbang -->
+    <!-- Apply dark mode immediately before body render -->
     <script>
         (function() {
             const savedTheme = localStorage.getItem("theme");
             if (savedTheme === "dark") {
-                document.documentElement.classList.add("dark-mode");
+                document.documentElement.classList.add("dark");
             }
         })();
     </script>
