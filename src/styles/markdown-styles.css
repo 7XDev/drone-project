@@ -17,8 +17,8 @@
     --md-negative-color: rgb(153, 27, 27);
     --md-info-bg: rgba(59, 130, 246, 0.1);
     --md-info-color: rgb(30, 64, 175);
-    --md-button-container: rgb(231, 231, 231);
-    --md-button-container-hover: rgb(190, 190, 190);
+    --md-button-container: rgb(200, 200, 200);
+    --md-button-container-hover: rgb(160, 160, 160);
 }
 
 :root.dark-mode {
