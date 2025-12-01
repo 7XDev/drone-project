@@ -367,7 +367,7 @@ class MarkdownConverter {
                 } else if (signature.type === 'warning') {
                     html += `<img class="icon" src="assets/img/triangle-exclamation.svg" alt="warning-icon"></img>`;
                 } else if (signature.type === 'negative') {
-                    html += `<img class="icon" src="assets/img/circle-xmark.svg" alt="negative-icon"></img>`;
+                    html += `<img class="icon" src="assets/img/triangle-exclamation.svg" alt="negative-icon"></img>`;
                 } else if (signature.type === 'info') {
                     html += `<img class="icon" src="assets/img/circle-info.svg" alt="info-icon"></img>`;
                 }
