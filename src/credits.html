@@ -28,6 +28,13 @@
             const md = await converter.loadMarkdown('assets/content/credits.md');
             const html = converter.convert(md, 'content/credits.md');
             document.getElementById('markdown-container').innerHTML = html;
+            
+            // Update button text based on saved theme
+            const savedTheme = localStorage.getItem("theme");
+            const toggleButton = document.getElementById("lightDarkToggle");
+            if (savedTheme === "dark" && toggleButton) {
+                toggleButton.innerHTML = '<img class="icon" src="assets/img/dark.svg" alt="modeswitch-icon"></img><span class="icon-text">Light Mode</span>';
+            }
         });
     </script>
     <title>Drones Documentation</title>
