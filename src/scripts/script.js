@@ -338,6 +338,12 @@ function setupEndButtonListeners() {
                     rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
                     setupRightPanelListeners(rightPanelHeader);
 
+                    // Scroll to top of display window instantly
+                    const displayWindow = document.querySelector('.display-window');
+                    if (displayWindow) {
+                        displayWindow.scrollTop = 0;
+                    }
+
                     // Re-setup event listeners for new end buttons
                     setupEndButtonListeners();
                 }
@@ -379,6 +385,12 @@ function setupEndButtonListeners() {
                     const headings = await getMarkdownHeaders('assets/' + path);
                     rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
                     setupRightPanelListeners(rightPanelHeader);
+
+                    // Scroll to top of display window instantly
+                    const displayWindow = document.querySelector('.display-window');
+                    if (displayWindow) {
+                        displayWindow.scrollTop = 0;
+                    }
 
                     // Re-setup event listeners for new end buttons
                     setupEndButtonListeners();

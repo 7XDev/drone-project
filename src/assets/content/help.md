@@ -1,255 +1,190 @@
 # Help & Documentation Guide
 
-Welcome to the Drones Documentation Help page! This guide will help you understand how this website works and how to use markdown to create content.
+Welcome to the Drones Documentation Help page! This guide explains how the website works and how to use markdown to create content.
 
 ## How This Website Works
 
-This documentation website uses a custom **Markdown Converter** system to dynamically render content. Here's how it works:
+This documentation website uses a custom **Markdown Converter** system to dynamically render content.
 
 ### Architecture Overview
-
-1. **Content Structure** - All documentation pages are stored as `.md` (Markdown) files in the `assets/content/` directory
-2. **Content Browser** - Manages the navigation structure defined in `content-structure.json`
-3. **Markdown Converter** - Converts markdown syntax into styled HTML in real-time
-4. **Dynamic Loading** - Pages are loaded on-demand when you click topics in the sidebar
+1. **Content Structure** - Documentation pages stored as `.md` files in `assets/content/`
+2. **Content Browser** - Manages navigation structure from `content-structure.json`
+3. **Markdown Converter** - Converts markdown syntax to styled HTML in real-time
+4. **Dynamic Loading** - Pages load on-demand when you click topics
 
 ### Key Components
-
-* **Topic Selector** - The left sidebar that displays all available topics and categories
-* **Display Window** - The main content area where markdown is rendered
-* **Right Panel** - Shows a table of contents with all headings on the current page
-* **Copy Button** - Allows you to copy the raw markdown content of the current page
+* **Topic Selector** - Left sidebar with all topics and categories
+* **Display Window** - Main content area where markdown renders
+* **Right Panel** - Table of contents with page headings
+* **Copy Button** - Copies raw markdown content to clipboard
 
 ## Standard Markdown Elements
 
 ### Headings
-
-Use `#` symbols to create headings. More `#` symbols = smaller heading.
-
+Use `#` symbols to create headings (more `#` = smaller heading):
 ```
 # Heading 1
 ## Heading 2
 ### Heading 3
-#### Heading 4
-##### Heading 5
-###### Heading 6
 ```
 
 ### Text Formatting
-
-* `**bold text**` - Creates **bold text**
-* `*italic text*` - Creates *italic text*
-* `~~strikethrough~~` - Creates ~~strikethrough~~
-* `` `inline code` `` - Creates `inline code`
+* `**bold text**` - **bold text**
+* `*italic text*` - *italic text*
+* `~~strikethrough~~` - ~~strikethrough~~
+* `` `inline code` `` - `inline code`
 
 ### Lists
-
-**Unordered Lists:**
+**Unordered:**
 ```
 * Item 1
 * Item 2
-* Item 3
 ```
-
-**Ordered Lists:**
+**Ordered:**
 ```
 1. First item
 2. Second item
-3. Third item
 ```
 
 ### Links and Images
+**Links:** `[Link text](https://example.com)`
 
-**Links:**
-```
-[Link text](https://example.com)
-```
+**Images:** `![Alt text](path/to/image.jpg)`
 
-**Images:**
-```
-![Alt text](path/to/image.jpg)
-```
-
-**Images with Dimensions:**
-```
-![Alt text](path/to/image.jpg)(300x200)
-![Alt text](path/to/image.jpg)(300)
-```
+**Images with Dimensions:** `![Alt text](image.jpg)(300x200)` or `![Alt text](image.jpg)(300)`
 
 ### Code Blocks
-
-Use triple backticks for code blocks:
-
+Use triple backticks:
 ````
 ```
 Your code here
-Multiple lines supported
 ```
 ````
 
 ### Tables
-
-Create tables using pipes `|` and hyphens `-`:
-
 ```
-| Header 1 | Header 2 | Header 3 |
-|----------|----------|----------|
-| Cell 1   | Cell 2   | Cell 3   |
-| Cell 4   | Cell 5   | Cell 6   |
+| Header 1 | Header 2 |
+|----------|----------|
+| Cell 1   | Cell 2   |
 ```
 
 ## Custom Signature Blocks
 
-This documentation system includes special custom signature blocks for highlighting important information.
+Special blocks for highlighting important information:
 
-### Positive Block (Success/Recommendation)
-
+### Positive Block
 ```
 #+h Heading text
-#+b Body text line 1
-#+b Body text line 2
+#+b Body text
 ```
-
 #ih Example:
-#ib This renders as a green block with a checkmark icon, perfect for success messages or recommendations.
+#ib Green block with checkmark icon for success messages and recommendations.
 
 ### Warning Block
-
 ```
 #wh Warning Heading
 #wb Warning body text
-#wb Additional warning details
 ```
-
 #ih Example:
-#ib This renders as a yellow/orange block with a warning triangle icon.
+#ib Yellow/orange block with warning triangle icon.
 
-### Negative Block (Danger/Error)
-
+### Negative Block
 ```
 #-h Error or Danger
-#-b Description of the error or danger
-#-b Additional information
+#-b Description text
 ```
-
 #ih Example:
-#ib This renders as a red block with an X icon, used for errors or critical warnings.
+#ib Red block with X icon for errors and critical warnings.
 
 ### Info Block
-
 ```
 #ih Information Heading
 #ib Information body text
-#ib More details about this information
 ```
-
 #ih Example:
-#ib This renders as a blue block with an info icon (like this one!).
+#ib Blue block with info icon (like this one!).
 
 ### Button Block
-
 ```
 #bh(unique-id) Button Text
-#bb Description or details about this action
+#bb Description text
 ```
-
 #ih Note:
-#ib Button blocks are interactive elements with unique IDs for JavaScript functionality.
+#ib Interactive elements with unique IDs for JavaScript functionality.
 
 ## Navigation Features
 
 ### Topic Navigation
-
-* Click on any topic in the left sidebar to load its content
-* Topics are organized into collapsible categories
-* Click category names to expand/collapse their contents
-* Selected topics are highlighted in blue
+* Click topics in left sidebar to load content
+* Topics organized into collapsible categories
+* Click category names to expand/collapse
+* Selected topics highlighted in blue
 
 ### Page Navigation
-
-At the bottom of each page, you'll find navigation buttons:
-
-* **Previous** - Navigate to the previous topic in sequence
-* **Next** - Navigate to the next topic in sequence
+Bottom of each page has **Previous** and **Next** buttons to navigate through content sequentially.
 
 ### Table of Contents
-
-The right panel displays all headings on the current page:
-
-* Click any heading to jump directly to that section
-* Headings are automatically extracted from the markdown
+Right panel shows all page headings - click any heading to jump to that section.
 
 ## Theme Switching
 
-Use the **Light Mode** / **Dark Mode** button in the header to toggle between themes. Your preference is automatically saved and will persist across sessions.
+Toggle between **Light Mode** / **Dark Mode** using the header button. Your preference is saved automatically.
 
 ## Copy Function
 
-Click the **Copy** button in the right panel to copy the raw markdown content of the current page to your clipboard. This is useful for:
-
-* Creating new pages with similar formatting
-* Extracting content for external use
-* Studying the markdown syntax
+**Copy** button in right panel copies raw markdown content - useful for creating similar pages or studying markdown syntax.
 
 ## Tips for Content Creators
 
 ### Best Practices
-
-1. **Use descriptive headings** - They appear in the table of contents
-2. **Combine signature blocks** - Mix different block types for emphasis
-3. **Add images with dimensions** - Prevents layout shifts during loading
-4. **Use tables sparingly** - They work best for structured data
-5. **Test on both themes** - Ensure content looks good in light and dark mode
+1. Use descriptive headings (appear in table of contents)
+2. Combine signature blocks for emphasis
+3. Add image dimensions to prevent layout shifts
+4. Use tables for structured data only
+5. Test content in both themes
 
 ### File Organization
+* Store markdown in `src/assets/content/`
+* Update `content-structure.json` for new pages
+* Use descriptive filenames (kebab-case)
+* Group related topics in categories
 
-* Store all markdown files in `src/assets/content/`
-* Update `content-structure.json` when adding new pages
-* Use clear, descriptive filenames (kebab-case recommended)
-* Keep related topics together in categories
-
-### Performance Tips
-
+### Performance
 * Optimize images before uploading
-* Keep individual pages focused and not too long
-* Use code blocks instead of images for code samples
-* Minimize external link dependencies
+* Keep pages focused and concise
+* Use code blocks for code (not images)
+* Minimize external dependencies
 
 ## Troubleshooting
 
 ### Content Not Loading
-
-* Check that the `.md` file exists in `assets/content/`
-* Verify the path in `content-structure.json` is correct
-* Check browser console for error messages
+* Verify `.md` file exists in `assets/content/`
+* Check path in `content-structure.json`
+* Review browser console for errors
 
 ### Formatting Issues
-
-* Ensure proper spacing after markdown symbols (`#`, `*`, etc.)
-* Leave blank lines between different block types
+* Add spacing after markdown symbols (`#`, `*`, etc.)
+* Leave blank lines between block types
 * Close all code blocks with triple backticks
-* End signature blocks before starting new content
+* End signature blocks before new content
 
 ### Dark Mode Issues
-
 * Clear browser cache and reload
-* Check localStorage is enabled in your browser
-* Try toggling the theme button again
+* Verify localStorage is enabled
+* Toggle theme button again
 
 ## Additional Resources
 
 ### File Locations
-
-* **Content Files**: `src/assets/content/*.md`
-* **Structure Config**: `src/assets/content/content-structure.json`
+* **Content**: `src/assets/content/*.md`
+* **Config**: `src/assets/content/content-structure.json`
 * **Scripts**: `src/scripts/`
 * **Styles**: `src/styles/`
 
 ### Key Scripts
-
 * `md-converter.js` - Markdown parsing and HTML conversion
 * `content-browser.js` - Navigation structure management
 * `script.js` - Main application logic and event handlers
 
 #ih Questions or Issues?
-#ib If you encounter any problems or have questions about using this documentation system, check the source code comments or create an issue in the project repository.
+#ib Check source code comments or create an issue in the project repository.
