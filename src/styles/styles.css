@@ -412,3 +412,31 @@ footer a:hover {
     opacity: 1;
     text-decoration: underline;
 }
+
+/*Section for credits.html*/
+.creditsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.creditsContainer ul {
+    margin-top: -1rem;
+    padding-left: 1.5rem;
+}
+
+.creditsContainer li {
+    margin: 0.1rem 0;
+}
+
+.creditsContainer a {
+    text-decoration: none;
+    color: rgb(79, 128, 235);
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+}
+
+.creditsContainer a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
