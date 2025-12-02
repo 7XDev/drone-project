@@ -371,7 +371,7 @@ class MarkdownConverter {
                 } else if (signature.type === 'info') {
                     html += `<img class="icon" src="assets/img/circle-info.svg" alt="info-icon"></img>`;
                 }
-                html += `<h4 class="markdown-signature-heading">${signature.heading}</h4>`;
+                html += `<h1 class="markdown-signature-heading">${signature.heading}</h1>`;
                 html += `</div>`;
             }
             
