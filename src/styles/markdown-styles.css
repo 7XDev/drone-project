@@ -469,6 +469,11 @@ body {
     transform: translateX(3px);
 }
 
+.markdown-end-next:hover .markdown-end-icon-previous {
+    opacity: 1;
+    transform: rotate(180deg) translateX(3px);
+}
+
 .markdown-end-previous:hover,
 .markdown-end-next:hover {
     border-color: var(--md-button-container-hover);
