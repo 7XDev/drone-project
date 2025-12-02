@@ -2,13 +2,13 @@
 
 ## **1. Project Title**
 
-* Drone Guide: A Comprehensive Resource for Building and Operating Drones
+* AeroMesh Drones: A comprehensive resource for building and operating drones to map out image depth maps.
 
 ---
 
 ## **2. Project Idea**
 
-* This website is designed to provide detailed guidance on building and 3D printing drones, utilizing control software to operate them, and exploring various applications, including drone shows, recreational flying, and educational projects. It will include step-by-step instructions, diagrams, and resources to help users construct, program, and operate drones effectively.
+* This website is designed to provide detailed guidance on building and 3D printing drones, utilizing control software to operate them, and exploring various applications, of mapping out image depth maps. It will include step-by-step instructions, diagrams, and resources to help users construct, program, and operate drones effectively.
 
 ---
 
@@ -17,7 +17,7 @@
 * The primary audience for this website includes:
   * Drone enthusiasts and hobbyists.
   * Students and educators interested in STEM projects.
-  * Professionals exploring drone applications in various fields.
+  * Professionals exploring drone applications for mapping out areas.
 
 * The website will be particularly helpful for those who are new to drone building and programming, offering clear and accessible guidance.
 
@@ -29,8 +29,7 @@
   * `index` → Home page with an overview of the project.
   * `prerequisites` → Details on budget, parts, software, and skills needed.
   * `assembly` → Step-by-step assembly instructions.
-  * `programming` → Comprehensive programming guide.
-  * `applications` → Exploration of various drone applications, including shows, recreational flying, and educational uses.
+  * `programming` → Comprehensive programming guide and operation guide.
 
 ---
 
@@ -44,16 +43,45 @@
 
 * Colors, fonts, and shapes will be chosen to enhance readability and visual appeal.
 
+<img width="925" height="699" alt="image" src="https://github.com/user-attachments/assets/ff463b7d-08eb-4c3e-9639-2cf52d6a05c7" />
+
 ---
 
 ## **6. Milestones**
 
-* The project will be developed in the following stages:
-  * **Week 1:** Develop the header section and main layout, start working on utilities for markdown conversion and navigation.
-  * **Week 2:** Implement navigation pane logic and create templates for pages.
-  * **Week 3:** Establish page linking, integrate search functionality and start implementing content.
-  * **Week 4:** Finalize content and perform testing.
+To ensure the successful development of the website, the following milestones have been identified. Each milestone represents a critical step in the project and includes detailed objectives:
 
+1. **Explore The Aim OfTthe Project:**
+   - Settle on the exact goal of the AeroMesh Drones.
+   - Discover potential sponsorship options by presenting the project to different companies.
+
+2. **Develop the Header Section:**
+   - Create the header layout, ensuring it is visually appealing and responsive.
+   - Implement placeholder functionality for the search bar, which will be enhanced in later stages.
+
+3. **Design the Main Page Layout:**
+   - Develop the structure of the main content area, including placeholders for text, images, and diagrams.
+   - Ensure the layout is responsive and adapts seamlessly to different screen sizes.
+
+4. **Implement Navigation Pane Logic:**
+   - Design and implement the sidebar navigation pane.
+   - Ensure categories and subcategories are dynamically loaded and can be expanded or collapsed.
+   - Add functionality to highlight the active step or category.
+
+5. **Create Templates for Categories and Pages:**
+   - Develop reusable templates for categories and individual pages.
+   - Ensure templates include placeholders for icons, titles, and content.
+   - Standardize the design to maintain consistency across the website.
+
+6. **Establish Page Linking with JavaScript:**
+   - Implement JavaScript logic to enable seamless navigation between pages.
+   - Add "Next" and "Previous" buttons at the bottom of each page, linking to the appropriate steps.
+   - Ensure links are dynamically updated based on the website structure.
+
+7. **Integrate Search Functionality with JavaScript:**
+   - Develop a robust search algorithm to index terms, steps, and categories.
+   - Implement a user-friendly search interface in the header.
+   - Ensure search results are displayed dynamically and link to the relevant pages.
 ---
 
 ## **7. Special Features (optional)**
