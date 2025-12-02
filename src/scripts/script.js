@@ -880,7 +880,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     browserContainer = document.querySelector(".topic-selector");
 
     // Fetch and load topic structure
-    await browser.fetchStructure('assets/content/content-structure.json'); // DEBUG_DATA
+    await browser.fetchStructure('assets/content-structure.json'); // DEBUG_DATA
     
     // Load saved content structure state from localStorage
     const savedState = loadContentStructureState();
