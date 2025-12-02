@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="./styles/markdown-styles.css">
     <link rel="icon" href="./assets/img/camera-drone.svg" type="image/svg+xml">
     
-    <!-- Apply dark mode immediately before body render -->
+    <!-- Apply dark mode immediately before body renders to prevent flashbang -->
     <script>
         (function() {
             const savedTheme = localStorage.getItem("theme");
@@ -20,14 +20,31 @@
     <script type="module" src="./scripts/script.js"></script>
     <script type="module" src="./scripts/md-converter.js"></script>
     <script type="module" src="./scripts/content-browser.js"></script>
-    <title>AeroMesh Drones Documentation</title>
+    <script type="module">
+        import MarkdownConverter from './scripts/md-converter.js';
+        
+        document.addEventListener("DOMContentLoaded", async () => {
+            const converter = new MarkdownConverter([], []);
+            const md = await converter.loadMarkdown('assets/content/credits.md');
+            const html = converter.convert(md, 'content/credits.md');
+            document.getElementById('markdown-container').innerHTML = html;
+            
+            // Update button text based on saved theme
+            const savedTheme = localStorage.getItem("theme");
+            const toggleButton = document.getElementById("lightDarkToggle");
+            if (savedTheme === "dark" && toggleButton) {
+                toggleButton.innerHTML = '<img class="icon" src="assets/img/dark.svg" alt="modeswitch-icon"></img><span class="icon-text">Light Mode</span>';
+            }
+        });
+    </script>
+    <title>Drones Documentation</title>
 </head>
 
 <body>
     <header>   <!-- Header-->
          <div class="header-logo">
             <img src="assets/img/camera-drone.svg" class="header-image" alt="Drone Logo">
-            <p class="header-text">AeroMesh Drones Documentation</p>
+            <p class="header-text">Drones Documentation</p>
             <button id="lightDarkToggle" onclick="lightDarkModeToggle()">
                 <img class="icon" src="assets/img/light.svg" alt="modeswitch-icon"></img>
                 <span class="icon-text">Dark Mode</span>
@@ -38,27 +55,14 @@
     <div class="side-line"></div>
 
     <main>
-        <div class="content-container">
-            <div class="topic-selector">
-                <!-- Loading of topics will use class "topic-category" for headers of categories -->
-            </div>
-            <div class="display-window">
-                <div id="markdown-container">
-                    <!-- Loading of MarkDown content will be placed here -->
-                </div>
-            </div>
-            <div class="right-panel">
-                <button class="copy-button" id="copyButton" onclick="copyButtonTrigger()">
-                    <img class="icon" src="assets/img/copy.svg" alt="copy-icon"></img>
-                    <span class="icon-text">Copy</span>
-                </button>
-                <div id="right-panel-header">
+        <div class="display-window">
+            <div id="markdown-container">
+                <!-- Loading of MarkDown content will be placed here -->
             </div>
         </div>
     </main>
     <footer>
-        <a href="credits.html">Credits</a>
-        <a href="help.html">Help</a>
+        <a href="index.html">Main Page</a>
     </footer>
 </body>
 
