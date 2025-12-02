@@ -170,6 +170,161 @@ function generateCategoryChildrenHTML(categoryItem) {
 }
 
 /**
+ * Save the current content structure state and selected page to localStorage
+ */
+function saveContentStructureState() {
+    try {
+        const stateToSave = {
+            contentStructure: browser.contentStructure,
+            selectedPage: currentlySelectedTopic ? currentlySelectedTopic.dataset.path : null,
+            selectedCategory: currentlySelectedCategory ? currentlySelectedCategory.textContent : null
+        };
+        localStorage.setItem('droneContentStructure', JSON.stringify(stateToSave));
+    } catch (error) {
+        console.warn('Failed to save content structure state to localStorage:', error);
+    }
+}
+
+/**
+ * Load the content structure state from localStorage
+ * @returns {Object|null} - The saved state object or null if not found
+ */
+function loadContentStructureState() {
+    try {
+        const saved = localStorage.getItem('droneContentStructure');
+        if (!saved) return null;
+        
+        const parsed = JSON.parse(saved);
+        
+        // Handle legacy format (just array) vs new format (object with structure + page)
+        if (Array.isArray(parsed)) {
+            return { contentStructure: parsed, selectedPage: null, selectedCategory: null };
+        }
+        
+        return parsed;
+    } catch (error) {
+        console.warn('Failed to load content structure state from localStorage:', error);
+        return null;
+    }
+}
+
+/**
+ * Update the collapsed state of a category in the content structure
+ * @param {Array} structure - The content structure to update
+ * @param {string} categoryName - The name of the category to update
+ * @param {boolean} collapsed - The new collapsed state
+ */
+function updateCategoryCollapsedState(structure, categoryName, collapsed) {
+    for (const item of structure) {
+        if (item.type === 'category' && item.name === categoryName) {
+            item.collapsed = collapsed;
+            return true;
+        }
+        if (item.children) {
+            if (updateCategoryCollapsedState(item.children, categoryName, collapsed)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
+ * Restore the selected page from saved state
+ * @param {string} savedPagePath - The path of the previously selected page
+ * @param {string} savedCategoryName - The name of the previously selected category
+ */
+async function restoreSelectedPage(savedPagePath, savedCategoryName) {
+    if (savedPagePath) {
+        // Find and select the page button
+        const pageButton = document.querySelector(`[data-path="${savedPagePath}"]`);
+        if (pageButton) {
+            // Deselect any currently selected items
+            if (currentlySelectedTopic) {
+                currentlySelectedTopic.classList.remove('topic-selected');
+                currentlySelectedTopic.classList.add('topic-unselected');
+            }
+            if (currentlySelectedCategory) {
+                currentlySelectedCategory.classList.remove('topic-category-button-selected');
+                currentlySelectedCategory = null;
+            }
+            
+            // Select the saved page
+            pageButton.classList.remove('topic-unselected');
+            pageButton.classList.add('topic-selected');
+            currentlySelectedTopic = pageButton;
+            
+            // Load the content
+            const md = await converter.loadMarkdown('assets/' + savedPagePath);
+            currentMarkdownContent = md;
+            const html = converter.convert(md, savedPagePath);
+            preview.innerHTML = html;
+            
+            const rightPanelHeader = document.getElementById("right-panel-header");
+            const headings = await getMarkdownHeaders('assets/' + savedPagePath);
+            rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
+            setupRightPanelListeners(rightPanelHeader);
+            setupEndButtonListeners();
+        }
+    } else if (savedCategoryName) {
+        // Find and select the category button
+        const categoryButton = document.querySelector(`#topic-category-topic-${savedCategoryName.replace(/[^a-zA-Z0-9\s]/g, '')}`);
+        if (categoryButton && categoryButton.classList.contains('topic-category-button-expanded')) {
+            categoryButton.classList.add('topic-category-button-selected');
+            currentlySelectedCategory = categoryButton;
+            
+            // Load the category content if it has a path
+            const categoryItem = findCategoryByName(browser.contentStructure, savedCategoryName);
+            if (categoryItem && categoryItem.path) {
+                const md = await converter.loadMarkdown('assets/' + categoryItem.path);
+                currentMarkdownContent = md;
+                const html = converter.convert(md, categoryItem.path);
+                preview.innerHTML = html;
+                
+                const rightPanelHeader = document.getElementById("right-panel-header");
+                const headings = await getMarkdownHeaders('assets/' + categoryItem.path);
+                rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
+                setupRightPanelListeners(rightPanelHeader);
+                setupEndButtonListeners();
+            }
+        }
+    }
+}
+
+/**
+ * Merge saved content structure states with fresh structure
+ * @param {Array} freshStructure - The freshly loaded content structure
+ * @param {Array} savedStructure - The saved content structure with user states
+ * @returns {Array} - The merged content structure
+ */
+function mergeContentStructureStates(freshStructure, savedStructure) {
+    const mergeItems = (fresh, saved) => {
+        return fresh.map(freshItem => {
+            // Find corresponding item in saved structure
+            const savedItem = saved.find(s => 
+                s.name === freshItem.name && s.type === freshItem.type
+            );
+            
+            const mergedItem = { ...freshItem };
+            
+            // If we found a saved item and it's a category, use its collapsed state
+            if (savedItem && freshItem.type === 'category') {
+                mergedItem.collapsed = savedItem.collapsed;
+            }
+            
+            // Recursively merge children if they exist
+            if (freshItem.children && savedItem && savedItem.children) {
+                mergedItem.children = mergeItems(freshItem.children, savedItem.children);
+            }
+            
+            return mergedItem;
+        });
+    };
+    
+    return mergeItems(freshStructure, savedStructure);
+}
+
+/**
  * Remove all DOM elements that belong to a specific category's children
  * @param {HTMLElement} categoryButton - The category button element
  * @param {Object} categoryItem - The category item from the data structure
@@ -251,12 +406,18 @@ function setupEventListenersForNewElements() {
                     currentlySelectedCategory.classList.remove('topic-category-button-selected');
                     currentlySelectedCategory = null;
                 }
+                // Update content structure and save to localStorage
+                updateCategoryCollapsedState(browser.contentStructure, button.textContent, true);
+                saveContentStructureState();
                 onDeToggle(button);
             } else {
                 // Expand this category
                 button.classList.remove('topic-category-button-collapsed');
                 button.classList.add('topic-category-button-expanded');
                 button.dataset.toggled = 'true';
+                // Update content structure and save to localStorage
+                updateCategoryCollapsedState(browser.contentStructure, button.textContent, false);
+                saveContentStructureState();
                 await onToggle(button);
             }
         });
@@ -392,6 +553,10 @@ function setupEndButtonListeners() {
                         displayWindow.scrollTop = 0;
                     }
 
+                    // Save the selected page state
+                    saveContentStructureState();
+
+
                     // Re-setup event listeners for new end buttons
                     setupEndButtonListeners();
                 }
@@ -495,12 +660,18 @@ async function setupEventListeners() {
                     currentlySelectedCategory.classList.remove('topic-category-button-selected');
                     currentlySelectedCategory = null;
                 }
+                // Update content structure and save to localStorage
+                updateCategoryCollapsedState(browser.contentStructure, button.textContent, true);
+                saveContentStructureState();
                 onDeToggle(button);
             } else {
                 // Expand this category
                 button.classList.remove('topic-category-button-collapsed');
                 button.classList.add('topic-category-button-expanded');
                 button.dataset.toggled = 'true';
+                // Update content structure and save to localStorage
+                updateCategoryCollapsedState(browser.contentStructure, button.textContent, false);
+                saveContentStructureState();
                 await onToggle(button);
             }
         });
@@ -539,6 +710,9 @@ async function setupEventListeners() {
             rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
             setupRightPanelListeners(rightPanelHeader);
             setupEndButtonListeners();
+            
+            // Save the selected page state
+            saveContentStructureState();
         });
     });
 
@@ -601,6 +775,9 @@ async function onToggle(button) {
             rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
             setupRightPanelListeners(rightPanelHeader);
             setupEndButtonListeners();
+            
+            // Save the selected category state
+            saveContentStructureState();
         }
         
         // Check if children already exist in the DOM to prevent duplicates
@@ -704,6 +881,18 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 
     // Fetch and load topic structure
     await browser.fetchStructure('assets/content/content-structure.json'); // DEBUG_DATA
+    
+    // Load saved content structure state from localStorage
+    const savedState = loadContentStructureState();
+    let savedPagePath = null;
+    let savedCategoryName = null;
+    
+    if (savedState) {
+        // Merge the saved collapsed states with the freshly loaded structure
+        browser.contentStructure = mergeContentStructureStates(browser.contentStructure, savedState.contentStructure);
+        savedPagePath = savedState.selectedPage;
+        savedCategoryName = savedState.selectedCategory;
+    }
 
     // Generate the flat structure and pass it to the MarkdownConverter
     const flatStructure = browser.flattenStructure();
@@ -711,7 +900,12 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     
     await refresh();
     
-    selectInitialLoadedTopic('assets/content/introduction.md');
+    // Restore the previously selected page or load default
+    if (savedPagePath || savedCategoryName) {
+        await restoreSelectedPage(savedPagePath, savedCategoryName);
+    } else {
+        selectInitialLoadedTopic('assets/content/introduction.md');
+    }
 
    const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "dark") {
