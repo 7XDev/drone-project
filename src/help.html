@@ -25,8 +25,8 @@
         
         document.addEventListener("DOMContentLoaded", async () => {
             const converter = new MarkdownConverter([], []);
-            const md = await converter.loadMarkdown('assets/content/help.md');
-            const html = converter.convert(md, 'content/help.md');
+            const md = await converter.loadMarkdown('assets/pages/help.md');
+            const html = converter.convert(md, 'pages/help.md');
             document.getElementById('markdown-container').innerHTML = html;
             
             // Update button text based on saved theme
