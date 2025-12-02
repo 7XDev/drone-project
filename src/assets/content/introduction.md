@@ -1,4 +1,4 @@
-# AeroMesh Drones: Revolutionizing 3D Image Depth Mapping for Organizations and Hobbyists
+# AeroMesh Drones: Revolutionizing 3D Image Depth Mapping
 
 Welcome to the ultimate guide for leveraging AeroMesh drones to create 3D image depth maps using cutting-edge AI technology for real-world applications and personal projects! This website provides detailed instructions, resources, and tools to help organizations, companies, and hobbyists integrate drone and AI technology into their operations or personal endeavors, from understanding prerequisites to mastering advanced programming techniques.
 
