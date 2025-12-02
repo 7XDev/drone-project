@@ -225,9 +225,12 @@ class MarkdownConverter {
             if (this.currentPageIndex !== 0) {
                 const previousPath = this.flatStructure[this.currentPageIndex - 1];
                 const previousName = this.getPageName(previousPath);
-                item += `<div class="markdown-end-previous" data-path="${previousPath}">
-                            <p class="markdown-end-label">Previous</p>
-                            <p class="markdown-end-title">${previousName}</p>
+                item += `<div class="markdown-end-next" data-path="${previousPath}">
+                            <img class="markdown-end-icon-previous" src="assets/img/arrow.svg" alt="next-icon"></img>
+                            <div class="markdown-end-content-p">
+                                <p class="markdown-end-label">Previous</p>
+                                <p class="markdown-end-title">${previousName}</p>
+                            </div>
                          </div>`;
             }
         
@@ -236,8 +239,11 @@ class MarkdownConverter {
                 const nextPath = this.flatStructure[this.currentPageIndex + 1];
                 const nextName = this.getPageName(nextPath);
                 item += `<div class="markdown-end-next" data-path="${nextPath}">
-                            <p class="markdown-end-label">Next</p>
-                            <p class="markdown-end-title">${nextName}</p>
+                            <div class="markdown-end-content-n">
+                                <p class="markdown-end-label">Next</p>
+                                <p class="markdown-end-title">${nextName}</p>
+                            </div>
+                            <img class="markdown-end-icon" src="assets/img/arrow.svg" alt="next-icon"></img>
                          </div>`;
             }
 
