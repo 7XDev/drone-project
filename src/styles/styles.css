@@ -66,21 +66,25 @@ body {
     width: 16px;
     height: 16px;
     filter: brightness(0) saturate(100%) invert(0%);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 :root.dark-mode .icon {
     filter: brightness(0) saturate(100%) invert(100%);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .lightmode-icon {
     width: 16px;
     height: 16px;
     filter: brightness(0) saturate(100%) invert(100%);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .darkmode-icon {
     width: 16px;
     height: 16px;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .icon-text {
@@ -108,6 +112,7 @@ body {
     font-weight: 600;
     font-family: league-spartan;
     color: var(--header-text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .side-line {
@@ -344,6 +349,7 @@ main {
     opacity: 0.8;
     transition: opacity 0.2s ease;
     word-wrap: break-word;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .right-bar-items:hover {
@@ -379,13 +385,13 @@ main {
     font-size: 14px;
     margin-left: auto;
     margin-right: 24%;
-    transition: background-color 0.2s ease, transform 0.1s ease;
     margin-left: 1.3rem;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .copy-button:hover {
