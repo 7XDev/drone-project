@@ -36,4 +36,3 @@ The total cost for building one drone is approximately **190€**, depending on 
 
 
 #end
-

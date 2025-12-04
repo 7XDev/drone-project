@@ -42,5 +42,3 @@ When sourcing parts for your drone project, here’s a list of platforms where y
 By exploring these platforms, you can find the best options for your budget and timeline while ensuring you get the right parts for your drone project.
 
 #end
-
-

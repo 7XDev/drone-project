@@ -1,5 +1,3 @@
 # Assembly Steps
 
 #end
-
-

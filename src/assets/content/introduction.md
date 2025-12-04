@@ -35,5 +35,3 @@ AeroMesh drones, combined with AI technology, offer a cost-effective and customi
 Ready to integrate AeroMesh drones and AI into your operations or personal projects? Start by exploring the **Prerequisites** section to ensure you have everything you need. From there, follow the guide step by step to build and deploy your drone for real-world applications or hobbyist adventures.
 
 #end
-
-

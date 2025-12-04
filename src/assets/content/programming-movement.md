@@ -1,5 +1,3 @@
 # Programming the movement
 
 #end
-
-
