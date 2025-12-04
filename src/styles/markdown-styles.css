@@ -451,7 +451,7 @@ body {
     width: 20px;
     height: 20px;
     opacity: 0.6;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: opacity 0.2s ease, transform 0.2s ease, filter 0.3s ease;
     flex-shrink: 0;
 }
 
@@ -459,9 +459,14 @@ body {
     width: 20px;
     height: 20px;
     opacity: 0.6;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: opacity 0.2s ease, transform 0.2s ease, filter 0.3s ease;
     flex-shrink: 0;
     transform: rotate(180deg);
+}
+
+:root.dark-mode .markdown-end-icon,
+:root.dark-mode .markdown-end-icon-previous {
+    filter: brightness(0) saturate(100%) invert(100%);
 }
 
 .markdown-end-next:hover .markdown-end-icon {
