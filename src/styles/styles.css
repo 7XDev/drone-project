@@ -42,9 +42,6 @@ body {
     left: 0;
     width: 100%;
     
-    /* Initially hidden */
-    display: none;
-    
     /* Styling */
     background: var(--button-bg);
     color: var(--text-color);
@@ -54,11 +51,18 @@ body {
     z-index: 100;
     max-height: 300px;
     overflow-y: auto;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    
+    /* Animation - initially hidden */
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 .search-popup.visible {
-    display: block;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
 }
 
 #lightDarkToggle {
