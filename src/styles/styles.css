@@ -36,6 +36,29 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+.search-popup {
+    position: absolute;
+    top: 130%;
+    left: 0;
+    width: 100%;
+    
+    /* Initially hidden */
+    display: none;
+    
+    /* Styling */
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    z-index: 100;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.search-popup.visible {
+    display: block;
+}
+
 #lightDarkToggle {
     background-color: var(--button-bg);
     color: var(--button-text);
@@ -115,6 +138,7 @@ body {
 }
 
 .header-search-bar {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -508,4 +532,6 @@ footer a:hover {
     .header-logo {
         margin-left: 1.5%;
     }
+
+    
 }

@@ -26,6 +26,9 @@ window.lightDarkModeToggle = lightDarkModeToggle;
 // Make function available globally for onclick handler
 window.copyButtonTrigger = copyButtonTrigger;
 
+// Make searchbar function available globally for onfocus handler
+window.searchbar = searchbar;
+
 /**
  * Gets all the markdown headings to display in the right panel
  * @param {Path} path 
@@ -50,6 +53,15 @@ async function getMarkdownHeaders(path) {
     }
 
     return headings;
+}
+
+/**
+ * Search bar function
+ */
+function searchbar() {
+    const searchBar = document.getElementById("searchInput");
+    const searchPopup = document.getElementById("searchPopup");
+    searchPopup.classList.add('visible');
 }
 
 /**
@@ -925,4 +937,12 @@ document.addEventListener("DOMContentLoaded", async (event) => {
             copyButton.innerHTML = '<img class="icon" src="assets/img/copy.svg"></img><span class="icon-text">Copy</span>';
         }
     }
+
+    document.addEventListener('click', (e) => {
+    const searchContainer = document.querySelector('.header-search-bar');
+    const searchPopup = document.getElementById('searchPopup');
+    if (!searchContainer.contains(e.target)) {
+        searchPopup.classList.remove('visible');
+    }
+});
 });
