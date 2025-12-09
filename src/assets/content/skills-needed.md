@@ -29,5 +29,3 @@ Building a DIY drone is an exciting and rewarding project, but it requires a com
 These skills will not only help you build your drone but also give you a solid foundation in electronics, programming, and engineering concepts.
 
 #end
-
-

@@ -3,13 +3,17 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="./styles/styles.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="AeroMesh Drones Documentation - Comprehensive guide for building, programming, and flying drones.">
+
+    <link rel="stylesheet" href="./styles/styles.css">
     <link rel="stylesheet" href="./styles/markdown-styles.css">
     <link rel="icon" href="./assets/img/camera-drone.svg" type="image/svg+xml">
-    
-    <!-- Apply dark mode immediately before body renders to prevent flashbang -->
+
+    <!-- Apply dark mode immediately before body render -->
     <script>
-        (function() {
+        (function () {
             const savedTheme = localStorage.getItem("theme");
             if (savedTheme === "dark") {
                 document.documentElement.classList.add("dark-mode");
@@ -24,15 +28,26 @@
 </head>
 
 <body>
-    <header>   <!-- Header-->
-         <div class="header-logo">
+    <header> <!-- Header-->
+        <div class="header-logo">
             <img src="assets/img/camera-drone.svg" class="header-image" alt="Drone Logo">
             <p class="header-text">AeroMesh Drones Documentation</p>
+            <div class="header-search-bar">
+                <img class="icon search-icon" src="assets/img/search.svg" alt="search-icon">
+                <input type="text" onfocus="searchbar()" id="searchInput" placeholder="Search documentation...">
+                <div id="searchPopup" class="search-popup">
+                    <!-- Popup content goes here -->
+                    <ul class="search-results">
+                        <li>Result 1</li>
+                        <li>Result 2</li>
+                    </ul>
+                </div>
+            </div>
             <button id="lightDarkToggle" onclick="lightDarkModeToggle()">
-                <img class="icon" src="assets/img/light.svg" alt="modeswitch-icon"></img>
+                <img class="icon" src="assets/img/light.svg" alt="modeswitch-icon">
                 <span class="icon-text">Dark Mode</span>
             </button>
-         </div>
+        </div>
     </header>
 
     <div class="side-line"></div>
@@ -49,13 +64,18 @@
             </div>
             <div class="right-panel">
                 <button class="copy-button" id="copyButton" onclick="copyButtonTrigger()">
-                    <img class="icon" src="assets/img/copy.svg" alt="copy-icon"></img>
+                    <img class="icon" src="assets/img/copy.svg" alt="copy-icon">
                     <span class="icon-text">Copy</span>
                 </button>
                 <div id="right-panel-header">
+                </div>
             </div>
         </div>
     </main>
+    <footer>
+        <a href="credits.html">Credits</a>
+        <a href="help.html">Help</a>
+    </footer>
 </body>
 
 </html>

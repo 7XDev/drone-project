@@ -36,6 +36,35 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+.search-popup {
+    position: absolute;
+    top: 130%;
+    left: 0;
+    width: 100%;
+    
+    /* Styling */
+    background: var(--button-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    z-index: 100;
+    max-height: 300px;
+    overflow-y: auto;
+    
+    /* Animation - initially hidden */
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.search-popup.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
 #lightDarkToggle {
     background-color: var(--button-bg);
     color: var(--button-text);
@@ -45,7 +74,6 @@ body {
     cursor: pointer;
     font-family: league-spartan;
     font-size: 14px;
-    margin-left: auto;
     margin-right: 8%;
     transition: background-color 0.2s ease, transform 0.1s ease;
     display: flex;
@@ -65,15 +93,33 @@ body {
 .icon {
     width: 16px;
     height: 16px;
+    filter: brightness(0) saturate(100%) invert(0%);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+:root.dark-mode .icon {
+    filter: brightness(0) saturate(100%) invert(100%);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .lightmode-icon {
     width: 16px;
     height: 16px;
     filter: brightness(0) saturate(100%) invert(100%);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.darkmode-icon {
+    width: 16px;
+    height: 16px;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .icon-text {
+    line-height: 1;
+}
+
+.darkmode-text {
     line-height: 1;
 }.header-logo {
     margin-left: 8%;
@@ -94,6 +140,46 @@ body {
     font-weight: 600;
     font-family: league-spartan;
     color: var(--header-text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.header-search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--button-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.4rem 0.75rem;
+    margin-left: auto;
+    margin-right: 1rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.header-search-bar:focus-within {
+    border-color: var(--topic-selected-color);
+}
+
+.header-search-bar input {
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    font-family: league-spartan;    
+    font-size: 14px;
+    outline: none;
+    width: 180px;
+}
+
+.header-search-bar input::placeholder {
+    color: var(--text-color);
+    opacity: 0.6;
+}
+
+.search-icon {
+    width: 14px;
+    height: 14px;
+    opacity: 0.7;
 }
 
 .side-line {
@@ -128,6 +214,11 @@ main {
     border-radius: 0px;
     position: relative;
     animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-out {
+    animation: fadeOut 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    pointer-events: none;
 }
 
 @keyframes fadeIn {
@@ -183,7 +274,7 @@ main {
 }
 
 .topic-unselected {
-    opacity: 0.6;
+    opacity: 0.8;
 }
 
 .topic-category-button {
@@ -203,13 +294,13 @@ main {
 }
 
 .topic-category-button-collapsed {
-    opacity: 0.6;
+    opacity: 0.8;
 }
 
 .topic-category-button-expanded {
     opacity: 1;
     color: var(--text-color);
-}x
+}
 
 .topic-category-button-selected {
     opacity: 1;
@@ -327,9 +418,10 @@ main {
     text-decoration: none;
     padding: 0.25rem 0.75rem;
     display: block;
-    opacity: 0.5;
+    opacity: 0.8;
     transition: opacity 0.2s ease;
     word-wrap: break-word;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .right-bar-items:hover {
@@ -365,13 +457,13 @@ main {
     font-size: 14px;
     margin-left: auto;
     margin-right: 24%;
-    transition: background-color 0.2s ease, transform 0.1s ease;
     margin-left: 1.3rem;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .copy-button:hover {
@@ -381,4 +473,71 @@ main {
 
 .copy-button:active {
     transform: scale(0.95);
+}
+
+footer {
+    position: fixed;
+    bottom: 0.75rem;
+    right: 1.5rem;
+    font-family: league-spartan;
+    font-size: 13px;
+    z-index: 1000;
+    display: flex;
+    gap: 1.5rem;
+}
+
+footer a {
+    color: var(--text-color);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+footer a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/*Section for credits.html*/
+.creditsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.creditsContainer ul {
+    margin-top: -1rem;
+    padding-left: 1.5rem;
+}
+
+.creditsContainer li {
+    margin: 0.1rem 0;
+}
+
+.creditsContainer a {
+    text-decoration: none;
+    color: rgb(79, 128, 235);
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+}
+
+.creditsContainer a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .header-text {
+        font-size: 15px;
+    }
+
+    main {
+        margin-left: 1.5%;
+    }
+
+    .header-logo {
+        margin-left: 1.5%;
+    }
+
+    
 }

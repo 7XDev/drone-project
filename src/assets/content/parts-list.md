@@ -26,5 +26,3 @@ This page lists all the essential parts needed to build the drone project:
 - **[BetaFPV Battery Charger](https://de.aliexpress.com/item/1005009138071014.html)** (~25€): Charges the drone batteries.
 
 #end
-
-

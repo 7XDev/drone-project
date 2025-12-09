@@ -1,3 +1,5 @@
+// Comment to commit on new branch
+
 // Import necessary modules for content browsing and markdown conversion
 import MarkdownConverter from './md-converter.js';
 import ContentBrowser from './content-browser.js';
@@ -24,6 +26,9 @@ window.lightDarkModeToggle = lightDarkModeToggle;
 // Make function available globally for onclick handler
 window.copyButtonTrigger = copyButtonTrigger;
 
+// Make searchbar function available globally for onfocus handler
+window.searchbar = searchbar;
+
 /**
  * Gets all the markdown headings to display in the right panel
  * @param {Path} path 
@@ -33,7 +38,7 @@ async function getMarkdownHeaders(path) {
     let headings = [];
     let id = 0;
     let markdown = await converter.loadMarkdown(path);
-    
+
     for (let line of markdown.split('\n')) {
         // Trim line to remove any trailing whitespace including \r on Windows
         line = line.trim();
@@ -51,6 +56,15 @@ async function getMarkdownHeaders(path) {
 }
 
 /**
+ * Search bar function
+ */
+function searchbar() {
+    const searchBar = document.getElementById("searchInput");
+    const searchPopup = document.getElementById("searchPopup");
+    searchPopup.classList.add('visible');
+}
+
+/**
  * Toggle between light mode and dark mode
  */
 function lightDarkModeToggle() {
@@ -62,12 +76,12 @@ function lightDarkModeToggle() {
 
     // Toggle mode switch button content
     if (html.classList.contains("dark-mode")) {
-        toggleButton.innerHTML = '<img class="lightmode-icon" src="assets/img/dark.svg"><span class="darkmode-text">Light Mode</span>';
-        copyButton.innerHTML = '<img class="lightmode-icon" src="assets/img/copy.svg"></img><span class="darkmode-text">Copy</span>';
+        toggleButton.innerHTML = '<img class="icon" src="assets/img/dark.svg"><span class="icon-text">Light Mode</span>';
+        copyButton.innerHTML = '<img class="icon" src="assets/img/copy.svg"></img><span class="icon-text">Copy</span>';
         localStorage.setItem("theme", "dark");
     } else {
-        toggleButton.innerHTML = '<img class="darkmode-icon" src="assets/img/light.svg"><span class="darkmode-text">Dark Mode</span>';
-        copyButton.innerHTML = '<img class="darkmode-icon" src="assets/img/copy.svg"></img><span class="darkmode-text">Copy</span>';
+        toggleButton.innerHTML = '<img class="icon" src="assets/img/light.svg"><span class="icon-text">Dark Mode</span>';
+        copyButton.innerHTML = '<img class="icon" src="assets/img/copy.svg"></img><span class="icon-text">Copy</span>';
         localStorage.setItem("theme", "light");
     }
 }
@@ -134,7 +148,7 @@ function findCategoryByName(structure, name) {
  */
 function generateCategoryChildrenHTML(categoryItem) {
     let html = '';
-    
+
     const traverse = (items, parentIsCategoryButton = false) => {
         items.forEach(item => {
             if (item.type === 'page') {
@@ -144,7 +158,7 @@ function generateCategoryChildrenHTML(categoryItem) {
             } else if (item.type === 'category') {
                 // Check if this category is a category button (has path property)
                 const isCategoryButton = !!item.path;
-                
+
                 // Generate HTML for all categories - let DOM state management handle visibility
                 if (item.path) {
                     html += `<p class="topic-category-button-unselected topic-category-button" id="topic-category-topic-${item.name}">${item.name}</p>`
@@ -163,8 +177,163 @@ function generateCategoryChildrenHTML(categoryItem) {
     if (categoryItem.children) {
         traverse(categoryItem.children, !!categoryItem.path);
     }
-    
+
     return html;
+}
+
+/**
+ * Save the current content structure state and selected page to localStorage
+ */
+function saveContentStructureState() {
+    try {
+        const stateToSave = {
+            contentStructure: browser.contentStructure,
+            selectedPage: currentlySelectedTopic ? currentlySelectedTopic.dataset.path : null,
+            selectedCategory: currentlySelectedCategory ? currentlySelectedCategory.textContent : null
+        };
+        localStorage.setItem('droneContentStructure', JSON.stringify(stateToSave));
+    } catch (error) {
+        console.warn('Failed to save content structure state to localStorage:', error);
+    }
+}
+
+/**
+ * Load the content structure state from localStorage
+ * @returns {Object|null} - The saved state object or null if not found
+ */
+function loadContentStructureState() {
+    try {
+        const saved = localStorage.getItem('droneContentStructure');
+        if (!saved) return null;
+
+        const parsed = JSON.parse(saved);
+
+        // Handle legacy format (just array) vs new format (object with structure + page)
+        if (Array.isArray(parsed)) {
+            return { contentStructure: parsed, selectedPage: null, selectedCategory: null };
+        }
+
+        return parsed;
+    } catch (error) {
+        console.warn('Failed to load content structure state from localStorage:', error);
+        return null;
+    }
+}
+
+/**
+ * Update the collapsed state of a category in the content structure
+ * @param {Array} structure - The content structure to update
+ * @param {string} categoryName - The name of the category to update
+ * @param {boolean} collapsed - The new collapsed state
+ */
+function updateCategoryCollapsedState(structure, categoryName, collapsed) {
+    for (const item of structure) {
+        if (item.type === 'category' && item.name === categoryName) {
+            item.collapsed = collapsed;
+            return true;
+        }
+        if (item.children) {
+            if (updateCategoryCollapsedState(item.children, categoryName, collapsed)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
+ * Restore the selected page from saved state
+ * @param {string} savedPagePath - The path of the previously selected page
+ * @param {string} savedCategoryName - The name of the previously selected category
+ */
+async function restoreSelectedPage(savedPagePath, savedCategoryName) {
+    if (savedPagePath) {
+        // Find and select the page button
+        const pageButton = document.querySelector(`[data-path="${savedPagePath}"]`);
+        if (pageButton) {
+            // Deselect any currently selected items
+            if (currentlySelectedTopic) {
+                currentlySelectedTopic.classList.remove('topic-selected');
+                currentlySelectedTopic.classList.add('topic-unselected');
+            }
+            if (currentlySelectedCategory) {
+                currentlySelectedCategory.classList.remove('topic-category-button-selected');
+                currentlySelectedCategory = null;
+            }
+
+            // Select the saved page
+            pageButton.classList.remove('topic-unselected');
+            pageButton.classList.add('topic-selected');
+            currentlySelectedTopic = pageButton;
+
+            // Load the content
+            const md = await converter.loadMarkdown('assets/' + savedPagePath);
+            currentMarkdownContent = md;
+            const html = converter.convert(md, savedPagePath);
+            preview.innerHTML = html;
+
+            const rightPanelHeader = document.getElementById("right-panel-header");
+            const headings = await getMarkdownHeaders('assets/' + savedPagePath);
+            rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
+            setupRightPanelListeners(rightPanelHeader);
+            setupEndButtonListeners();
+        }
+    } else if (savedCategoryName) {
+        // Find and select the category button
+        const categoryButton = document.querySelector(`#topic-category-topic-${savedCategoryName.replace(/[^a-zA-Z0-9\s]/g, '')}`);
+        if (categoryButton && categoryButton.classList.contains('topic-category-button-expanded')) {
+            categoryButton.classList.add('topic-category-button-selected');
+            currentlySelectedCategory = categoryButton;
+
+            // Load the category content if it has a path
+            const categoryItem = findCategoryByName(browser.contentStructure, savedCategoryName);
+            if (categoryItem && categoryItem.path) {
+                const md = await converter.loadMarkdown('assets/' + categoryItem.path);
+                currentMarkdownContent = md;
+                const html = converter.convert(md, categoryItem.path);
+                preview.innerHTML = html;
+
+                const rightPanelHeader = document.getElementById("right-panel-header");
+                const headings = await getMarkdownHeaders('assets/' + categoryItem.path);
+                rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
+                setupRightPanelListeners(rightPanelHeader);
+                setupEndButtonListeners();
+            }
+        }
+    }
+}
+
+/**
+ * Merge saved content structure states with fresh structure
+ * @param {Array} freshStructure - The freshly loaded content structure
+ * @param {Array} savedStructure - The saved content structure with user states
+ * @returns {Array} - The merged content structure
+ */
+function mergeContentStructureStates(freshStructure, savedStructure) {
+    const mergeItems = (fresh, saved) => {
+        return fresh.map(freshItem => {
+            // Find corresponding item in saved structure
+            const savedItem = saved.find(s =>
+                s.name === freshItem.name && s.type === freshItem.type
+            );
+
+            const mergedItem = { ...freshItem };
+
+            // If we found a saved item and it's a category, use its collapsed state
+            if (savedItem && freshItem.type === 'category') {
+                mergedItem.collapsed = savedItem.collapsed;
+            }
+
+            // Recursively merge children if they exist
+            if (freshItem.children && savedItem && savedItem.children) {
+                mergedItem.children = mergeItems(freshItem.children, savedItem.children);
+            }
+
+            return mergedItem;
+        });
+    };
+
+    return mergeItems(freshStructure, savedStructure);
 }
 
 /**
@@ -173,7 +342,6 @@ function generateCategoryChildrenHTML(categoryItem) {
  * @param {Object} categoryItem - The category item from the data structure
  */
 function removeCategoryChildren(categoryButton, categoryItem) {
-    // Get all the IDs of elements that should be removed
     const elementsToRemove = [];
     
     const collectElementIds = (items) => {
@@ -197,13 +365,23 @@ function removeCategoryChildren(categoryButton, categoryItem) {
         collectElementIds(categoryItem.children);
     }
     
-    // Remove all collected elements from the DOM
+    // Apply fade-out class to all elements
     elementsToRemove.forEach(id => {
         const element = document.getElementById(id);
         if (element) {
-            element.remove();
+            element.classList.add('fade-out');
         }
     });
+    
+    // Remove elements after animation completes
+    setTimeout(() => {
+        elementsToRemove.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.remove();
+            }
+        });
+    }, 200); // Match the CSS animation duration (0.2s)
 }
 
 /**
@@ -217,7 +395,7 @@ function setupEventListenersForNewElements() {
     // Set up event listeners for new category buttons
     newCategoryButtons.forEach(button => {
         button.setAttribute('data-has-listener', 'true');
-        
+
         // Add arrow if it doesn't exist
         if (!button.querySelector('.category-arrow')) {
             const arrow = document.createElement('span');
@@ -225,13 +403,13 @@ function setupEventListenersForNewElements() {
             arrow.innerHTML = '<img src="assets/img/arrow.svg" class="category-arrow" alt="arrow" width="15" height="15">';
             button.appendChild(arrow);
         }
-        
+
         // Initialize state
         button.dataset.toggled = 'false';
-        
+
         button.addEventListener('click', async () => {
             const isToggled = button.dataset.toggled === 'true';
-            
+
             // Deselect previously selected topic button (O(1))
             if (currentlySelectedTopic) {
                 currentlySelectedTopic.classList.remove('topic-selected');
@@ -249,12 +427,18 @@ function setupEventListenersForNewElements() {
                     currentlySelectedCategory.classList.remove('topic-category-button-selected');
                     currentlySelectedCategory = null;
                 }
+                // Update content structure and save to localStorage
+                updateCategoryCollapsedState(browser.contentStructure, button.textContent, true);
+                saveContentStructureState();
                 onDeToggle(button);
             } else {
                 // Expand this category
                 button.classList.remove('topic-category-button-collapsed');
                 button.classList.add('topic-category-button-expanded');
                 button.dataset.toggled = 'true';
+                // Update content structure and save to localStorage
+                updateCategoryCollapsedState(browser.contentStructure, button.textContent, false);
+                saveContentStructureState();
                 await onToggle(button);
             }
         });
@@ -263,7 +447,7 @@ function setupEventListenersForNewElements() {
     // Set up event listeners for new topic buttons
     newTopicButtons.forEach(button => {
         button.setAttribute('data-has-listener', 'true');
-        
+
         button.addEventListener('click', async () => {
             if (currentlySelectedTopic) {
                 currentlySelectedTopic.classList.remove('topic-selected');
@@ -336,6 +520,12 @@ function setupEndButtonListeners() {
                     rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
                     setupRightPanelListeners(rightPanelHeader);
 
+                    // Scroll to top of display window instantly
+                    const displayWindow = document.querySelector('.display-window');
+                    if (displayWindow) {
+                        displayWindow.scrollTop = 0;
+                    }
+
                     // Re-setup event listeners for new end buttons
                     setupEndButtonListeners();
                 }
@@ -378,6 +568,16 @@ function setupEndButtonListeners() {
                     rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
                     setupRightPanelListeners(rightPanelHeader);
 
+                    // Scroll to top of display window instantly
+                    const displayWindow = document.querySelector('.display-window');
+                    if (displayWindow) {
+                        displayWindow.scrollTop = 0;
+                    }
+
+                    // Save the selected page state
+                    saveContentStructureState();
+
+
                     // Re-setup event listeners for new end buttons
                     setupEndButtonListeners();
                 }
@@ -408,28 +608,28 @@ async function setupEventListeners() {
             arrow.innerHTML = '<img src="assets/img/arrow.svg" class="category-arrow" alt="arrow" width="15" height="15">';
             button.appendChild(arrow);
         }
-        
+
         if (categoryItem) {
             const isExpanded = !categoryItem.collapsed;
-            
+
             // Check if children exist in DOM to determine actual UI state
             let hasChildrenInDOM = false;
             if (categoryItem.children && categoryItem.children.length > 0) {
                 const firstChild = categoryItem.children[0];
-                const firstChildId = firstChild.type === 'page' 
-                    ? `topic-button-${firstChild.name}` 
+                const firstChildId = firstChild.type === 'page'
+                    ? `topic-button-${firstChild.name}`
                     : (firstChild.path ? `topic-category-topic-${firstChild.name}` : `topic-category-${firstChild.name}`);
                 hasChildrenInDOM = document.getElementById(firstChildId) !== null;
             }
-            
+
             // Set button state based on whether children are visible in DOM
             button.dataset.toggled = hasChildrenInDOM.toString();
-            
+
             // Apply visual state based on DOM state (not data structure)
             if (hasChildrenInDOM) {
                 button.classList.remove('topic-category-button-collapsed');
                 button.classList.add('topic-category-button-expanded');
-                
+
                 // Set arrow rotation for expanded state without animation on initial load
                 const arrow = button.querySelector('.category-arrow');
                 if (arrow) {
@@ -439,11 +639,11 @@ async function setupEventListeners() {
                     setTimeout(() => {
                         arrow.style.transition = 'transform 0.3s ease';
                     }, 10);
-               }
+                }
             } else {
                 button.classList.remove('topic-category-button-expanded');
                 button.classList.add('topic-category-button-collapsed');
-                
+
                 // Set arrow rotation for collapsed state without animation on initial load
                 const arrow = button.querySelector('.category-arrow');
                 if (arrow) {
@@ -459,11 +659,11 @@ async function setupEventListeners() {
             // Fallback: Initialize as not toggled if category not found
             button.dataset.toggled = 'false';
         }
-        
+
         button.addEventListener('click', async () => {
             // Check current toggle state before making changes
             const isToggled = button.dataset.toggled === 'true';
-            
+
             // Deselect previously selected topic button (O(1))
             if (currentlySelectedTopic) {
                 currentlySelectedTopic.classList.remove('topic-selected');
@@ -481,12 +681,18 @@ async function setupEventListeners() {
                     currentlySelectedCategory.classList.remove('topic-category-button-selected');
                     currentlySelectedCategory = null;
                 }
+                // Update content structure and save to localStorage
+                updateCategoryCollapsedState(browser.contentStructure, button.textContent, true);
+                saveContentStructureState();
                 onDeToggle(button);
             } else {
                 // Expand this category
                 button.classList.remove('topic-category-button-collapsed');
                 button.classList.add('topic-category-button-expanded');
                 button.dataset.toggled = 'true';
+                // Update content structure and save to localStorage
+                updateCategoryCollapsedState(browser.contentStructure, button.textContent, false);
+                saveContentStructureState();
                 await onToggle(button);
             }
         });
@@ -497,7 +703,7 @@ async function setupEventListeners() {
      */
     topicButtons.forEach(button => {
         button.setAttribute('data-has-listener', 'true');
-        
+
         button.addEventListener('click', async () => {
             if (currentlySelectedTopic) {
                 currentlySelectedTopic.classList.remove('topic-selected');
@@ -525,6 +731,9 @@ async function setupEventListeners() {
             rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
             setupRightPanelListeners(rightPanelHeader);
             setupEndButtonListeners();
+
+            // Save the selected page state
+            saveContentStructureState();
         });
     });
 
@@ -572,11 +781,11 @@ async function onToggle(button) {
             if (currentlySelectedCategory && currentlySelectedCategory !== button) {
                 currentlySelectedCategory.classList.remove('topic-category-button-selected');
             }
-            
+
             // Mark this category as selected for content display
             button.classList.add('topic-category-button-selected');
             currentlySelectedCategory = button;
-            
+
             const md = await converter.loadMarkdown('assets/' + categoryItem.path);
             currentMarkdownContent = md; // for copy button
             const html = converter.convert(md, categoryItem.path);
@@ -587,28 +796,31 @@ async function onToggle(button) {
             rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
             setupRightPanelListeners(rightPanelHeader);
             setupEndButtonListeners();
+
+            // Save the selected category state
+            saveContentStructureState();
         }
-        
+
         // Check if children already exist in the DOM to prevent duplicates
         let hasExistingChildren = false;
         if (categoryItem.children && categoryItem.children.length > 0) {
             const firstChild = categoryItem.children[0];
-            const firstChildId = firstChild.type === 'page' 
-                ? `topic-button-${firstChild.name}` 
+            const firstChildId = firstChild.type === 'page'
+                ? `topic-button-${firstChild.name}`
                 : (firstChild.path ? `topic-category-topic-${firstChild.name}` : `topic-category-${firstChild.name}`);
             hasExistingChildren = document.getElementById(firstChildId) !== null;
         }
-        
+
         // Only insert children if they don't already exist
         if (!hasExistingChildren) {
             // Generate HTML for just this category's children
             const childrenHTML = generateCategoryChildrenHTML(categoryItem);
-            
+
             // Insert the children HTML after this button
             const nextSibling = button.nextElementSibling;
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = childrenHTML;
-            
+
             // Insert all children after the button
             while (tempDiv.firstChild) {
                 if (nextSibling) {
@@ -617,7 +829,7 @@ async function onToggle(button) {
                     browserContainer.appendChild(tempDiv.firstChild);
                 }
             }
-            
+
             // Set up event listeners for the newly added elements
             setupEventListenersForNewElements();
         }
@@ -655,7 +867,7 @@ async function copyButtonTrigger() {
 };
 
 // Refreshes MarkDown-Container and Topic-Container
-async function refresh() {    
+async function refresh() {
     // Populate container with the generated topics
     browserContainer.innerHTML = browser.generateTopicsHTML();
     // Re-setup event listeners after DOM regeneration
@@ -684,28 +896,53 @@ function selectInitialLoadedTopic(path) {
 }
 
 document.addEventListener("DOMContentLoaded", async (event) => {
-    
+
     // Get reference to the topic browser container
     browserContainer = document.querySelector(".topic-selector");
 
     // Fetch and load topic structure
-    await browser.fetchStructure('assets/content/content-structure.json'); // DEBUG_DATA
+    await browser.fetchStructure('assets/content-structure.json'); // DEBUG_DATA
+
+    // Load saved content structure state from localStorage
+    const savedState = loadContentStructureState();
+    let savedPagePath = null;
+    let savedCategoryName = null;
+
+    if (savedState) {
+        // Merge the saved collapsed states with the freshly loaded structure
+        browser.contentStructure = mergeContentStructureStates(browser.contentStructure, savedState.contentStructure);
+        savedPagePath = savedState.selectedPage;
+        savedCategoryName = savedState.selectedCategory;
+    }
 
     // Generate the flat structure and pass it to the MarkdownConverter
     const flatStructure = browser.flattenStructure();
-    converter = new MarkdownConverter(flatStructure);
-    
-    await refresh();
-    
-    selectInitialLoadedTopic('assets/content/introduction.md');
+    converter = new MarkdownConverter(flatStructure, browser.contentStructure);
 
-   const savedTheme = localStorage.getItem("theme");
+    await refresh();
+
+    // Restore the previously selected page or load default
+    if (savedPagePath || savedCategoryName) {
+        await restoreSelectedPage(savedPagePath, savedCategoryName);
+    } else {
+        selectInitialLoadedTopic('assets/content/introduction.md');
+    }
+
+    const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "dark") {
         const toggleButton = document.getElementById("lightDarkToggle");
         const copyButton = document.getElementById("copyButton");
         if (toggleButton) {
-            toggleButton.innerHTML = '<img class="lightmode-icon" src="assets/img/dark.svg"><span class="darkmode-text">Light Mode</span>';
-            copyButton.innerHTML = '<img class="lightmode-icon" src="assets/img/copy.svg"></img><span class="darkmode-text">Copy</span>';
+            toggleButton.innerHTML = '<img class="icon" src="assets/img/dark.svg"><span class="icon-text">Light Mode</span>';
+            copyButton.innerHTML = '<img class="icon" src="assets/img/copy.svg"></img><span class="icon-text">Copy</span>';
         }
-    }  
+    }
+
+    document.addEventListener('click', (e) => {
+    const searchContainer = document.querySelector('.header-search-bar');
+    const searchPopup = document.getElementById('searchPopup');
+    if (!searchContainer.contains(e.target)) {
+        searchPopup.classList.remove('visible');
+    }
+});
 });

@@ -1,12 +1,14 @@
 class MarkdownConverter {
     headingCount;
     flatStructure;
+    contentStructure;
     currentPageIndex;
 
-    constructor(flatStructure) {
+    constructor(flatStructure, contentStructure = []) {
         this.headingCount = 0;
         this.currentPageIndex = 0;
         this.flatStructure = flatStructure;
+        this.contentStructure = contentStructure;
     }
 
     // Load markdown content from a given path
@@ -222,16 +224,26 @@ class MarkdownConverter {
             // If previous item exists
             if (this.currentPageIndex !== 0) {
                 const previousPath = this.flatStructure[this.currentPageIndex - 1];
-                item += `<div class="markdown-end-previous" data-path="${previousPath}">
-                            <p>Previous</p>
+                const previousName = this.getPageName(previousPath);
+                item += `<div class="markdown-end-next" data-path="${previousPath}">
+                            <img class="markdown-end-icon-previous" src="assets/img/arrow.svg" alt="next-icon"></img>
+                            <div class="markdown-end-content-p">
+                                <p class="markdown-end-label">Previous</p>
+                                <p class="markdown-end-title">${previousName}</p>
+                            </div>
                          </div>`;
             }
         
             // If next item exists
             if (this.currentPageIndex !== this.flatStructure.length - 1) {
                 const nextPath = this.flatStructure[this.currentPageIndex + 1];
+                const nextName = this.getPageName(nextPath);
                 item += `<div class="markdown-end-next" data-path="${nextPath}">
-                            <p>Next</p>
+                            <div class="markdown-end-content-n">
+                                <p class="markdown-end-label">Next</p>
+                                <p class="markdown-end-title">${nextName}</p>
+                            </div>
+                            <img class="markdown-end-icon" src="assets/img/arrow.svg" alt="next-icon"></img>
                          </div>`;
             }
 
@@ -355,7 +367,18 @@ class MarkdownConverter {
             let html = `<div class="markdown-${signature.type}">`;
             
             if (signature.heading) {
-                html += `<h4 class="markdown-signature-heading">${signature.heading}</h4>`;
+                html += `<div class="markdown-signature-header">`;
+                if (signature.type === 'positive') {
+                    html += `<img class="icon" src="assets/img/circle-check.svg" alt="positive-icon"></img>`;
+                } else if (signature.type === 'warning') {
+                    html += `<img class="icon" src="assets/img/triangle-exclamation.svg" alt="warning-icon"></img>`;
+                } else if (signature.type === 'negative') {
+                    html += `<img class="icon" src="assets/img/cancel.svg" alt="negative-icon"></img>`;
+                } else if (signature.type === 'info') {
+                    html += `<img class="icon" src="assets/img/circle-info.svg" alt="info-icon"></img>`;
+                }
+                html += `<h1 class="markdown-signature-heading">${signature.heading}</h1>`;
+                html += `</div>`;
             }
             
             for (const body of signature.bodies) {
@@ -365,6 +388,23 @@ class MarkdownConverter {
             html += '</div>';
             return html;
         }
+    }
+
+    // Get page name from path by searching content structure
+    getPageName(path) {
+        const findName = (items) => {
+            for (const item of items) {
+                if (item.path === path) {
+                    return item.name;
+                }
+                if (item.children) {
+                    const found = findName(item.children);
+                    if (found) return found;
+                }
+            }
+            return null;
+        };
+        return findName(this.contentStructure) || 'Unknown Page';
     }
 
     // Check if line is a table row

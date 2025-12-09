@@ -2,13 +2,13 @@
 
 ## **1. Project Title**
 
-* AeroMesh Drones: A comprehensive resource for building and operating drones to map out image depth maps.
+* AeroMesh Drones: Revolutionizing 3D Image Depth Mapping with AI Technology
 
 ---
 
 ## **2. Project Idea**
 
-* This website is designed to provide detailed guidance on building and 3D printing drones, utilizing control software to operate them, and exploring various applications, of mapping out image depth maps. It will include step-by-step instructions, diagrams, and resources to help users construct, program, and operate drones effectively.
+* This website is designed to provide detailed guidance on building and programming drones, utilizing AI technology to create 3D image depth maps for real-world applications and personal projects. It will include step-by-step instructions, diagrams, and resources to help users construct, program, and operate drones effectively.
 
 ---
 
@@ -18,6 +18,8 @@
   * Drone enthusiasts and hobbyists.
   * Students and educators interested in STEM projects.
   * Professionals exploring drone applications for mapping out areas.
+  * Organizations in construction, agriculture, and environmental research.
+  * Research institutions conducting advanced studies in fields like geology, archaeology, and environmental science.
 
 * The website will be particularly helpful for those who are new to drone building and programming, offering clear and accessible guidance.
 
@@ -51,7 +53,7 @@
 
 To ensure the successful development of the website, the following milestones have been identified. Each milestone represents a critical step in the project and includes detailed objectives:
 
-1. **Explore The Aim OfTthe Project:**
+1. **Explore The Aim Of The Project:**
    - Settle on the exact goal of the AeroMesh Drones.
    - Discover potential sponsorship options by presenting the project to different companies.
 
