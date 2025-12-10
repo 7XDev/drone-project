@@ -191,6 +191,7 @@ body {
     font-family: 'league-spartan', Arial, sans-serif;
     font-weight: 500;
     color: var(--md-positive-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .markdown-warning {
@@ -202,6 +203,7 @@ body {
     font-family: 'league-spartan', Arial, sans-serif;
     font-weight: 500;
     color: var(--md-warning-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .markdown-negative {
@@ -213,6 +215,7 @@ body {
     font-family: 'league-spartan', Arial, sans-serif;
     font-weight: 500;
     color: var(--md-negative-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .markdown-info {
@@ -224,6 +227,7 @@ body {
     font-family: 'league-spartan', Arial, sans-serif;
     font-weight: 500;
     color: var(--md-info-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Signature Block Components */
@@ -254,34 +258,42 @@ body {
 
 .markdown-positive .markdown-signature-header .icon {
     filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(106deg) brightness(91%) contrast(97%);
+    transition: filter 0.3s ease;
 }
 
 .markdown-warning .markdown-signature-header .icon {
     filter: brightness(0) saturate(100%) invert(41%) sepia(94%) saturate(1263%) hue-rotate(13deg) brightness(94%) contrast(91%);
+    transition: opacity 0.3s ease;
 }
 
 .markdown-negative .markdown-signature-header .icon {
     filter: brightness(0) saturate(100%) invert(15%) sepia(73%) saturate(3607%) hue-rotate(347deg) brightness(89%) contrast(88%);
+    transition: filter 0.3s ease;
 }
 
 .markdown-info .markdown-signature-header .icon {
     filter: brightness(0) saturate(100%) invert(19%) sepia(95%) saturate(2733%) hue-rotate(224deg) brightness(91%) contrast(95%);
+    transition: filter 0.3s ease;
 }
 
 :root.dark-mode .markdown-positive .markdown-signature-header .icon {
     filter: brightness(0) saturate(100%) invert(79%) sepia(23%) saturate(864%) hue-rotate(88deg) brightness(96%) contrast(89%);
+    transition: filter 0.3s ease;
 }
 
 :root.dark-mode .markdown-warning .markdown-signature-header .icon {
     filter: brightness(0) saturate(100%) invert(80%) sepia(47%) saturate(565%) hue-rotate(360deg) brightness(102%) contrast(98%);
+    transition: opacity 0.3s ease;
 }
 
 :root.dark-mode .markdown-negative .markdown-signature-header .icon {
     filter: brightness(0) saturate(100%) invert(84%) sepia(17%) saturate(1078%) hue-rotate(308deg) brightness(102%) contrast(98%);
+    transition: filter 0.3s ease;
 }
 
 :root.dark-mode .markdown-info .markdown-signature-header .icon {
     filter: brightness(0) saturate(100%) invert(75%) sepia(26%) saturate(741%) hue-rotate(188deg) brightness(101%) contrast(98%);
+    transition: filter 0.3s ease;
 }
 
 .markdown-positive-heading {
