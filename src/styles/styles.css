@@ -36,6 +36,35 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+.search-popup {
+    position: absolute;
+    top: 130%;
+    left: 0;
+    width: 100%;
+    
+    /* Styling */
+    background: var(--button-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    z-index: 100;
+    max-height: 300px;
+    overflow-y: auto;
+    
+    /* Animation - initially hidden */
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.search-popup.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
 #lightDarkToggle {
     background-color: var(--button-bg);
     color: var(--button-text);
@@ -45,7 +74,6 @@ body {
     cursor: pointer;
     font-family: league-spartan;
     font-size: 14px;
-    margin-left: auto;
     margin-right: 8%;
     transition: background-color 0.2s ease, transform 0.1s ease;
     display: flex;
@@ -115,6 +143,45 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+.header-search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--button-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.4rem 0.75rem;
+    margin-left: auto;
+    margin-right: 1rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.header-search-bar:focus-within {
+    border-color: var(--topic-selected-color);
+}
+
+.header-search-bar input {
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    font-family: league-spartan;    
+    font-size: 14px;
+    outline: none;
+    width: 180px;
+}
+
+.header-search-bar input::placeholder {
+    color: var(--text-color);
+    opacity: 0.6;
+}
+
+.search-icon {
+    width: 14px;
+    height: 14px;
+    opacity: 0.7;
+}
+
 .side-line {
     height: 1px;
     background-color: var(--border-color);
@@ -147,6 +214,11 @@ main {
     border-radius: 0px;
     position: relative;
     animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-out {
+    animation: fadeOut 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    pointer-events: none;
 }
 
 @keyframes fadeIn {
@@ -454,6 +526,18 @@ footer a:hover {
     text-decoration: underline;
 }
 
-footer a {
-    transition: color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+@media (max-width: 768px) {
+    .header-text {
+        font-size: 15px;
+    }
+
+    main {
+        margin-left: 1.5%;
+    }
+
+    .header-logo {
+        margin-left: 1.5%;
+    }
+
+    
 }
