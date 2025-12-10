@@ -358,12 +358,14 @@ body {
 
 /* Tables */
 .markdown-table {
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     width: auto;
     margin: 1rem 0;
     font-family: 'league-spartan', Arial, sans-serif;
     border: 1px solid var(--md-table-border);
     border-radius: 5px;
+    overflow: hidden;
 }
 
 .markdown-table-header {
@@ -373,14 +375,30 @@ body {
     text-align: left;
     font-weight: 700;
     border: 1px solid var(--md-table-border);
+    border-top: none;
+    border-left: none;
     white-space: nowrap;
+}
+
+.markdown-table-header:last-child {
+    border-right: none;
 }
 
 .markdown-table-cell {
     padding: 0.5rem 0.75rem;
     border: 1px solid var(--md-table-border);
+    border-top: none;
+    border-left: none;
     background-color: var(--md-table-cell-bg);
     white-space: nowrap;
+}
+
+.markdown-table-cell:last-child {
+    border-right: none;
+}
+
+.markdown-table-row:last-child .markdown-table-cell {
+    border-bottom: none;
 }
 
 .markdown-table-row:nth-child(even) .markdown-table-cell {
@@ -389,7 +407,7 @@ body {
 
 .markdown-table-row:hover .markdown-table-cell {
     background-color: var(--md-table-row-hover-bg);
-    transition: background-color 0.1s;
+    transition: background-color 0.2s ease-in-out;
 }
 
 .markdown-button-container {
