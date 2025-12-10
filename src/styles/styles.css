@@ -93,25 +93,25 @@ body {
     width: 16px;
     height: 16px;
     filter: brightness(0) saturate(100%) invert(0%);
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: filter 0.3s ease;
 }
 
 :root.dark-mode .icon {
     filter: brightness(0) saturate(100%) invert(100%);
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: filter 0.3s ease;
 }
 
 .lightmode-icon {
     width: 16px;
     height: 16px;
     filter: brightness(0) saturate(100%) invert(100%);
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: filter 0.3s ease;
 }
 
 .darkmode-icon {
     width: 16px;
     height: 16px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: filter 0.3s ease;
 }
 
 .icon-text {

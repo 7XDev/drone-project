@@ -70,18 +70,19 @@ function searchbar() {
 function lightDarkModeToggle() {
     const html = document.documentElement;
     const toggleButton = document.getElementById("lightDarkToggle");
-    const copyButton = document.getElementById("copyButton");
+    const toggleIcon = toggleButton.querySelector('.icon');
+    const toggleText = toggleButton.querySelector('.icon-text');
 
     html.classList.toggle("dark-mode"); // Change page appearance
 
-    // Toggle mode switch button content
+    // Toggle mode switch button content (only update src and text, preserve DOM for smooth transition)
     if (html.classList.contains("dark-mode")) {
-        toggleButton.innerHTML = '<img class="icon" src="assets/img/dark.svg"><span class="icon-text">Light Mode</span>';
-        copyButton.innerHTML = '<img class="icon" src="assets/img/copy.svg"></img><span class="icon-text">Copy</span>';
+        toggleIcon.src = 'assets/img/dark.svg';
+        toggleText.textContent = 'Light Mode';
         localStorage.setItem("theme", "dark");
     } else {
-        toggleButton.innerHTML = '<img class="icon" src="assets/img/light.svg"><span class="icon-text">Dark Mode</span>';
-        copyButton.innerHTML = '<img class="icon" src="assets/img/copy.svg"></img><span class="icon-text">Copy</span>';
+        toggleIcon.src = 'assets/img/light.svg';
+        toggleText.textContent = 'Dark Mode';
         localStorage.setItem("theme", "light");
     }
 }
