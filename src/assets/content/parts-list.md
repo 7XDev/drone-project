@@ -24,9 +24,16 @@ This page lists all the essential parts needed to build the drone project:
 - **[MLX90640ESF-BAB Thermal Camera](https://de.aliexpress.com/item/32949428715.html)** (~32€): Captures thermal images.
 - **[Lidar Sensor](https://de.aliexpress.com/item/1005008667948116.html)** (~40€): Measures height.
 
-## Miscellaneous
+### Miscellaneous
+
+- **[BT2.0 Connector](https://de.aliexpress.com/item/1005009888527632.html)** (~4€): Connects the drone's power cables.
+
+## Tools
 
 - **[Carbon Fibre PLA](https://eu.elegoo.com/de-at/products/pla-cf-filament-1-75mm-black-1kg)** (~22€): Lightweight filament for 3D printing.
+
+## Materials
+
 - **[BetaFPV Battery Charger](https://de.aliexpress.com/item/1005009138071014.html)** (~25€): Charges drone batteries.
 
 #end
