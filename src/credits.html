@@ -41,15 +41,19 @@
 </head>
 
 <body>
-    <header>   <!-- Header-->
-         <div class="header-logo">
+    <header> 
+        <div class="header-logo">
             <img src="assets/img/camera-drone.svg" class="header-image" alt="Drone Logo">
             <p class="header-text">Drones Documentation</p>
+            <div class="header-search-bar" style="visibility: hidden;">
+                <img class="icon search-icon" src="assets/img/search.svg" alt="search-icon">
+                <input type="text" id="searchInput" placeholder="Search documentation..." disabled>
+            </div>
             <button id="lightDarkToggle" onclick="lightDarkModeToggle()">
-                <img class="icon" src="assets/img/light.svg" alt="modeswitch-icon"></img>
+                <img class="icon" src="assets/img/light.svg" alt="modeswitch-icon">
                 <span class="icon-text">Dark Mode</span>
             </button>
-         </div>
+        </div>
     </header>
 
     <div class="side-line"></div>

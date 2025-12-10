@@ -6,14 +6,12 @@ This page lists all the essential parts needed to build the drone project:
 #wb Availability and specifications may vary depending on your location.
 
 ## Drone Hub
-
 | Part | Price | Description |
 |------|-------|-------------|
 | [Raspberry Pi 3](https://www.amazon.de/-/en/Raspberry-Model-Quad-Core-Motherboard/dp/B01CD5VC92) | ~40€ | Main computer for controlling the drone |
 | [TP-Link Archer T3U Plus](https://www.amazon.de/-/en/TP-Link-T3U-Dualband-antennas-compatible-Black/dp/B0859M539M) | ~20€ | Wi-Fi adapter for communication |
 
 ## The Drones
-
 | Part | Price | Description |
 |------|-------|-------------|
 | [ESP32-CAM Microcontroller (Without Camera)](https://de.aliexpress.com/item/1005005834248957.html) | ~6€ | Microcontroller for drone operations |
@@ -29,19 +27,18 @@ This page lists all the essential parts needed to build the drone project:
 | [MLX90640ESF-BAB Thermal Camera](https://de.aliexpress.com/item/32949428715.html) (Optional) | ~32€ | Captures thermal images |
 
 ### Miscellaneous
-
 | Part | Price | Description |
 |------|-------|-------------|
 | [BT2.0 Connector](https://de.aliexpress.com/item/1005009888527632.html) | ~4€ | Connects the drone's power cables |
 
 ## Tools
-
 | Part | Price | Description |
 |------|-------|-------------|
 | [Carbon Fibre PLA](https://eu.elegoo.com/de-at/products/pla-cf-filament-1-75mm-black-1kg) | ~22€ | Lightweight filament for 3D printing |
 
 ## Materials
-
 | Part | Price | Description |
 |------|-------|-------------|
 | [BetaFPV Battery Charger](https://de.aliexpress.com/item/1005009138071014.html) | ~25€ | Charges drone batteries |
+
+#end
