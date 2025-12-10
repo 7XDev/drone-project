@@ -263,7 +263,6 @@ body {
 
 .markdown-warning .markdown-signature-header .icon {
     filter: brightness(0) saturate(100%) invert(41%) sepia(94%) saturate(1263%) hue-rotate(13deg) brightness(94%) contrast(91%);
-    transition: opacity 0.3s ease;
 }
 
 .markdown-negative .markdown-signature-header .icon {
@@ -283,7 +282,6 @@ body {
 
 :root.dark-mode .markdown-warning .markdown-signature-header .icon {
     filter: brightness(0) saturate(100%) invert(80%) sepia(47%) saturate(565%) hue-rotate(360deg) brightness(102%) contrast(98%);
-    transition: opacity 0.3s ease;
 }
 
 :root.dark-mode .markdown-negative .markdown-signature-header .icon {

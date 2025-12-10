@@ -441,8 +441,9 @@ main {
     color: rgb(44, 98, 245);
 }
 
-.markdown-code-block pre {
+.markdown-code-block {
     background-color: var(--md-code-bg-color);
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .top-line {
