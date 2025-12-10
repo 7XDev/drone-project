@@ -32,21 +32,23 @@
         <div class="header-logo">
             <img src="assets/img/camera-drone.svg" class="header-image" alt="Drone Logo">
             <p class="header-text">AeroMesh Drones Documentation</p>
-            <div class="header-search-bar">
-                <img class="icon search-icon" src="assets/img/search.svg" alt="search-icon">
-                <input type="text" onfocus="searchbar()" id="searchInput" placeholder="Search documentation...">
-                <div id="searchPopup" class="search-popup">
-                    <!-- Popup content goes here -->
-                    <ul class="search-results">
-                        <li>Result 1</li>
-                        <li>Result 2</li>
-                    </ul>
+            <div class="header-controls">
+                <div class="header-search-bar">
+                    <img class="icon search-icon" src="assets/img/search.svg" alt="search-icon">
+                    <input type="text" onfocus="searchbar()" id="searchInput" placeholder="Search documentation...">
+                    <div id="searchPopup" class="search-popup">
+                        <!-- Popup content goes here -->
+                        <ul class="search-results">
+                            <li>Result 1</li>
+                            <li>Result 2</li>
+                        </ul>
+                    </div>
                 </div>
+                <button id="lightDarkToggle" onclick="lightDarkModeToggle()">
+                    <img class="icon" src="assets/img/light.svg" alt="modeswitch-icon">
+                    <span class="icon-text">Dark Mode</span>
+                </button>
             </div>
-            <button id="lightDarkToggle" onclick="lightDarkModeToggle()">
-                <img class="icon" src="assets/img/light.svg" alt="modeswitch-icon">
-                <span class="icon-text">Dark Mode</span>
-            </button>
         </div>
     </header>
 
