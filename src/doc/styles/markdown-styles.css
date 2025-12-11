@@ -1,7 +1,7 @@
 /* Font Face */
 @font-face {
     font-family: 'league-spartan';
-    src: url('../../src/assets/fonts/league-spartan/LeagueSpartan-VariableFont_wght.ttf');
+    src: url('../../assets/fonts/league-spartan/LeagueSpartan-VariableFont_wght.ttf');
 }
 
 :root {
