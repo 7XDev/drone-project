@@ -26,9 +26,10 @@ window.lightDarkModeToggle = lightDarkModeToggle;
 // Make function available globally for onclick handler
 window.copyButtonTrigger = copyButtonTrigger;
 
-// Make searchbar functions available globally for onfocus/onblur handlers
+// Make searchbar functions available globally for onfocus/onblur/oninput handlers
 window.searchbarFocus = searchbarFocus;
 window.searchbarBlur = searchbarBlur;
+window.searchbarSearch = searchbarSearch;
 
 /**
  * Gets all the markdown headings to display in the right panel
@@ -73,8 +74,327 @@ function searchbarBlur() {
     // Use setTimeout to allow click events on popup items to fire before hiding
     setTimeout(() => {
         searchPopup.classList.remove('visible');
-    }, 150);
-    searchInput.value = "";
+        searchInput.value = "";
+    }, 200);
+}
+
+// Debounce timer for search
+let searchDebounceTimer = null;
+
+/**
+ * Search bar searching logic - searches through all markdown files
+ * and displays results grouped by category
+ */
+async function searchbarSearch() {
+    const searchInput = document.getElementById("searchInput");
+    const searchPopup = document.getElementById("searchPopup");
+    const searchResults = searchPopup.querySelector('.search-results');
+    const searchTerm = searchInput.value.toLowerCase().trim();
+
+    // Clear previous timeout
+    if (searchDebounceTimer) {
+        clearTimeout(searchDebounceTimer);
+    }
+
+    // If search term is empty, clear results
+    if (searchTerm.length < 2) {
+        searchResults.innerHTML = '<li class="search-no-results">Type at least 2 characters to search...</li>';
+        return;
+    }
+
+    // Debounce: wait 300ms after user stops typing
+    searchDebounceTimer = setTimeout(async () => {
+        searchResults.innerHTML = '<li class="search-loading">Searching...</li>';
+
+        const resultsByCategory = {};
+
+        // Recursive function to search through the content structure
+        const searchInStructure = async (items, parentCategory = 'General') => {
+            for (const item of items) {
+                if (item.type === 'page' || (item.type === 'category' && item.path)) {
+                    // This item has a markdown file to search
+                    try {
+                        const markdown = await converter.loadMarkdown('assets/' + item.path);
+                        const lowerMarkdown = markdown.toLowerCase();
+
+                        if (lowerMarkdown.includes(searchTerm)) {
+                            // Find all matches and create snippets
+                            const snippets = findSnippets(markdown, searchTerm);
+
+                            if (!resultsByCategory[parentCategory]) {
+                                resultsByCategory[parentCategory] = [];
+                            }
+
+                            resultsByCategory[parentCategory].push({
+                                name: item.name,
+                                path: item.path,
+                                snippets: snippets
+                            });
+                        }
+                    } catch (err) {
+                        console.warn(`Failed to search in ${item.path}:`, err);
+                    }
+                }
+
+                // If it's a category, search its children
+                if (item.type === 'category' && item.children) {
+                    // Use this category's name as the parent for its children
+                    await searchInStructure(item.children, item.name);
+                }
+            }
+        };
+
+        await searchInStructure(browser.contentStructure);
+
+        // Generate and display results HTML
+        displaySearchResults(resultsByCategory, searchResults, searchTerm);
+    }, 300);
+}
+
+/**
+ * Find snippets of text around search matches
+ * @param {string} markdown - The full markdown content
+ * @param {string} searchTerm - The search term to find
+ * @returns {Array} - Array of snippet objects with text and search term info
+ */
+function findSnippets(markdown, searchTerm) {
+    const snippets = [];
+    const lowerMarkdown = markdown.toLowerCase();
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    let startIndex = 0;
+    const maxSnippets = 3; // Limit number of snippets per file
+
+    while (snippets.length < maxSnippets) {
+        const index = lowerMarkdown.indexOf(lowerSearchTerm, startIndex);
+        if (index === -1) break;
+
+        // Get context around the match (50 chars before and after)
+        const snippetStart = Math.max(0, index - 50);
+        const snippetEnd = Math.min(markdown.length, index + searchTerm.length + 50);
+        let snippet = markdown.substring(snippetStart, snippetEnd);
+
+        // Get the actual matched text (preserving case)
+        const matchedText = markdown.substring(index, index + searchTerm.length);
+
+        // Clean up the snippet - remove markdown syntax and extra whitespace
+        snippet = snippet.replace(/[#*_`\[\]]/g, '').replace(/\s+/g, ' ').trim();
+
+        // Add ellipsis if we didn't start/end at boundaries
+        if (snippetStart > 0) snippet = '...' + snippet;
+        if (snippetEnd < markdown.length) snippet = snippet + '...';
+
+        snippets.push({
+            text: snippet,
+            searchTerm: searchTerm,
+            matchedText: matchedText
+        });
+        startIndex = index + searchTerm.length;
+    }
+
+    return snippets;
+}
+
+/**
+ * Display search results in the popup
+ * @param {Object} resultsByCategory - Results grouped by category
+ * @param {HTMLElement} container - The container to display results in
+ * @param {string} searchTerm - The search term for highlighting
+ */
+function displaySearchResults(resultsByCategory, container, searchTerm) {
+    const categories = Object.keys(resultsByCategory);
+
+    if (categories.length === 0) {
+        container.innerHTML = '<li class="search-no-results">No results found</li>';
+        return;
+    }
+
+    let html = '';
+
+    for (const category of categories) {
+        html += `<li class="search-category-header">${category}</li>`;
+
+        for (const result of resultsByCategory[category]) {
+            html += `<li class="search-result-item">`;
+            html += `<div class="search-result-title-row" data-path="${result.path}">`;
+            html += `<span class="search-result-title">${result.name}</span>`;
+            html += `</div>`;
+
+            // Show all snippets with highlighted search terms - each clickable
+            if (result.snippets.length > 0) {
+                html += `<div class="search-result-snippets">`;
+                for (const snippet of result.snippets) {
+                    const highlightedSnippet = highlightSearchTerm(snippet.text, searchTerm);
+                    html += `<div class="search-result-snippet" data-path="${result.path}" data-search="${escapeHtml(snippet.searchTerm)}">`;
+                    html += `<span class="snippet-text">${highlightedSnippet}</span>`;
+                    html += `</div>`;
+                }
+                html += `</div>`;
+            }
+
+            html += `</li>`;
+        }
+    }
+
+    container.innerHTML = html;
+
+    // Add click handlers to search results
+    setupSearchResultClickHandlers();
+}
+
+/**
+ * Escape HTML special characters to prevent XSS
+ * @param {string} text - Text to escape
+ * @returns {string} - Escaped text
+ */
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+/**
+ * Highlight the search term in a snippet
+ * @param {string} snippet - The text snippet
+ * @param {string} searchTerm - The term to highlight
+ * @returns {string} - HTML with highlighted term
+ */
+function highlightSearchTerm(snippet, searchTerm) {
+    const regex = new RegExp(`(${escapeRegExp(searchTerm)})`, 'gi');
+    return snippet.replace(regex, '<mark>$1</mark>');
+}
+
+/**
+ * Escape special regex characters
+ * @param {string} string - String to escape
+ * @returns {string} - Escaped string
+ */
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Set up click handlers for search result items
+ */
+function setupSearchResultClickHandlers() {
+    const titleRows = document.querySelectorAll('.search-result-title-row');
+    const snippetItems = document.querySelectorAll('.search-result-snippet');
+
+    // Handler for clicking on page title - navigates to page
+    titleRows.forEach(item => {
+        item.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            await navigateToSearchResult(item.dataset.path, null);
+        });
+    });
+
+    // Handler for clicking on snippet - navigates to page and scrolls to match
+    snippetItems.forEach(item => {
+        item.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const searchTerm = item.dataset.search;
+            await navigateToSearchResult(item.dataset.path, searchTerm);
+        });
+    });
+}
+
+/**
+ * Navigate to a search result and optionally scroll to the matching text
+ * @param {string} path - Path to the markdown file
+ * @param {string|null} searchTerm - The search term to scroll to, or null to just navigate
+ */
+async function navigateToSearchResult(path, searchTerm) {
+    if (!path) return;
+
+    // Find and select the corresponding topic button
+    const targetButton = document.querySelector(`[data-path="${path}"]`);
+
+    // Deselect current selections
+    if (currentlySelectedTopic) {
+        currentlySelectedTopic.classList.remove('topic-selected');
+        currentlySelectedTopic.classList.add('topic-unselected');
+    }
+    if (currentlySelectedCategory) {
+        currentlySelectedCategory.classList.remove('topic-category-button-selected');
+        currentlySelectedCategory = null;
+    }
+
+    // If the button exists in the DOM, select it
+    if (targetButton) {
+        targetButton.classList.remove('topic-unselected');
+        targetButton.classList.add('topic-selected');
+        currentlySelectedTopic = targetButton;
+    }
+
+    // Load and display the content
+    const md = await converter.loadMarkdown('assets/' + path);
+    currentMarkdownContent = md;
+    const html = converter.convert(md, path);
+    preview.innerHTML = html;
+
+    const rightPanelHeader = document.getElementById("right-panel-header");
+    const headings = await getMarkdownHeaders('assets/' + path);
+    rightPanelHeader.innerHTML = await generateHtmlRightHeader(headings);
+    setupRightPanelListeners(rightPanelHeader);
+    setupEndButtonListeners();
+
+    // Save state
+    saveContentStructureState();
+
+    // Close the search popup
+    const searchPopup = document.getElementById("searchPopup");
+    searchPopup.classList.remove('visible');
+    document.getElementById("searchInput").value = "";
+
+    // If we have a search term, find and scroll to it
+    if (searchTerm) {
+        // Wait for DOM to update
+        setTimeout(() => {
+            scrollToTextInContent(searchTerm);
+        }, 100);
+    }
+}
+
+/**
+ * Find and scroll to text content in the display window, highlighting it
+ * @param {string} searchTerm - The text to find and scroll to
+ */
+function scrollToTextInContent(searchTerm) {
+    const container = document.querySelector('.display-window');
+    const markdownContainer = document.getElementById('markdown-container');
+    
+    if (!markdownContainer || !container) return;
+
+    // Use TreeWalker to find text nodes containing the search term
+    const walker = document.createTreeWalker(
+        markdownContainer,
+        NodeFilter.SHOW_TEXT,
+        {
+            acceptNode: function(node) {
+                if (node.textContent.toLowerCase().includes(searchTerm.toLowerCase())) {
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+                return NodeFilter.FILTER_SKIP;
+            }
+        }
+    );
+
+    const textNode = walker.nextNode();
+    if (textNode && textNode.parentElement) {
+        const element = textNode.parentElement;
+        
+        // Scroll the element into view
+        const rect = element.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        const scrollTop = container.scrollTop + (rect.top - containerRect.top) - 100; // 100px offset from top
+        
+        container.scrollTo({ top: scrollTop, behavior: 'smooth' });
+
+        // Highlight the element temporarily
+        element.classList.add('search-highlight-flash');
+        setTimeout(() => {
+            element.classList.remove('search-highlight-flash');
+        }, 2000);
+    }
 }
 
 /**
