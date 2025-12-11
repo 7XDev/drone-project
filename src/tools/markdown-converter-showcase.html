@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown Converter Showcase</title>
     
-    <!-- Import styles and fonts from main documentation -->
     <link rel="stylesheet" href="../doc/styles/styles.css">
     <link rel="stylesheet" href="../doc/styles/markdown-styles.css">
     
@@ -119,10 +118,8 @@
         
         input.addEventListener('input', updatePreview);
         
-        // Initial render
         updatePreview();
         
-        // Apply saved theme on load
         const savedTheme = localStorage.getItem("theme");
         if (savedTheme === "dark") {
             document.documentElement.classList.add("dark-mode");
