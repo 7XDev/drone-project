@@ -78,6 +78,8 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    min-width: 122px;
+    justify-content: center;
 }
 
 #lightDarkToggle:hover {
@@ -101,26 +103,11 @@ body {
     transition: filter 0.3s ease;
 }
 
-.lightmode-icon {
-    width: 16px;
-    height: 16px;
-    filter: brightness(0) saturate(100%) invert(100%);
-    transition: filter 0.3s ease;
-}
-
-.darkmode-icon {
-    width: 16px;
-    height: 16px;
-    transition: filter 0.3s ease;
-}
-
 .icon-text {
     line-height: 1;
 }
 
-.darkmode-text {
-    line-height: 1;
-}.header-logo {
+.header-logo {
     margin-left: 8%;
 
     display:flex;
@@ -158,8 +145,7 @@ body {
     background-color: var(--button-bg);
     border: 1px solid var(--border-color);
     border-radius: 5px;
-    padding: 0.6rem 1rem;
-    line-height: 1.5;
+    padding: 0.5rem 1rem;
     transition: background-color 0.3s ease, border-color 0.2s ease;
 }
 
@@ -175,6 +161,10 @@ body {
     font-size: 14px;
     outline: none;
     width: 180px;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    top: 1.5px;
 }
 
 .header-search-bar input::placeholder {
@@ -183,9 +173,10 @@ body {
 }
 
 .search-icon {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     opacity: 0.7;
+    flex-shrink: 0;
 }
 
 .side-line {
@@ -257,17 +248,6 @@ main {
     width: 2px;
     height: 0.25rem;
     background-color: rgba(44, 98, 245, 0.3);
-}
-
-.topic-button-selected {
-    border-radius: 5px;
-    transition: 0.1s;
-    padding: 0.5rem;
-    width: 100%;
-}
-
-.topic-button-selected:hover {
-    background-color: var(--topic-selected-hover-bg);
 }
 
 .topic-selected {
@@ -446,12 +426,6 @@ main {
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.top-line {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-}
-
 .copy-button {
     position: static;
     background-color: var(--button-bg);
@@ -497,44 +471,12 @@ footer a {
     color: var(--text-color);
     text-decoration: none;
     opacity: 0.7;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 footer a:hover {
     opacity: 1;
     text-decoration: underline;
-}
-
-/*Section for credits.html*/
-.creditsContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.creditsContainer ul {
-    margin-top: -1rem;
-    padding-left: 1.5rem;
-}
-
-.creditsContainer li {
-    margin: 0.1rem 0;
-}
-
-.creditsContainer a {
-    text-decoration: none;
-    color: rgb(79, 128, 235);
-    opacity: 0.85;
-    transition: opacity 0.2s ease;
-}
-
-.creditsContainer a:hover {
-    opacity: 1;
-    text-decoration: underline;
-}
-
-footer a {
-    transition: color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 @media (max-width: 768px) {

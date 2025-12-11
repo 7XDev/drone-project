@@ -26,8 +26,9 @@ window.lightDarkModeToggle = lightDarkModeToggle;
 // Make function available globally for onclick handler
 window.copyButtonTrigger = copyButtonTrigger;
 
-// Make searchbar function available globally for onfocus handler
-window.searchbar = searchbar;
+// Make searchbar functions available globally for onfocus/onblur handlers
+window.searchbarFocus = searchbarFocus;
+window.searchbarBlur = searchbarBlur;
 
 /**
  * Gets all the markdown headings to display in the right panel
@@ -56,12 +57,24 @@ async function getMarkdownHeaders(path) {
 }
 
 /**
- * Search bar function
+ * Search bar focus handler - called when searchbar receives focus
  */
-function searchbar() {
-    const searchBar = document.getElementById("searchInput");
+function searchbarFocus() {
     const searchPopup = document.getElementById("searchPopup");
     searchPopup.classList.add('visible');
+}
+
+/**
+ * Search bar blur handler - called when searchbar loses focus
+ */
+function searchbarBlur() {
+    const searchPopup = document.getElementById("searchPopup");
+    const searchInput = document.getElementById("searchInput");
+    // Use setTimeout to allow click events on popup items to fire before hiding
+    setTimeout(() => {
+        searchPopup.classList.remove('visible');
+    }, 150);
+    searchInput.value = "";
 }
 
 /**
@@ -77,11 +90,11 @@ function lightDarkModeToggle() {
 
     // Toggle mode switch button content (only update src and text, preserve DOM for smooth transition)
     if (html.classList.contains("dark-mode")) {
-        toggleIcon.src = 'assets/img/dark.svg';
+        toggleIcon.src = 'assets/img/light.svg';
         toggleText.textContent = 'Light Mode';
         localStorage.setItem("theme", "dark");
     } else {
-        toggleIcon.src = 'assets/img/light.svg';
+        toggleIcon.src = 'assets/img/dark.svg';
         toggleText.textContent = 'Dark Mode';
         localStorage.setItem("theme", "light");
     }
@@ -934,7 +947,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
         const toggleButton = document.getElementById("lightDarkToggle");
         const copyButton = document.getElementById("copyButton");
         if (toggleButton) {
-            toggleButton.innerHTML = '<img class="icon" src="assets/img/dark.svg"><span class="icon-text">Light Mode</span>';
+            toggleButton.innerHTML = '<img class="icon" src="assets/img/light.svg"><span class="icon-text">Light Mode</span>';
             copyButton.innerHTML = '<img class="icon" src="assets/img/copy.svg"></img><span class="icon-text">Copy</span>';
         }
     }

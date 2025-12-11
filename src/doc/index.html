@@ -15,8 +15,24 @@
     <script>
         (function () {
             const savedTheme = localStorage.getItem("theme");
+            // Apply dark mode class immediately to prevent flash
             if (savedTheme === "dark") {
                 document.documentElement.classList.add("dark-mode");
+            }
+            // Update button icon/text after DOM is ready
+            function updateToggleButton() {
+                const toggleButton = document.getElementById("lightDarkToggle");
+                if (toggleButton && savedTheme === "dark") {
+                    const toggleIcon = toggleButton.querySelector('.icon');
+                    const toggleText = toggleButton.querySelector('.icon-text');
+                    toggleIcon.src = 'assets/img/light.svg';
+                    toggleText.textContent = 'Light Mode';
+                }
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener("DOMContentLoaded", updateToggleButton);
+            } else {
+                updateToggleButton();
             }
         })();
     </script>
@@ -35,7 +51,7 @@
             <div class="header-controls">
                 <div class="header-search-bar">
                     <img class="icon search-icon" src="assets/img/search.svg" alt="search-icon">
-                    <input type="text" onfocus="searchbar()" id="searchInput" placeholder="Search documentation...">
+                    <input type="text" onfocus="searchbarFocus()" onblur="searchbarBlur()" id="searchInput" placeholder="Search documentation...">
                     <div id="searchPopup" class="search-popup">
                         <!-- Popup content goes here -->
                         <ul class="search-results">
@@ -45,7 +61,7 @@
                     </div>
                 </div>
                 <button id="lightDarkToggle" onclick="lightDarkModeToggle()">
-                    <img class="icon" src="assets/img/light.svg" alt="modeswitch-icon">
+                    <img class="icon" src="assets/img/dark.svg" alt="modeswitch-icon">
                     <span class="icon-text">Dark Mode</span>
                 </button>
             </div>
