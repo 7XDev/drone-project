@@ -356,7 +356,7 @@ main {
     flex: 0 0 auto;
     width: 15%;
     overflow-y: auto;
-    max-height: calc(100vh - 120px); /* max-height minus header height */
+    max-height: calc(100vh - 120px); 
     overflow-x: hidden;
     padding-right: 1rem;
 }
