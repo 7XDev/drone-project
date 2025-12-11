@@ -33,10 +33,24 @@ class MarkdownConverter {
         let inOrderedList = false;
         let inCodeBlock = false;
         let inTable = false;
+        let inCalculation = false;
+        let calculationContent = [];
         let tableHeaders = [];
 
         for (const line of lines) {
-            if (/^```/.test(line)) {
+            // Calculation block toggle
+            if (/^#cal/.test(line)) {
+                if (inCalculation) {
+                    htmlLines.push(`<div class="markdown-calculation">${calculationContent.join('<br>')}</div>`);
+                    calculationContent = [];
+                    inCalculation = false;
+                } else {
+                    inCalculation = true;
+                    calculationContent = [];
+                }
+            } else if (inCalculation) {
+                calculationContent.push(this.escapeHtml(line));
+            } else if (/^```/.test(line)) {
                 if (inCodeBlock) {
                     htmlLines.push('</pre>');
                     inCodeBlock = false;
@@ -137,6 +151,10 @@ class MarkdownConverter {
         if (inTable) {
             htmlLines.push('</tbody>');
             htmlLines.push('</table>');
+        }
+        if (inCalculation) {
+            // Close any unclosed calculation block
+            htmlLines.push(`<div class="markdown-calculation">${calculationContent.join('<br>')}</div>`);
         }
 
         return this.processSignatureBlocks(htmlLines.join('\n'));
