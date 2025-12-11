@@ -77,11 +77,11 @@ function lightDarkModeToggle() {
 
     // Toggle mode switch button content (only update src and text, preserve DOM for smooth transition)
     if (html.classList.contains("dark-mode")) {
-        toggleIcon.src = 'assets/img/dark.svg';
+        toggleIcon.src = 'assets/img/light.svg';
         toggleText.textContent = 'Light Mode';
         localStorage.setItem("theme", "dark");
     } else {
-        toggleIcon.src = 'assets/img/light.svg';
+        toggleIcon.src = 'assets/img/dark.svg';
         toggleText.textContent = 'Dark Mode';
         localStorage.setItem("theme", "light");
     }
@@ -934,7 +934,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
         const toggleButton = document.getElementById("lightDarkToggle");
         const copyButton = document.getElementById("copyButton");
         if (toggleButton) {
-            toggleButton.innerHTML = '<img class="icon" src="assets/img/dark.svg"><span class="icon-text">Light Mode</span>';
+            toggleButton.innerHTML = '<img class="icon" src="assets/img/light.svg"><span class="icon-text">Light Mode</span>';
             copyButton.innerHTML = '<img class="icon" src="assets/img/copy.svg"></img><span class="icon-text">Copy</span>';
         }
     }
