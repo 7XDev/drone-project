@@ -14,7 +14,7 @@ Setting up the software environment is a crucial step in building and programmin
    - Click "Install" next to the "esp32" entry by Espressif Systems.
 
 2. **Select the Correct Board**:  
-   - Go to `Tools > Board` and select your board (e.g., "Seeed Studio XIAO ESP32C3").
+   - Go to `Tools > Board` and select your board (e.g., "ESP32 CAM").
 
 Your Arduino IDE is now ready to program the microcontroller.
 

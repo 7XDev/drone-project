@@ -1,9 +1,7 @@
 # Software Requirements
-
 The following software tools are required or recommended for working with the drone project.
 
 ## Necessary Software
-
 ### 3D Printer Slicer
 **Purpose:** Export G-code files to print the necessary parts.
   - [Creality Print](https://www.creality.com/pages/download)
@@ -17,7 +15,6 @@ The following software tools are required or recommended for working with the dr
 chmod +x <filename>
 ./filename.AppImage
 ```
-
 3. For DEB:
 ```
 sudo dpkg -i <filename>.deb
