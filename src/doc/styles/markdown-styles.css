@@ -550,9 +550,41 @@ body {
     background-color: var(--md-code-block-bg);
     border: 1px solid var(--md-code-block-border);
     border-radius: 5px;
-    padding: 1rem;
+    padding: 0 1rem 1rem 1rem;
     margin: 1rem 0;
     overflow-x: auto;
-    white-space: pre;
+    white-space: pre-wrap;
+    text-align: left;
     transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.markdown-formatted-code-header {
+    width: 100%;
+}
+
+.code-lang {
+    font-family: 'league-spartan';
+    user-select: none;
+}
+
+.markdown-formatted-code-content {
+    display: flex;
+    flex-direction: row;
+    align-self: flex-start;
+    gap: 0.5rem;
+}
+
+.markdown-formatted-code-line-numbers {
+    min-width: 2.5em;
+    text-align: right;
+    color: #888;
+    user-select: none;
+    font-family: monospace;
+    padding-right: 0.5em;
+}
+
+.markdown-formatted-code-content-lines {
+    flex: 1;
+    white-space: pre-wrap;
+    font-family: monospace;
 }

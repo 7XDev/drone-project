@@ -39,6 +39,7 @@ class MarkdownConverter {
         let inFormattedCode = false;
         let currentFormattedCodeLang = "";
         let formattedCodeContent = [];
+        let formattedCodeBlockText = "";
 
         for (const line of lines) {
             if(/#codefs\((\w+)\)/.test(line)) {
@@ -48,8 +49,21 @@ class MarkdownConverter {
                 const match = line.match(/#codefs\((\w+)\)/);
                 currentFormattedCodeLang = match[1];
             } else if (/^#codefe/.test(line)) {
-                htmlLines.push(`<div class="markdown-formatted-code">${formattedCodeContent.join('<br>')}</div>`)             
-                inFormattedCode = false;
+                let lineNumbers = [];
+                for(let i = 0; i < formattedCodeContent.length; i++) {
+                    const newLineNumber = `<span class="markdown-formatted-code-line-number">${i + 1}</span>`;
+                    lineNumbers.push(newLineNumber);
+                }
+
+                htmlLines.push(`<div class="markdown-formatted-code">
+                                    <div class="markdown-formatted-code-header">
+                                        <p class="code-lang">${currentFormattedCodeLang}</p>
+                                    </div>
+                                    <div class="markdown-formatted-code-content">
+                                        <div class="markdown-formatted-code-line-numbers">${lineNumbers.join('<br>')}</div>
+                                        <div class="markdown-formatted-code-content-lines">${formattedCodeContent.join('<br>')}</div>
+                                    </div>
+                                </div>`);                inFormattedCode = false;
             } else if (inFormattedCode) {
                 // Inner code
                 formattedCodeContent.push(this.escapeHtml(line));
