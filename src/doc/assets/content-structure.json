@@ -58,11 +58,6 @@
     "collapsed": false,
     "children": [
       {
-        "type": "page",
-        "name": "🛡️ Safety Checks",
-        "path": "content/safety-checks.md"
-      },
-      {
         "type": "category",
         "name": "🛠️ Exploring Components",
         "path": "content/exploring-component.md",
