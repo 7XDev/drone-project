@@ -39,30 +39,155 @@ body {
 .search-popup {
     position: absolute;
     top: 130%;
-    left: 0;
-    width: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    width: 340px;
     
     /* Styling */
-    background: var(--button-bg);
+    background: var(--bg-color);
     color: var(--text-color);
     border: 1px solid var(--border-color);
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.1);
     z-index: 100;
-    max-height: 300px;
+    max-height: 350px;
     overflow-y: auto;
     
     /* Animation - initially hidden */
     opacity: 0;
-    transform: translateY(-10px);
     pointer-events: none;
     transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 .search-popup.visible {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
     pointer-events: auto;
+}
+
+/* Search Results Styling */
+.search-results {
+    list-style: none;
+    margin: 0;
+    padding: 8px;
+}
+
+.search-no-results,
+.search-loading {
+    padding: 16px;
+    color: var(--text-color);
+    opacity: 0.6;
+    font-size: 13px;
+    font-family: league-spartan;
+    text-align: center;
+}
+
+.search-category-header {
+    padding: 12px 12px 6px 12px;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-color);
+    opacity: 0.6;
+    background: transparent;
+    font-family: league-spartan;
+    letter-spacing: 0.8px;
+}
+
+.search-category-header:first-child {
+    padding-top: 4px;
+}
+
+.search-result-item {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 4px;
+}
+
+.search-result-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+}
+
+.search-result-title-row:hover {
+    background-color: var(--hover-bg);
+}
+
+.search-result-icon {
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+.search-result-title {
+    font-weight: 500;
+    font-size: 14px;
+    font-family: league-spartan;
+    color: var(--text-color);
+}
+
+.search-result-snippets {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-left: 36px;
+    margin-bottom: 4px;
+}
+
+.search-result-snippet {
+    font-size: 12px;
+    color: var(--text-color);
+    font-family: league-spartan;
+    line-height: 1.5;
+    padding: 8px 12px;
+    background: var(--button-bg);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    border-left: 3px solid transparent;
+}
+
+.search-result-snippet:hover {
+    background-color: var(--hover-bg);
+    border-left-color: var(--topic-selected-color);
+    transform: translateX(2px);
+}
+
+.snippet-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    opacity: 0.8;
+}
+
+.search-result-snippet mark {
+    background-color: rgba(255, 200, 0, 0.35);
+    color: inherit;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: 500;
+}
+
+:root.dark-mode .search-result-snippet mark {
+    background-color: rgba(255, 200, 0, 0.25);
+}
+
+/* Highlight flash animation for scroll-to text */
+@keyframes highlightFlash {
+    0% { background-color: rgba(255, 200, 0, 0.5); }
+    100% { background-color: transparent; }
+}
+
+.search-highlight-flash {
+    animation: highlightFlash 2s ease-out;
+    border-radius: 4px;
 }
 
 #lightDarkToggle {
@@ -151,6 +276,11 @@ body {
 
 .header-search-bar:focus-within {
     border-color: var(--topic-selected-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+:root.dark-mode .header-search-bar:focus-within {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .header-search-bar input {
