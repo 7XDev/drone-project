@@ -41,15 +41,20 @@ class MarkdownConverter {
         let fomrattedCodeContent = [];
 
         for (const line of lines) {
-            // if(/^/.test(line)) {
-            //     if (inCalculation) {
-            //         htmlLines.push();
-            //     }
-            //     inFormattedCode = !inFormattedCode;
-            //     fomrattedCodeContent = [];
-            // } else
-            
-            if (/^#cal/.test(line)) {
+            if(/#codefs\((\w+)\)/.test(line)) {
+                // Open formatted code
+                inFormattedCode = true;
+                fomrattedCodeContent = [];
+                const match = line.match(/#codefs\((\w+)\)/);
+                currentFormattedCodeLang = match[1];
+            } else if (/^#codefe/.test(line)) {
+                console.log("Close code");
+                // Close formatted code
+                inFormattedCode = false;
+            } else if (inFormattedCode) {
+                // Inner code
+                fomrattedCodeContent.push(line);
+            } else if (/^#cal/.test(line)) {
                 if (inCalculation) {
                     htmlLines.push(`<div class="markdown-calculation">${calculationContent.join('<br>')}</div>`);
                 }
