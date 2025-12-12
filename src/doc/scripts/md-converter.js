@@ -46,7 +46,6 @@ class MarkdownConverter {
 
         for (const line of lines) {
             if (/#codefs\((\w+)\)/.test(line)) {
-                // Open formatted code
                 inFormattedCode = true;
                 formattedCodeContent = [];
                 formattedCodePlainText = [];
@@ -59,7 +58,6 @@ class MarkdownConverter {
                     lineNumbers.push(newLineNumber);
                 }
 
-                // Store plain text in array and get index
                 const codeBlockIndex = this.codeBlocks.length;
                 this.codeBlocks.push(formattedCodePlainText.join('\n'));
 
@@ -73,14 +71,15 @@ class MarkdownConverter {
                                     </div>
                                     <div class="markdown-formatted-code-content">
                                         <div class="markdown-formatted-code-line-numbers">${lineNumbers.join('<br>')}</div>
-                                        <div class="markdown-formatted-code-content-lines">${formattedCodeContent.join('<br>')}</div>
+                                        <div class="markdown-formatted-code-content-lines">${this.colorFormatCode(formattedCodeContent).join('')}</div>
                                     </div>
                                 </div>`);                
                 inFormattedCode = false;
             } else if (inFormattedCode) {
-                // Inner code - store escaped for display, plain for copy
+                console.log(formattedCodeContent);
                 formattedCodeContent.push(this.escapeHtml(line));
                 formattedCodePlainText.push(line);
+                console.log(this.colorFormatCode(formattedCodeContent)); 
             } else if (/^#cal/.test(line)) {
                 if (inCalculation) {
                     htmlLines.push(`<div class="markdown-calculation">${calculationContent.join('<br>')}</div>`);
@@ -197,6 +196,86 @@ class MarkdownConverter {
         }
 
         return this.processSignatureBlocks(htmlLines.join('\n'));
+    }
+
+    // color format lines
+    colorFormatCode(codeLines = []) {
+        let returnLines = [];
+
+        const escapeHtml = (str) => {
+            return str.replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;')
+                      .replace(/"/g, '&quot;')
+                      .replace(/'/g, '&#039;');
+        };
+
+        const keywords = [
+            'auto', 'break', 'case', 'char', 'const', 'continue', 'default', 'do',
+            'double', 'else', 'enum', 'extern', 'float', 'for', 'goto', 'if',
+            'int', 'long', 'register', 'return', 'short', 'signed', 'sizeof',
+            'static', 'struct', 'switch', 'typedef', 'union', 'unsigned', 'void',
+            'volatile', 'while', 'asm', 'bool', 'catch', 'class', 'const_cast',
+            'delete', 'dynamic_cast', 'explicit', 'export', 'false', 'friend',
+            'inline', 'mutable', 'namespace', 'new', 'operator', 'private',
+            'protected', 'public', 'reinterpret_cast', 'static_cast', 'template',
+            'this', 'throw', 'true', 'try', 'typeid', 'typename', 'using',
+            'virtual', 'wchar_t'
+        ];
+
+        const tokenRegex = /\/\/.*?$|\/\*.*?\*\/|"[^"]*"|'[^']*'|#\w+|\b\d+(?:\.\d+)?\b|[{}()[\];,]|[-+\/*=%.&|!<>?:]+|\b\w+\b|\s+/g;
+
+        codeLines.forEach(line => {
+            let newline = [];
+            let lastIndex = 0;
+            tokenRegex.lastIndex = 0;
+
+            while (true) {
+                const match = tokenRegex.exec(line);
+                if (!match) break;
+
+                if (match.index > lastIndex) {
+                    const unmatched = line.substring(lastIndex, match.index);
+                    newline.push(escapeHtml(unmatched));
+                }
+
+                const token = match[0];
+                let colored = false;
+
+                if (token.startsWith('//') || token.startsWith('/*')) {
+                    newline.push(`<span style="color: green;">${escapeHtml(token)}</span>`);
+                    colored = true;
+                } else if (token.startsWith('#')) {
+                    newline.push(`<span style="color: purple;">${escapeHtml(token)}</span>`);
+                    colored = true;
+                } else if (token.startsWith('"') || token.startsWith("'")) {
+                    newline.push(`<span style="color: red;">${escapeHtml(token)}</span>`);
+                    colored = true;
+                } else if (/^\d+(?:\.\d+)?$/.test(token)) {
+                    newline.push(`<span style="color: orange;">${escapeHtml(token)}</span>`);
+                    colored = true;
+                } else if (keywords.includes(token)) {
+                    newline.push(`<span style="color: blue;">${escapeHtml(token)}</span>`);
+                    colored = true;
+                }
+
+                if (!colored) {
+                    newline.push(escapeHtml(token));
+                }
+
+                lastIndex = match.index + token.length;
+            }
+
+            if (lastIndex < line.length) {
+                const unmatched = line.substring(lastIndex);
+                newline.push(escapeHtml(unmatched));
+            }
+
+            const lineHtml = newline.join('');
+            returnLines.push(`<p style="white-space: pre;">${lineHtml}</p>`);
+        });
+
+        return returnLines;
     }
 
     // Detect and convert each line
