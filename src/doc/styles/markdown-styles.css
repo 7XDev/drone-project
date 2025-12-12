@@ -563,7 +563,42 @@ body {
     margin: 0; 
     height: auto; 
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     overflow: visible;
+}
+
+.code-copy-button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--border-color);
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'league-spartan', sans-serif;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.code-copy-button:hover {
+    background-color: var(--hover-bg);
+    transform: scale(1.025);
+}
+
+.code-copy-button:active {
+    transform: scale(0.95);
+}
+
+.code-copy-button .icon {
+    width: 14px;
+    height: 14px;
+}
+
+.code-copy-text {
+    line-height: 1;
 }   
 
 .code-lang {

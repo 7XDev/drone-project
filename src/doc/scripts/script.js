@@ -26,6 +26,9 @@ window.lightDarkModeToggle = lightDarkModeToggle;
 // Make function available globally for onclick handler
 window.copyButtonTrigger = copyButtonTrigger;
 
+// Make copy code block function available globally for onclick handler
+window.copyCodeBlock = copyCodeBlock;
+
 // Make searchbar functions available globally for onfocus/onblur/oninput handlers
 window.searchbarFocus = searchbarFocus;
 window.searchbarBlur = searchbarBlur;
@@ -1199,6 +1202,32 @@ async function copyButtonTrigger() {
         console.error('Failed to copy text: ', err);
     }
 };
+
+/**
+ * Copy code from a formatted code block to clipboard
+ * @param {HTMLElement} button - The copy button that was clicked
+ */
+async function copyCodeBlock(button) {
+    const codeBlock = button.closest('.markdown-formatted-code');
+    const codeIndex = parseInt(codeBlock.getAttribute('data-code-index'));
+    const code = converter.codeBlocks[codeIndex];
+    const textSpan = button.querySelector('.code-copy-text');
+    
+    try {
+        await navigator.clipboard.writeText(code);
+        // Show feedback
+        textSpan.textContent = 'Copied!';
+        setTimeout(() => {
+            textSpan.textContent = 'Copy';
+        }, 2000);
+    } catch (err) {
+        console.error('Failed to copy code: ', err);
+        textSpan.textContent = 'Failed';
+        setTimeout(() => {
+            textSpan.textContent = 'Copy';
+        }, 2000);
+    }
+}
 
 // Refreshes MarkDown-Container and Topic-Container
 async function refresh() {

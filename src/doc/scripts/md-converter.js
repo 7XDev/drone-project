@@ -3,12 +3,14 @@ class MarkdownConverter {
     flatStructure;
     contentStructure;
     currentPageIndex;
+    codeBlocks;
 
     constructor(flatStructure, contentStructure = []) {
         this.headingCount = 0;
         this.currentPageIndex = 0;
         this.flatStructure = flatStructure;
         this.contentStructure = contentStructure;
+        this.codeBlocks = [];
     }
 
     // Load markdown content from a given path
@@ -27,6 +29,7 @@ class MarkdownConverter {
 
         // Set up values for different conversion conditions
         this.headingCount = 0;
+        this.codeBlocks = [];
         const lines = md.split('\n');
         const htmlLines = [];
         let inUnorderedList = false;
@@ -39,25 +42,34 @@ class MarkdownConverter {
         let inFormattedCode = false;
         let currentFormattedCodeLang = "";
         let formattedCodeContent = [];
-        let formattedCodeBlockText = "";
+        let formattedCodePlainText = [];
 
         for (const line of lines) {
-            if(/#codefs\((\w+)\)/.test(line)) {
+            if (/#codefs\((\w+)\)/.test(line)) {
                 // Open formatted code
                 inFormattedCode = true;
                 formattedCodeContent = [];
+                formattedCodePlainText = [];
                 const match = line.match(/#codefs\((\w+)\)/);
                 currentFormattedCodeLang = match[1];
-            } else if (/^#codefe/.test(line)) {
+            } else if (/#codefe/.test(line)) {
                 let lineNumbers = [];
                 for(let i = 0; i < formattedCodeContent.length; i++) {
                     const newLineNumber = `<span class="markdown-formatted-code-line-number">${i + 1}</span>`;
                     lineNumbers.push(newLineNumber);
                 }
 
-                htmlLines.push(`<div class="markdown-formatted-code">
+                // Store plain text in array and get index
+                const codeBlockIndex = this.codeBlocks.length;
+                this.codeBlocks.push(formattedCodePlainText.join('\n'));
+
+                htmlLines.push(`<div class="markdown-formatted-code" data-code-index="${codeBlockIndex}">
                                     <div class="markdown-formatted-code-header">
                                         <p class="code-lang">${currentFormattedCodeLang}</p>
+                                        <button class="code-copy-button" onclick="copyCodeBlock(this)">
+                                            <img class="icon" src="assets/img/copy.svg" alt="copy-icon">
+                                            <span class="code-copy-text">Copy</span>
+                                        </button>
                                     </div>
                                     <div class="markdown-formatted-code-content">
                                         <div class="markdown-formatted-code-line-numbers">${lineNumbers.join('<br>')}</div>
@@ -66,8 +78,9 @@ class MarkdownConverter {
                                 </div>`);                
                 inFormattedCode = false;
             } else if (inFormattedCode) {
-                // Inner code
+                // Inner code - store escaped for display, plain for copy
                 formattedCodeContent.push(this.escapeHtml(line));
+                formattedCodePlainText.push(line);
             } else if (/^#cal/.test(line)) {
                 if (inCalculation) {
                     htmlLines.push(`<div class="markdown-calculation">${calculationContent.join('<br>')}</div>`);

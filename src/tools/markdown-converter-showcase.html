@@ -116,6 +116,28 @@
             output.innerHTML = html;
         }
         
+        // Make copy function available globally for onclick handler
+        window.copyCodeBlock = async function(button) {
+            const codeBlock = button.closest('.markdown-formatted-code');
+            const codeIndex = parseInt(codeBlock.getAttribute('data-code-index'));
+            const code = converter.codeBlocks[codeIndex];
+            const textSpan = button.querySelector('.code-copy-text');
+            
+            try {
+                await navigator.clipboard.writeText(code);
+                textSpan.textContent = 'Copied!';
+                setTimeout(() => {
+                    textSpan.textContent = 'Copy';
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy code: ', err);
+                textSpan.textContent = 'Failed';
+                setTimeout(() => {
+                    textSpan.textContent = 'Copy';
+                }, 2000);
+            }
+        };
+        
         input.addEventListener('input', updatePreview);
         
         updatePreview();
