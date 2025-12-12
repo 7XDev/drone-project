@@ -162,6 +162,7 @@ body {
 .snippet-text {
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     opacity: 0.8;
@@ -544,6 +545,7 @@ main {
     cursor: pointer;
     background-color: rgba(44, 98, 245, 0.08);
     transform: translateX(2px);
+    transition: 0.2s ease-in-out;
 }
 
 .right-bar-items:hover a {
