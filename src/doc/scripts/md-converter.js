@@ -63,7 +63,8 @@ class MarkdownConverter {
                                         <div class="markdown-formatted-code-line-numbers">${lineNumbers.join('<br>')}</div>
                                         <div class="markdown-formatted-code-content-lines">${formattedCodeContent.join('<br>')}</div>
                                     </div>
-                                </div>`);                inFormattedCode = false;
+                                </div>`);                
+                inFormattedCode = false;
             } else if (inFormattedCode) {
                 // Inner code
                 formattedCodeContent.push(this.escapeHtml(line));
@@ -74,6 +75,7 @@ class MarkdownConverter {
                 inCalculation = !inCalculation;
                 calculationContent = [];
             } else if (inCalculation) {
+                console.log(calculationContent)
                 calculationContent.push(this.escapeHtml(line));
             } else if (/^```/.test(line)) {
                 if (inCodeBlock) {

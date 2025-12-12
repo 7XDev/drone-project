@@ -8,6 +8,7 @@
     --md-inline-code-bg: #f4f4f4;
     --md-code-block-bg: #f8f9fa;
     --md-code-block-border: #e9ecef;
+    --md-greyed-out: #a6a6a6;
     --md-positive-bg: rgba(34, 197, 94, 0.1);
     --md-positive-color: rgb(22, 101, 52);
     --md-warning-bg: rgba(245, 158, 11, 0.1);
@@ -547,24 +548,33 @@ body {
 
 .markdown-formatted-code {
     font-family: monospace;
-    background-color: var(--md-code-block-bg);
+    background-color: var(--md-code-bg-color);
     border: 1px solid var(--md-code-block-border);
     border-radius: 5px;
-    padding: 0 1rem 1rem 1rem;
-    margin: 1rem 0;
-    overflow-x: auto;
-    white-space: pre-wrap;
     text-align: left;
+    padding: 0.5rem;
     transition: background-color 0.3s ease, border-color 0.3s ease;
+    overflow: visible;
 }
 
 .markdown-formatted-code-header {
     width: 100%;
-}
+    padding: 0.3em 0.7em 0.3em 0.7em;
+    margin: 0; 
+    height: auto; 
+    display: flex;
+    overflow: visible;
+}   
 
 .code-lang {
     font-family: 'league-spartan';
     user-select: none;
+    align-self: start;
+    color: var(--md-greyed-out);
+    font-size: 1.1em;
+    font-weight: 400;
+    margin: 0;
+    padding: 0;
 }
 
 .markdown-formatted-code-content {
@@ -572,10 +582,12 @@ body {
     flex-direction: row;
     align-self: flex-start;
     gap: 0.5rem;
+    margin: 0;
+    overflow-x: auto;
 }
 
 .markdown-formatted-code-line-numbers {
-    min-width: 2.5em;
+    min-width: 1.5em;
     text-align: right;
     color: #888;
     user-select: none;
