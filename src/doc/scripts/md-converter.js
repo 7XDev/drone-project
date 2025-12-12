@@ -36,28 +36,34 @@ class MarkdownConverter {
         let inCalculation = false;
         let calculationContent = [];
         let tableHeaders = [];
+        let inFormattedCode = false;
+        let currentFormattedCodeLang = "";
+        let fomrattedCodeContent = [];
 
         for (const line of lines) {
-            // Calculation block toggle
+            // if(/^/.test(line)) {
+            //     if (inCalculation) {
+            //         htmlLines.push();
+            //     }
+            //     inFormattedCode = !inFormattedCode;
+            //     fomrattedCodeContent = [];
+            // } else
+            
             if (/^#cal/.test(line)) {
                 if (inCalculation) {
                     htmlLines.push(`<div class="markdown-calculation">${calculationContent.join('<br>')}</div>`);
-                    calculationContent = [];
-                    inCalculation = false;
-                } else {
-                    inCalculation = true;
-                    calculationContent = [];
                 }
+                inCalculation = !inCalculation;
+                calculationContent = [];
             } else if (inCalculation) {
                 calculationContent.push(this.escapeHtml(line));
             } else if (/^```/.test(line)) {
                 if (inCodeBlock) {
                     htmlLines.push('</pre>');
-                    inCodeBlock = false;
                 } else {
                     htmlLines.push('<pre class="markdown-code-block">');
-                    inCodeBlock = true;
                 }
+                inCodeBlock = !inCodeBlock;
             } else if (inCodeBlock) {
                 htmlLines.push(this.escapeHtml(line));
             } else if (this.isTableRow(line)) {
