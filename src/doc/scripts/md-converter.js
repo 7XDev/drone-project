@@ -38,22 +38,21 @@ class MarkdownConverter {
         let tableHeaders = [];
         let inFormattedCode = false;
         let currentFormattedCodeLang = "";
-        let fomrattedCodeContent = [];
+        let formattedCodeContent = [];
 
         for (const line of lines) {
             if(/#codefs\((\w+)\)/.test(line)) {
                 // Open formatted code
                 inFormattedCode = true;
-                fomrattedCodeContent = [];
+                formattedCodeContent = [];
                 const match = line.match(/#codefs\((\w+)\)/);
                 currentFormattedCodeLang = match[1];
             } else if (/^#codefe/.test(line)) {
-                console.log("Close code");
-                // Close formatted code
+                htmlLines.push(`<div class="markdown-formatted-code">${formattedCodeContent.join('<br>')}</div>`)             
                 inFormattedCode = false;
             } else if (inFormattedCode) {
                 // Inner code
-                fomrattedCodeContent.push(line);
+                formattedCodeContent.push(this.escapeHtml(line));
             } else if (/^#cal/.test(line)) {
                 if (inCalculation) {
                     htmlLines.push(`<div class="markdown-calculation">${calculationContent.join('<br>')}</div>`);

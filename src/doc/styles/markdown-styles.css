@@ -542,4 +542,17 @@ body {
 .markdown-calculation {
     padding: 1rem;
     font-family:'Courier New', Courier, monospace;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.markdown-formatted-code {
+    font-family: monospace;
+    background-color: var(--md-code-block-bg);
+    border: 1px solid var(--md-code-block-border);
+    border-radius: 5px;
+    padding: 1rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+    white-space: pre;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
