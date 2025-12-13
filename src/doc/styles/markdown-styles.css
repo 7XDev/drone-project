@@ -27,6 +27,10 @@
     --md-table-row-hover-bg: #f3f4f6;
 
     --md-cb-text: #0a0a0a;
+    --md-cb-comment: #188418;
+    --md-cb-number: #dfb11b;
+    --md-cb-keyword: #0e00d5;
+    --md-cb-hash: #c915e1; 
 }
 
 :root.dark-mode {
@@ -52,6 +56,10 @@
     --md-table-row-hover-bg: #2d2d2d;
 
     --md-cb-text: #e0e0e0; 
+    --md-cb-comment: #379837;
+    --md-cb-number: #dfb11b;
+    --md-cb-keyword: #4f43ff;
+    --md-cb-hash: #cf11e8; 
 }
 
 /* General Styles */
@@ -645,4 +653,25 @@ body {
 .markdown-formatted-code-content-lines p {
     margin: 0;
     padding: 0;
+}
+
+/* Markdown Code Styles */
+.markdown-code-text {
+    color: var(--md-cb-text);
+}
+
+.markdown-code-comment {
+    color: var(--md-cb-comment);
+}
+
+.markdown-code-keyword {
+    color: var(--md-cb-keyword);
+}
+
+.markdown-code-number {
+    color: var(--md-cb-number);
+}
+
+.markdown-code-hash {
+    color: var(--md-cb-hash)
 }

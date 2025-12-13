@@ -76,8 +76,8 @@ class MarkdownConverter {
                                 </div>`);                
                 inFormattedCode = false;
             } else if (inFormattedCode) {
-                console.log(formattedCodeContent);
-                formattedCodeContent.push(this.escapeHtml(line));
+                // Only push raw line, do not escape here
+                formattedCodeContent.push(line);
                 formattedCodePlainText.push(line);
                 console.log(this.colorFormatCode(formattedCodeContent)); 
             } else if (/^#cal/.test(line)) {
@@ -243,24 +243,33 @@ class MarkdownConverter {
                 let colored = false;
 
                 if (token.startsWith('//') || token.startsWith('/*')) {
-                    newline.push(`<span style="color: green;">${escapeHtml(token)}</span>`);
+                    newline.push(`<span class="markdown-code-comment">${escapeHtml(token)}</span>`);
                     colored = true;
                 } else if (token.startsWith('#')) {
-                    newline.push(`<span style="color: purple;">${escapeHtml(token)}</span>`);
+                    newline.push(`<span class="markdown-code-hash">${escapeHtml(token)}</span>`);
                     colored = true;
                 } else if (token.startsWith('"') || token.startsWith("'")) {
                     newline.push(`<span style="color: red;">${escapeHtml(token)}</span>`);
                     colored = true;
                 } else if (/^\d+(?:\.\d+)?$/.test(token)) {
-                    newline.push(`<span style="color: orange;">${escapeHtml(token)}</span>`);
+                    newline.push(`<span class="markdown-code-number">${escapeHtml(token)}</span>`);
                     colored = true;
                 } else if (keywords.includes(token)) {
-                    newline.push(`<span style="color: blue;">${escapeHtml(token)}</span>`);
+                    newline.push(`<span class="markdown-code-keyword">${escapeHtml(token)}</span>`);
+                    colored = true;
+                } else if (/^<.*>$/.test(token)) {
+                    // If token is already an HTML tag, don't escape
+                    newline.push(token);
                     colored = true;
                 }
 
                 if (!colored) {
-                    newline.push(`<span>${escapeHtml(token)}</span>`);
+                    // Only escape if not already an HTML entity
+                    if (/^&[a-zA-Z]+;/.test(token)) {
+                        newline.push(`<span>${token}</span>`);
+                    } else {
+                        newline.push(`<span>${escapeHtml(token)}</span>`);
+                    }
                 }
 
                 lastIndex = match.index + token.length;
