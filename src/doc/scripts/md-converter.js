@@ -45,11 +45,11 @@ class MarkdownConverter {
         let formattedCodePlainText = [];
 
         for (const line of lines) {
-            if (/#codefs\((\w+)\)/.test(line)) {
+            if (/#codefs\(([^)]+)\)/.test(line)) {
                 inFormattedCode = true;
                 formattedCodeContent = [];
                 formattedCodePlainText = [];
-                const match = line.match(/#codefs\((\w+)\)/);
+                const match = line.match(/#codefs\(([^)]+)\)/);
                 currentFormattedCodeLang = match[1];
             } else if (/#codefe/.test(line)) {
                 let lineNumbers = [];
@@ -249,7 +249,7 @@ class MarkdownConverter {
                     newline.push(`<span class="markdown-code-hash">${escapeHtml(token)}</span>`);
                     colored = true;
                 } else if (token.startsWith('"') || token.startsWith("'")) {
-                    newline.push(`<span style="color: red;">${escapeHtml(token)}</span>`);
+                    newline.push(`<span class="markdown-code-qmark">${escapeHtml(token)}</span>`);
                     colored = true;
                 } else if (/^\d+(?:\.\d+)?$/.test(token)) {
                     newline.push(`<span class="markdown-code-number">${escapeHtml(token)}</span>`);
@@ -258,13 +258,11 @@ class MarkdownConverter {
                     newline.push(`<span class="markdown-code-keyword">${escapeHtml(token)}</span>`);
                     colored = true;
                 } else if (/^<.*>$/.test(token)) {
-                    // If token is already an HTML tag, don't escape
                     newline.push(token);
                     colored = true;
                 }
 
                 if (!colored) {
-                    // Only escape if not already an HTML entity
                     if (/^&[a-zA-Z]+;/.test(token)) {
                         newline.push(`<span>${token}</span>`);
                     } else {

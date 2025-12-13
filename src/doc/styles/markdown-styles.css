@@ -31,6 +31,7 @@
     --md-cb-number: #dfb11b;
     --md-cb-keyword: #0e00d5;
     --md-cb-hash: #c915e1; 
+    --md-cb-qmark: #a84600;
 }
 
 :root.dark-mode {
@@ -60,6 +61,7 @@
     --md-cb-number: #dfb11b;
     --md-cb-keyword: #4f43ff;
     --md-cb-hash: #cf11e8; 
+    --md-cb-qmark: #db8b52;
 }
 
 /* General Styles */
@@ -674,4 +676,8 @@ body {
 
 .markdown-code-hash {
     color: var(--md-cb-hash)
+}
+
+.markdown-code-qmark {
+    color: var(--md-cb-qmark);
 }
