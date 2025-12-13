@@ -1216,7 +1216,6 @@ async function copyCodeBlock(button) {
     try {
         await navigator.clipboard.writeText(code);
         // Show feedback
-        textSpan.textContent = 'Copied!';
         setTimeout(() => {
             textSpan.textContent = 'Copy';
         }, 2000);

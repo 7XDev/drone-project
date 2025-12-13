@@ -576,12 +576,11 @@ main {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.1s ease;
 }
 
 .copy-button:hover {
     background-color: var(--hover-bg);
-    transform: scale(1.025);
 }
 
 .copy-button:active {
