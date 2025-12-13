@@ -32,9 +32,12 @@
     --md-cb-keyword: #0e00d5;
     --md-cb-hash: #c915e1; 
     --md-cb-qmark: #a84600;
-    --md-cb-brc: #0a0a0a;
-    --md-cb-cbrc: #0a0a0a;
-    --md-cb-sbrc: #0e00d5;
+    --md-cb-brc: var(--md-cb-text);     /* Brackets */
+    --md-cb-cbrc: var(--md-cb-text);    /* Curly Brackets */
+    --md-cb-sbrc: var(--md-cb-keyword); /* Square Brackets */
+    --md-cb-dot: var(--md-cb-text);
+    --md-cb-object: #001369;
+    --md-cb-property: #575a00;
 }
 
 :root.dark-mode {
@@ -65,9 +68,12 @@
     --md-cb-keyword: #4f43ff;
     --md-cb-hash: #cf11e8; 
     --md-cb-qmark: #db8b52;
-    --md-cb-brc: #e0e0e0;
-    --md-cb-cbrc: #e0e0e0;
-    --md-cb-sbrc: #4f43ff;
+    --md-cb-brc: var(--md-cb-text);     /* Brackets */
+    --md-cb-cbrc: var(--md-cb-text);    /* Curly Brackets */
+    --md-cb-sbrc: var(--md-cb-keyword); /* Square Brackets */
+    --md-cb-dot: var(--md-cb-text);
+    --md-cb-object: #bbc2e3;
+    --md-cb-property: #e6e7c8;
 }
 
 /* General Styles */
@@ -698,4 +704,16 @@ body {
 
 .markdown-code-square-brackets {
     color: var(--md-cb-sbrc);
+}
+
+.markdown-code-dot {
+    color: var(--md-cb-dot);
+}
+
+.markdown-code-object {
+    color: var(--md-cb-object);
+}
+
+.markdown-code-property {
+    color: var(--md-cb-property);
 }

@@ -221,11 +221,12 @@ class MarkdownConverter {
             'virtual', 'wchar_t'
         ];
 
-        const tokenRegex = /\/\/.*?$|\/\*.*?\*\/|"[^"]*"|'[^']*'|#\w+|\b\d+(?:\.\d+)?\b|[{}()[\];,]|[-+\/*=%.&|!<>?:]+|\b\w+\b|\s+/g;
+        const tokenRegex = /\/\/.*?$|\/\*.*?\*\/|"[^"]*"|'[^']*'|#\w+|\b\d+(?:\.\d+)?\b|\b\w+(?=\.)|(?<=\.)\w+\b|[{}()[\];,.]|[-+\/*=%.&|!<>?:]+|\b\w+\b|\s+/g;
 
         codeLines.forEach(line => {
             let newline = [];
             let lastIndex = 0;
+            let previousToken = '';
             tokenRegex.lastIndex = 0;
 
             if (line == "") {
@@ -255,6 +256,12 @@ class MarkdownConverter {
                     } else if (/^\d+(?:\.\d+)?$/.test(token)) {
                         newline.push(`<span class="markdown-code-number">${escapeHtml(token)}</span>`);
                         colored = true;
+                    } else if (/^\w+$/.test(token) && previousToken === '.') {
+                        newline.push(`<span class="markdown-code-property">${escapeHtml(token)}</span>`);
+                        colored = true;
+                    } else if (/^\w+$/.test(token) && line.charAt(match.index + token.length) === '.') {
+                        newline.push(`<span class="markdown-code-object">${escapeHtml(token)}</span>`);
+                        colored = true;
                     } else if (keywords.includes(token)) {
                         newline.push(`<span class="markdown-code-keyword">${escapeHtml(token)}</span>`);
                         colored = true;
@@ -266,6 +273,9 @@ class MarkdownConverter {
                         colored = true;
                     } else if (/^[{}]$/.test(token)) {
                         newline.push(`<span class="markdown-code-curly-brackets">${escapeHtml(token)}</span>`);
+                        colored = true;
+                    } else if (token === '.') {
+                        newline.push(`<span class="markdown-code-dot">${escapeHtml(token)}</span>`);
                         colored = true;
                     } else if (/^<.*>$/.test(token)) {
                         newline.push(token);
@@ -280,6 +290,7 @@ class MarkdownConverter {
                         }
                     }
 
+                    previousToken = token.trim();
                     lastIndex = match.index + token.length;
                 }
             }
