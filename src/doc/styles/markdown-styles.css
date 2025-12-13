@@ -32,6 +32,9 @@
     --md-cb-keyword: #0e00d5;
     --md-cb-hash: #c915e1; 
     --md-cb-qmark: #a84600;
+    --md-cb-brc: #0a0a0a;
+    --md-cb-cbrc: #0a0a0a;
+    --md-cb-sbrc: #0e00d5;
 }
 
 :root.dark-mode {
@@ -62,6 +65,9 @@
     --md-cb-keyword: #4f43ff;
     --md-cb-hash: #cf11e8; 
     --md-cb-qmark: #db8b52;
+    --md-cb-brc: #e0e0e0;
+    --md-cb-cbrc: #e0e0e0;
+    --md-cb-sbrc: #4f43ff;
 }
 
 /* General Styles */
@@ -680,4 +686,16 @@ body {
 
 .markdown-code-qmark {
     color: var(--md-cb-qmark);
+}
+
+.markdown-code-brackets {
+    color: var(--md-cb-brc);
+}
+
+.markdown-code-curly-brackets {
+    color: var(--md-cb-cbrc);
+}
+
+.markdown-code-square-brackets {
+    color: var(--md-cb-sbrc);
 }

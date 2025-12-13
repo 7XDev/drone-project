@@ -79,7 +79,6 @@ class MarkdownConverter {
                 // Only push raw line, do not escape here
                 formattedCodeContent.push(line);
                 formattedCodePlainText.push(line);
-                console.log(this.colorFormatCode(formattedCodeContent)); 
             } else if (/^#cal/.test(line)) {
                 if (inCalculation) {
                     htmlLines.push(`<div class="markdown-calculation">${calculationContent.join('<br>')}</div>`);
@@ -87,7 +86,6 @@ class MarkdownConverter {
                 inCalculation = !inCalculation;
                 calculationContent = [];
             } else if (inCalculation) {
-                console.log(calculationContent)
                 calculationContent.push(this.escapeHtml(line));
             } else if (/^```/.test(line)) {
                 if (inCodeBlock) {
@@ -259,6 +257,15 @@ class MarkdownConverter {
                         colored = true;
                     } else if (keywords.includes(token)) {
                         newline.push(`<span class="markdown-code-keyword">${escapeHtml(token)}</span>`);
+                        colored = true;
+                    } else if (/^[\[\]]$/.test(token)) {
+                        newline.push(`<span class="markdown-code-square-brackets">${escapeHtml(token)}</span>`);
+                        colored = true;
+                    } else if (/^[()]$/.test(token)) {
+                        newline.push(`<span class="markdown-code-brackets">${escapeHtml(token)}</span>`);
+                        colored = true;
+                    } else if (/^[{}]$/.test(token)) {
+                        newline.push(`<span class="markdown-code-curly-brackets">${escapeHtml(token)}</span>`);
                         colored = true;
                     } else if (/^<.*>$/.test(token)) {
                         newline.push(token);
