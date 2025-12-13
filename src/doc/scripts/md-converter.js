@@ -218,7 +218,7 @@ class MarkdownConverter {
             'volatile', 'while', 'asm', 'bool', 'catch', 'class', 'const_cast',
             'delete', 'dynamic_cast', 'explicit', 'export', 'false', 'friend',
             'inline', 'mutable', 'namespace', 'new', 'operator', 'private',
-            'protected', 'public', 'reinterpret_cast', 'static_cast', 'template',
+            'protected', 'public', 'reinterpret_cast', 'static_cast', 'string', 'template',
             'this', 'throw', 'true', 'try', 'typeid', 'typename', 'using',
             'virtual', 'wchar_t'
         ];
@@ -260,7 +260,7 @@ class MarkdownConverter {
                 }
 
                 if (!colored) {
-                    newline.push(escapeHtml(token));
+                    newline.push(`<span>${escapeHtml(token)}</span>`);
                 }
 
                 lastIndex = match.index + token.length;

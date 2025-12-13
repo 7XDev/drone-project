@@ -4,14 +4,14 @@
 }
 
 :root {
-    --bg-color: white;
-    --text-color: black;
-    --header-text-color: black;
+    --bg-color: #f6f6f6;
+    --text-color: #0a0a0a;
+    --header-text-color: #0a0a0a;
     --border-color: rgba(0, 0, 0, 0.1);
     --hover-bg: rgba(0, 0, 0, 0.1);
     --button-bg: #f0f0f0;
-    --button-text: black;
-    --topic-selected-color: rgb(44, 98, 245);
+    --button-text: #0a0a0a;
+    --topic-selected-color: rgb(44, 98, 245); 
     --topic-selected-hover-bg: rgba(195, 220, 252, 0.5);
 }
 

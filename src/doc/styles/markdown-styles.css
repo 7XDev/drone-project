@@ -25,6 +25,8 @@
     --md-table-cell-bg: white;
     --md-table-row-even-bg: #fbfbfb;
     --md-table-row-hover-bg: #f3f4f6;
+
+    --md-cb-text: #0a0a0a;
 }
 
 :root.dark-mode {
@@ -48,6 +50,8 @@
     --md-table-cell-bg: #1e1e1e;
     --md-table-row-even-bg: #252525;
     --md-table-row-hover-bg: #2d2d2d;
+
+    --md-cb-text: #e0e0e0; 
 }
 
 /* General Styles */
