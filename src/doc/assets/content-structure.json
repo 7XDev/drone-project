@@ -62,9 +62,7 @@
         "name": "🛠️ Exploring Components",
         "path": "content/exploring-component.md",
         "collapsed": true,
-        "children": [
-          
-        ]
+        "children": []
       }
     ]
   },
@@ -72,9 +70,7 @@
     "type": "category",
     "name": "🔨 Assembly",
     "collapsed": false,
-    "children": [
-
-    ]
+    "children": []
   },
   {
     "type": "category",
