@@ -632,10 +632,17 @@ body {
     user-select: none;
     font-family: monospace;
     padding-right: 0.5em;
+    line-height: normal;
 }
 
 .markdown-formatted-code-content-lines {
     flex: 1;
     white-space: pre-wrap;
     font-family: monospace;
+    line-height: normal;
+}
+
+.markdown-formatted-code-content-lines p {
+    margin: 0;
+    padding: 0;
 }
