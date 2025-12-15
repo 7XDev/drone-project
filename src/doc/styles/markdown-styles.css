@@ -396,12 +396,15 @@ body {
 .markdown-table {
 	border-collapse: separate;
 	border-spacing: 0;
-	width: auto;
+	/* allow table to be wider than viewport but scroll inside */
+	display: block;
+	width: 100%;
 	margin: 1rem 0;
 	font-family: "league-spartan", Arial, sans-serif;
 	border: 1px solid var(--md-table-border);
 	border-radius: 5px;
-	overflow: hidden;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
 }
 
 .markdown-table-header {
