@@ -12,10 +12,10 @@ Welcome to the ultimate guide for leveraging AeroMesh drones to create 3D image 
 
 This project is designed for:
 
-- **Hobbyists**: If you love tinkering with gadgets and exploring new technologies, this guide will help you build a drone from scratch and customize it to your liking.
 - **Construction Companies**: Use drones to create accurate 3D maps of construction sites, improving project planning and monitoring.
 - **Surveying and Mapping Firms**: Enhance your surveying capabilities with detailed 3D image depth maps for land analysis and urban planning.
 - **Environmental Organizations**: Monitor ecosystems, track changes in landscapes, and create detailed topographical maps for conservation efforts.
+- **Hobbyists**: If you love tinkering with gadgets and exploring new technologies, this guide will help you build a drone from scratch and customize it to your liking.
 - **Agricultural Businesses**: Optimize crop management and irrigation planning with precise 3D mapping of farmland.
 - **Research Institutions**: Conduct advanced studies in fields like geology, archaeology, and environmental science using cutting-edge drone technology.
 
