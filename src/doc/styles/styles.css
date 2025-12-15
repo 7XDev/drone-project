@@ -714,6 +714,10 @@ footer a:hover {
 	text-decoration: underline;
 }
 
+.markdown-end-container {
+    gap: 3rem;
+}
+
 @media (max-width: 768px) {
 	.header-text {
 		font-size: 15px;
@@ -840,5 +844,53 @@ footer a:hover {
 
 	.header-search-bar input {
 		width: 110px;
+	}
+
+	.markdown-end-container {
+		flex-direction: column;
+		gap: 1.5rem;
+		align-items: stretch;
+		padding: 0.12rem 0.12rem;
+	}
+
+	.markdown-end-previous,
+	.markdown-end-next {
+		width: 100%;
+		padding: 0.45rem 0.6rem;
+		border-radius: 8px;
+		box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+		background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+		border: 1px solid rgba(0,0,0,0.05);
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.markdown-end-previous {
+		order: 1;
+	}
+
+	.markdown-end-next {
+		order: 2;
+	}
+
+	.markdown-end-icon,
+	.markdown-end-icon-previous {
+		width: 18px;
+		height: 18px;
+		margin-left: 0.25rem;
+		filter: drop-shadow(0 1px 3px rgba(0,0,0,0.04));
+	}
+
+	.markdown-end-label {
+		font-size: 0.9rem;
+	}
+
+	.markdown-end-title {
+		font-size: 1rem;
+	}
+
+	.markdown-end-previous,
+	.markdown-end-next {
+		-touch-action: manipulation;
 	}
 }

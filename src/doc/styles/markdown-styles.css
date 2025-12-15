@@ -464,7 +464,6 @@ body {
 }
 
 .markdown-end-container {
-	gap: 3rem;
 	display: flex;
 	width: 100%;
 	margin: 0 auto;
