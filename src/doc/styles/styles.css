@@ -238,7 +238,7 @@ body {
 }
 
 .header-logo {
-	margin-left: 8%;
+	margin-left: 7rem;
 
 	display: flex;
 	flex-direction: row;
@@ -261,7 +261,7 @@ body {
 
 .header-controls {
 	margin-left: auto;
-	margin-right: 8%;
+	margin-right: 7rem;
 	display: flex;
 	align-items: center;
 	gap: 1rem;
@@ -322,7 +322,7 @@ body {
 
 main {
 	margin-top: 1rem;
-	margin-left: 8%;
+	margin-left: 7rem;
 	font-family: league-spartan;
 }
 
