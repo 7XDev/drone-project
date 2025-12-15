@@ -498,10 +498,8 @@ main {
 	gap: 1rem;
 	align-items: flex-start;
 	width: 100%;
-	/* Allow the content area to take more space to the right side
-	   and align it to the right so it fills the empty area beside header controls */
-	max-width: 1400px;
-	margin: 0 1rem 0 auto;
+	max-width: 100%;
+	margin: 0 auto;
 	padding: 0 1rem;
 }
 
@@ -639,6 +637,13 @@ footer a:hover {
 
 	.header-logo {
 		margin-left: 1.5%;
+	}
+
+    .content-container {
+		padding: 0 0;
+		gap: 0.5rem;
+		width: 100%;
+		max-width: 100%;
 	}
 
 	.right-panel {
