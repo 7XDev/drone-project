@@ -498,8 +498,10 @@ main {
 	gap: 1rem;
 	align-items: flex-start;
 	width: 100%;
-	max-width: 100%;
-	margin: 0 auto;
+	/* Allow the content area to take more space to the right side
+	   and align it to the right so it fills the empty area beside header controls */
+	max-width: 1400px;
+	margin: 0 1rem 0 auto;
 	padding: 0 1rem;
 }
 
@@ -632,7 +634,7 @@ footer a:hover {
 	}
 
 	main {
-		margin-left: 1.5%;
+		margin-left: 0.5%;
 	}
 
 	.header-logo {
@@ -660,6 +662,55 @@ footer a:hover {
 	.header-controls {
 		margin-right: 1.5%;
 		gap: 0.5rem;
+		position: relative;
+	}
+
+	.header-search-bar {
+		position: absolute;
+		right: 48px;
+		top: 50%;
+		transform: translateY(-50%);
+		z-index: 60;
+		transition: background-color 0.3s ease, color 0.3s ease, transform 0.1s ease;
+
+	}
+
+	.header-search-bar.mobile-collapsed {
+		width: 40px;
+		padding: 0.35rem;
+		overflow: hidden;
+		border-radius: 6px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+
+	.header-search-bar.mobile-collapsed input {
+		display: none;
+	}
+
+	.header-search-bar.expanded {
+		width: 220px;
+		padding: 0.4rem 0.6rem;
+		/* when expanded, slide slightly left so it doesn't overlap the toggle */
+		right: 56px;
+		transform: translateY(-50%);
+	}
+
+	.header-search-bar.expanded input {
+		width: 100%;
+		opacity: 1;
+		padding-left: 0.25rem;
+		pointer-events: auto;
+		display: block;
+	}
+
+	.header-search-bar .search-popup {
+		left: 50%;
+		transform: translateX(-50%) translateY(-10px);
 	}
 
 	.header-search-bar input {

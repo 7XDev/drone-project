@@ -78,8 +78,75 @@ function searchbarBlur() {
 	setTimeout(() => {
 		searchPopup.classList.remove("visible");
 		searchInput.value = "";
+
+		// On mobile collapse the search bar back to icon-only
+		try {
+			if (window.innerWidth <= 768) {
+				const bar = document.querySelector('.header-search-bar');
+				if (bar) {
+					bar.classList.remove('expanded');
+					bar.classList.add('mobile-collapsed');
+				}
+			}
+		} catch (e) {
+			// ignore
+		}
 	}, 200);
 }
+
+// Mobile search icon toggle: collapse to icon, expand on click to reveal input
+document.addEventListener('DOMContentLoaded', () => {
+	const searchBar = document.querySelector('.header-search-bar');
+	const searchIcon = document.querySelector('.header-search-bar .search-icon');
+	const searchInput = document.getElementById('searchInput');
+
+	function applyMobileState() {
+		if (!searchBar) return;
+		if (window.innerWidth <= 768) {
+			// default collapsed state on mobile
+			if (!searchBar.classList.contains('expanded')) {
+				searchBar.classList.add('mobile-collapsed');
+			}
+		} else {
+			// remove mobile-only classes on larger screens
+			searchBar.classList.remove('mobile-collapsed');
+			searchBar.classList.remove('expanded');
+		}
+	}
+
+	applyMobileState();
+
+	window.addEventListener('resize', applyMobileState);
+
+	if (searchIcon) {
+		searchIcon.addEventListener('click', (e) => {
+			if (window.innerWidth > 768) return; // default behavior on desktop
+
+			const bar = searchIcon.closest('.header-search-bar');
+			if (!bar) return;
+
+			if (bar.classList.contains('expanded')) {
+				// collapse
+				bar.classList.remove('expanded');
+				bar.classList.add('mobile-collapsed');
+				if (searchInput) searchInput.blur();
+			} else {
+				// expand and focus
+				bar.classList.remove('mobile-collapsed');
+				bar.classList.add('expanded');
+				// slight delay to allow CSS transition
+				setTimeout(() => {
+					if (searchInput) {
+						searchInput.focus();
+						// open popup too
+						const popup = document.getElementById('searchPopup');
+						if (popup) popup.classList.add('visible');
+					}
+				}, 160);
+			}
+		});
+	}
+});
 
 // Debounce timer for search
 let searchDebounceTimer = null;
