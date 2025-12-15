@@ -1365,4 +1365,52 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 			searchPopup.classList.remove("visible");
 		}
 	});
+
+	// Sidebar toggle
+	const topicToggle = document.getElementById('topicToggle');
+	const sidebarOverlay = document.getElementById('sidebarOverlay');
+	const topicClose = document.getElementById('topicClose');
+
+	function openSidebar() {
+		document.body.classList.add('sidebar-open');
+		const firstTopic = document.querySelector('.topic-selector button, .topic-selector a');
+		if (firstTopic) firstTopic.focus();
+		try {
+			if (topicToggle) topicToggle.setAttribute('aria-expanded', 'true');
+		} catch (e) {}
+	}
+
+	function closeSidebar() {
+		document.body.classList.remove('sidebar-open');
+		try {
+			if (topicToggle) topicToggle.setAttribute('aria-expanded', 'false');
+		} catch (e) {}
+	}
+
+	if (topicToggle) {
+		topicToggle.addEventListener('click', (ev) => {
+			ev.stopPropagation();
+			if (document.body.classList.contains('sidebar-open')) closeSidebar();
+			else openSidebar();
+		});
+	}
+
+	if (sidebarOverlay) {
+		sidebarOverlay.addEventListener('click', () => closeSidebar());
+	}
+
+	if (topicClose) {
+		topicClose.addEventListener('click', (e) => {
+			e.stopPropagation();
+			closeSidebar();
+		});
+	}
+
+	document.addEventListener('keydown', (e) => {
+		if (e.key === 'Escape') closeSidebar();
+	});
+
+	window.addEventListener('resize', () => {
+		if (window.innerWidth > 768) closeSidebar();
+	});
 });

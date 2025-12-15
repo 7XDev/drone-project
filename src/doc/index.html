@@ -45,8 +45,12 @@
 		<header>
 			<!-- Header-->
 			<div class="header-logo">
+				<!-- Sidebar toggle as an icon-only control placed top-left -->
+				<button id="topicToggle" class="topic-toggle" aria-label="Toggle sidebar" aria-expanded="false">
+					<img class="topic-toggle-icon" src="assets/img/hamburger.svg" alt="menu" />
+				</button>
 				<img src="assets/img/camera-drone.svg" class="header-image" alt="Drone Logo" />
-				<p class="header-text">AeroMesh Drones Documentation</p>
+				<p class="header-text">AeroMesh Drones</p>
 				<div class="header-controls">
 					<div class="header-search-bar">
 						<img class="icon search-icon" src="assets/img/search.svg" alt="search-icon" />
@@ -71,6 +75,9 @@
 		<main>
 			<div class="content-container">
 				<div class="topic-selector">
+					<button id="topicClose" class="topic-close" aria-label="Close sidebar">
+						<img src="assets/img/cancel.svg" alt="close" />
+					</button>
 					<!-- Loading of topics will use class "topic-category" for headers of categories -->
 				</div>
 				<div class="display-window">
@@ -91,5 +98,8 @@
 			<a href="credits.html">Credits</a>
 			<a href="help.html">Help</a>
 		</footer>
+
+		<!-- Overlay for sliding sidebar on small screens -->
+		<div id="sidebarOverlay" class="sidebar-overlay" aria-hidden="true"></div>
 	</body>
 </html>

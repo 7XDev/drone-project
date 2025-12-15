@@ -272,6 +272,31 @@ body {
 	gap: 1rem;
 }
 
+/* Topic toggle (hamburger) */
+.topic-toggle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: transparent;
+	border: none;
+	padding: 0;
+	margin-right: 0.6rem;
+	cursor: pointer;
+}
+.topic-toggle:focus {
+	outline: 2px solid rgba(44,98,245,0.18);
+	outline-offset: 2px;
+}
+.topic-toggle-icon {
+	width: 28px;
+	height: 28px;
+	display: block;
+}
+
+:root.dark-mode .topic-toggle-icon {
+	filter: invert(1) hue-rotate(180deg) brightness(1.05);
+}
+
 .header-search-bar {
 	position: relative;
 	display: flex;
@@ -481,6 +506,69 @@ main {
 	padding-right: 1rem;
 }
 
+.topic-selector {
+	transition: transform 240ms cubic-bezier(.2,.8,.2,1), visibility 240ms;
+}
+
+.sidebar-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0,0,0,0.35);
+	z-index: 10050;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 200ms ease;
+}
+
+body.sidebar-open .sidebar-overlay {
+	opacity: 1;
+	visibility: visible;
+}
+
+/* When `.sidebar-open` is present, slide in sidebar on small screens */
+body.sidebar-open .topic-selector {
+	transform: translateX(0) !important;
+}
+
+/* Sidebar pop-in styling improvements */
+.topic-selector {
+	border-top-right-radius: 12px;
+	border-bottom-right-radius: 12px;
+	background-clip: padding-box;
+}
+
+.topic-selector .topic-close {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	background: transparent;
+	border: none;
+	padding: 6px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+
+.topic-selector .topic-close img {
+	width: 18px;
+	height: 18px;
+	opacity: 0.8;
+}
+
+.topic-selector {
+	transition: transform 240ms cubic-bezier(.2,.8,.2,1), box-shadow 180ms ease;
+}
+
+.topic-selector.open {
+	transform: translateX(0);
+}
+
+.sidebar-overlay {
+	backdrop-filter: blur(4px) saturate(1.05);
+	-webkit-backdrop-filter: blur(4px) saturate(1.05);
+}
+
 .topic-selector::-webkit-scrollbar {
 	width: 3px;
 }
@@ -632,7 +720,7 @@ footer a:hover {
 	}
 
 	main {
-		margin-left: 0.5%;
+		margin-left: 0;
 	}
 
 	.header-logo {
@@ -648,6 +736,39 @@ footer a:hover {
 
 	.right-panel {
 		display: none !important;
+	}
+
+	.topic-toggle {
+		display: inline-flex;
+	}
+
+	.topic-selector {
+		position: fixed;
+		top: 64px;
+		bottom: 0;
+		left: 0;
+		width: 78%;
+		max-width: 360px;
+		padding: 1rem;
+		background: var(--bg-color);
+		z-index: 10060;
+		box-shadow: 8px 0 30px rgba(0,0,0,0.12);
+		transform: translateX(-110%);
+		overflow-y: auto;
+		max-height: calc(100vh - 64px);
+	}
+
+	.content-container {
+		padding: 0 0.5rem;
+	}
+
+	.display-window {
+		padding: 0.75rem 0.5rem;
+		flex-basis: 100%;
+	}
+
+	.sidebar-overlay {
+		display: block;
 	}
 
 	.copy-button {
@@ -700,7 +821,6 @@ footer a:hover {
 	.header-search-bar.expanded {
 		width: 220px;
 		padding: 0.4rem 0.6rem;
-		/* when expanded, slide slightly left so it doesn't overlap the toggle */
 		right: 56px;
 		transform: translateY(-50%);
 	}
