@@ -58,6 +58,11 @@
     "collapsed": false,
     "children": [
       {
+        "type": "page",
+        "name": "📊 Performance Metrics",
+        "path": "content/performance-metrics.md"
+      },
+      {
         "type": "category",
         "name": "🛠️ Exploring Components",
         "path": "content/exploring-component.md",
