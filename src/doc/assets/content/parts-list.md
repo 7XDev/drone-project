@@ -14,7 +14,8 @@ This page lists all the essential parts needed to build the drone project:
 ## The Drones
 | Part | Price | Description |
 |------|-------|-------------|
-| [ESP32-CAM Microcontroller (Without Camera)](https://de.aliexpress.com/item/1005005834248957.html) | ~6€ | Microcontroller for drone operations |
+| [ESP32-CAM Microcontroller](https://www.amazon.de/dp/B089MDKBWG) | ~15€ | Microcontroller for drone operations |
+drone operations |
 | [Happy Model SE 0802 Motors (16000KV, 4x)](https://de.aliexpress.com/item/1005007502560009.html) | ~30€ for 4 | Lightweight motors for flight |
 | [BETAFPV BT2.0 550mAh 1S Battery](https://de.aliexpress.com/item/1005008775642172.html) | ~32€ for 4 | Powers the drone |
 | [LDARC 65mm 2-Blade Propellers (20pcs)](https://de.aliexpress.com/item/1005009401177467.html) | ~5€ | Propellers for stable flight |
