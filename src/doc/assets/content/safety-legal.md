@@ -8,7 +8,6 @@ Operating drones comes with responsibilities to ensure safety and compliance wit
 ## Safety Precautions
 
 ### Do's:
-
 #### Pre-Flight Checks
  - Inspect the drone for any damage or loose components before each flight.
  - Ensure the battery is fully charged and securely connected.
@@ -25,14 +24,12 @@ Operating drones comes with responsibilities to ensure safety and compliance wit
  - Keep a fire extinguisher nearby when charging or handling LiPo batteries.
 
 ### Dont's:
-
 #-h Unsafe Practices
 #-b - Never fly the drone beyond the maximum altitude of 120 meters (400 feet).
 #-b - Avoid flying in restricted areas, such as near airports or military zones.
 #-b - Do not fly over crowds or private property without permission.
 
 ## Legal Considerations
-
 #ih Registration and Licensing
 #ib In case of modding the drone above 250g:
 #ib - Register drones with the appropriate aviation authority in your country.

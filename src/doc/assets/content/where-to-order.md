@@ -2,9 +2,7 @@
 
 #ih Notice
 #ib While the links to the parts are to the `Elegoo Shop` and `Aliexpress` you can source the parts from other platforms
-
-When sourcing parts for your drone project, here’s a list of platforms where you can find the components used in this project, as well as alternatives to consider:
-
+When sourcing parts for your drone project, here’s a list of platforms where you can find the components used in this project, as well as alternatives to consider.
 ## Recommended Platforms
 
 ### AliExpress
