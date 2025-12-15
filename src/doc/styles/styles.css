@@ -274,7 +274,7 @@ body {
 
 /* Topic toggle (hamburger) */
 .topic-toggle {
-	display: inline-flex;
+	display: none;
 	align-items: center;
 	justify-content: center;
 	background: transparent;
