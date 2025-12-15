@@ -21,7 +21,7 @@ drone operations |
 | [LDARC 65mm 2-Blade Propellers (20pcs)](https://de.aliexpress.com/item/1005009401177467.html) | ~5€ | Propellers for stable flight |
 | [Micro 1S 4A Brushless ESC](https://de.aliexpress.com/item/1005006197408875.html) | ~10€ for 4 | Controls motor speed |
 | [GY-521 MPU6050](https://de.aliexpress.com/item/1005009131270695.html) | ~1€ | Gyroscope sensor for stability |
-| [Mini 5V 0.5A BEC Regulator](https://de.aliexpress.com/item/1005001303802541.html) | ~2€ | Converts power for the microcontroller |
+| [DC-DC 5V Step Up Converter](https://de.aliexpress.com/item/1005008051438437.html) | ~6€ for 5 | Power Booster for powering the Microcontroller |
 | [Mini PDB Power Distribution Board](https://de.aliexpress.com/item/1005004096995692.html) | ~5€ | Distributes power to components |
 | [TFmini-S Lidar Sensor](https://de.aliexpress.com/item/1005008667948116.html) | ~40€ | Measures height |
 | [OV2640 66° Camera](https://de.aliexpress.com/item/1005007291555550.html) | ~5€ | Captures images |
