@@ -17,9 +17,7 @@
 			})();
 		</script>
 
-		<script type="module" src="./scripts/script.js"></script>
-		<script type="module" src="./scripts/md-converter.js"></script>
-		<script type="module" src="./scripts/content-browser.js"></script>
+		<!-- defer module loading; page will import modules when needed -->
 		<script type="module">
 			import MarkdownConverter from "./scripts/md-converter.js";
 
