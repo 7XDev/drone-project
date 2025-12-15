@@ -18,6 +18,7 @@
 	--button-text: #0a0a0a;
 	--topic-selected-color: rgb(44, 98, 245);
 	--topic-selected-hover-bg: rgba(195, 220, 252, 0.5);
+    --end-border-color: rgba(0,0,0,0.12);
 }
 
 :root.dark-mode {
@@ -30,6 +31,43 @@
 	--button-text: #e0e0e0;
 	--topic-selected-color: rgb(79, 128, 235);
 	--topic-selected-hover-bg: rgba(79, 128, 235, 0.2);
+    --end-border-color: rgba(255,255,255,0.08);
+}
+
+.markdown-end-previous,
+.markdown-end-next,
+.markdown-button-container,
+.code-copy-button {
+    background: var(--bg-color);
+    border: 1px solid var(--end-border-color);
+    color: var(--text-color);
+    border-radius: 8px;
+	transition: background-color 0.3s ease, color 0.3s ease, transform 0.1s ease border-color 0.2s ease;
+}
+
+:root.dark-mode .markdown-end-previous,
+:root.dark-mode .markdown-end-next,
+:root.dark-mode .markdown-button-container,
+:root.dark-mode .code-copy-button {
+    background: var(--bg-color);
+    border: 1px solid var(--end-border-color);
+    color: var(--button-text);
+}
+
+:root.dark-mode .markdown-end-previous:hover,
+:root.dark-mode .markdown-end-next:hover {
+    border-color: rgba(255,255,255,0.12);
+}
+
+:root.dark-mode .markdown-end-title,
+:root.dark-mode .markdown-end-label {
+    color: var(--text-color);
+}
+
+:root.dark-mode .markdown-end-icon,
+:root.dark-mode .markdown-end-icon-previous,
+:root.dark-mode .code-copy-button .icon {
+    filter: brightness(0) saturate(100%) invert(100%);
 }
 
 body {
@@ -859,8 +897,8 @@ footer a:hover {
 		padding: 0.45rem 0.6rem;
 		border-radius: 8px;
 		box-shadow: 0 3px 8px rgba(0,0,0,0.04);
-		background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
-		border: 1px solid rgba(0,0,0,0.05);
+		background: var(--bg-color);
+		border: 1px solid var(--end-border-color);
 		justify-content: space-between;
 		align-items: center;
 	}
@@ -894,3 +932,4 @@ footer a:hover {
 		-touch-action: manipulation;
 	}
 }
+
