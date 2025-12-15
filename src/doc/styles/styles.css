@@ -647,4 +647,22 @@ footer a:hover {
 		margin-right: 0.5rem;
 		margin-left: 0.5rem;
 	}
+
+	#lightDarkToggle {
+		min-width: 0 !important;
+		padding: 0.4rem 0.6rem !important;
+	}
+
+	#lightDarkToggle .icon-text {
+		display: none !important;
+	}
+
+	.header-controls {
+		margin-right: 1.5%;
+		gap: 0.5rem;
+	}
+
+	.header-search-bar input {
+		width: 110px;
+	}
 }
