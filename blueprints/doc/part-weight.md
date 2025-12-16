@@ -1,0 +1,1 @@
+[Brushless ESC](https://manuals.plus/ae/1005005802778106): 0.59g
