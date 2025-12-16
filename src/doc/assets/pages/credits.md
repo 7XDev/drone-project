@@ -30,3 +30,6 @@
 ###  ESP32 CAM
 - [Arduino Forum](https://forum.arduino.cc/t/powering-an-esp32-with-a-battery-beginner/1231555)
 - [OpenELAB Wiki](https://wiki.openelab.io/esp/esp32-cam-camera-module)
+
+### Brushless ESC
+ - [Manuals+](https://manuals.plus/ae/1005005802778106)
