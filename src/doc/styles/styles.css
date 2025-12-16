@@ -80,6 +80,22 @@ body {
 	transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Smooth transitions for theme changes (match copy-button feel) */
+.display-window,
+.topic-selector,
+.header-search-bar,
+.topic-button,
+.topic-category-button,
+.right-bar-items,
+.markdown-end-previous,
+.markdown-end-next,
+.copy-button,
+.code-copy-button,
+.search-popup,
+footer {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.25s ease, box-shadow 0.25s ease, filter 0.3s ease;
+}
+
 .search-popup {
 	position: absolute;
 	top: 130%;

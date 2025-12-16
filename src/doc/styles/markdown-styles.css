@@ -172,7 +172,7 @@ body {
 	margin: 1rem 0;
 	overflow-x: auto;
 	white-space: pre;
-	transition: background-color 0.3s ease, border-color 0.3s ease;
+	transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 /* Links */
@@ -449,6 +449,45 @@ body {
 	transition: background-color 0.2s ease-in-out;
 }
 
+@media (min-width: 769px) {
+	.markdown-table {
+		display: table;
+		width: auto;
+		border-collapse: separate;
+		border-spacing: 0;
+		border: 1px solid var(--md-table-border);
+		border-radius: 5px;
+		overflow: hidden;
+		margin: 1rem 0;
+		background-clip: padding-box;
+	}
+
+	.markdown-table-header,
+	.markdown-table-cell {
+		border: none;
+		white-space: normal;
+		padding: 0.5rem 0.75rem;
+	}
+
+	.markdown-table-header {
+		background-color: var(--md-table-header-bg);
+		color: var(--md-table-header-color);
+		font-weight: 700;
+	}
+
+	.markdown-table-cell {
+		background-color: var(--md-table-cell-bg);
+	}
+
+	.markdown-table-row .markdown-table-cell:not(:last-child) {
+		border-right: 1px solid var(--md-table-border);
+	}
+
+	.markdown-table-row:not(:last-child) .markdown-table-cell {
+		border-bottom: 1px solid var(--md-table-border);
+	}
+}
+
 .markdown-button-container {
 	padding: 1rem;
 	border: solid 2px var(--md-button-container);
@@ -581,8 +620,23 @@ body {
 	border-radius: 5px;
 	text-align: left;
 	padding: 0.5rem;
-	transition: background-color 0.3s ease, border-color 0.3s ease;
+	transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 	overflow: visible;
+}
+
+/* Smooth transitions for markdown components on theme change */
+.markdown-table,
+.markdown-table-header,
+.markdown-table-cell,
+.markdown-button-container,
+.markdown-positive,
+.markdown-warning,
+.markdown-negative,
+.markdown-info,
+.markdown-formatted-code,
+.markdown-code-block,
+.code-copy-button {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.25s ease;
 }
 
 .markdown-formatted-code-header {
