@@ -1,9 +1,0 @@
-[submodule "crazyflie-clients-python"]
-	path = crazyflie-clients-python
-	url = https://github.com/leeebo/crazyflie-clients-python.git
-[submodule "cfclient"]
-	path = cfclient
-	url = https://github.com/leeebo/crazyflie-clients-python.git
-[submodule "drone"]
-	path = drone
-	url = https://github.com/espressif/esp-drone.git

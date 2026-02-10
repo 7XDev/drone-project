@@ -1,4 +1,9 @@
 {
   "liveServer.settings.port": 5000,
-  "prettier.configPath": ".vscode/.prettierrc"
+  "prettier.configPath": ".vscode/.prettierrc",
+  "cSpell.words": [
+    "cfclient",
+    "espressif's",
+    "leeebo's"
+  ]
 }
