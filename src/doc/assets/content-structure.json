@@ -1,0 +1,128 @@
+[
+  {
+    "type": "page",
+    "name": "🚁 Drones Intruduction",
+    "path": "content/introduction.md"
+  },
+  {
+    "type": "category",
+    "name": "📋 Prerequisites",
+    "collapsed": false,
+    "children": [
+      {
+        "type": "category",
+        "name": "🔧 Parts List",
+        "path": "content/parts-list.md",
+        "collapsed": true,
+        "children": [
+          {
+            "type": "page",
+            "name": "💰 Budget",
+            "path": "content/budget.md"
+          },
+          {
+            "type": "page",
+            "name": "🛒 Where to Order",
+            "path": "content/where-to-order.md"
+          }
+        ]
+      },
+      {
+        "type": "category",
+        "name": "💻 Software List",
+        "path": "content/software-list.md",
+        "collapsed": true,
+        "children": [
+          {
+            "type": "page",
+            "name": "⚙️ Software Setup",
+            "path": "content/software-setup.md"
+          }
+        ]
+      },
+      {
+        "type": "page",
+        "name": "🎓 Skills Needed",
+        "path": "content/skills-needed.md"
+      },
+      {
+        "type": "page",
+        "name": "⚠️ Safety and Legal Preparations",
+        "path": "content/safety-legal.md"
+      }
+    ]
+  },
+  {
+    "type": "category",
+    "name": "⏱️ Before Building",
+    "collapsed": false,
+    "children": [
+      {
+        "type": "page",
+        "name": "📊 Performance Metrics",
+        "path": "content/performance-metrics.md"
+      },
+      {
+        "type": "category",
+        "name": "🛠️ Exploring Components",
+        "path": "content/exploring-component.md",
+        "collapsed": true,
+        "children": []
+      }
+    ]
+  },
+  {
+    "type": "category",
+    "name": "🔨 Assembly",
+    "collapsed": false,
+    "children": []
+  },
+  {
+    "type": "category",
+    "name": "💻 Programming",
+    "collapsed": false,
+    "children": [
+      {
+        "type": "category",
+        "name": "🤖 Programming the Drone Itself",
+        "path": "content/programming-drone.md",
+        "collapsed": false,
+        "children": [
+          {
+            "type": "page",
+            "name": "📦 Uploading Precompiled Versions",
+            "path": "content/precompiled-versions.md"
+          },
+          {
+            "type": "page",
+            "name": "💾 Accessing and Flashing Source Code",
+            "path": "content/flashing-source-code.md"
+          }
+        ]
+      },
+      {
+        "type": "category",
+        "name": "🎮 Programming Movement",
+        "path": "content/programming-movement.md",
+        "collapsed": false,
+        "children": [
+          {
+            "type": "page",
+            "name": "🕹️ Control Setup",
+            "path": "content/control-setup.md"
+          },
+          {
+            "type": "page",
+            "name": "✈️ Raw Flight",
+            "path": "content/raw-flight.md"
+          },
+          {
+            "type": "page",
+            "name": "👥 Following Flight",
+            "path": "content/following-flight.md"
+          }
+        ]
+      }
+    ]
+  }
+]

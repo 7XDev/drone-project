@@ -1,0 +1,18 @@
+<a href="https://www.flaticon.com/free-icons/camera-drone" title="camera drone icons">Camera drone icons created by vectorsmarket15 - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/next" title="next icons">Next icons created by Roundicons - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by shin_icons - Flaticon</a>
+
+Icons:(Copy,Dark,White)
+<a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by shin_icons - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/mode" title="mode icons">Mode icons created by amoghdesign - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/dark" title="dark icons">Dark icons created by adriansyah - Flaticon</a>
+
+//Negative Icons
+https://ka-p.fontawesome.com/releases/v6.6.0/svgs/regular/triangle-exclamation.svg?v=2&token=a463935e93
+
+//Positive Icons
+https://ka-p.fontawesome.com/releases/v6.6.0/svgs/regular/circle-check.svg?v=2&token=a463935e93
+
+//Info Icon
+https://ka-p.fontawesome.com/releases/v6.6.0/svgs/regular/circle-info.svg?v=2&token=a463935e93
+
