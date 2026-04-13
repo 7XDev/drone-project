@@ -6,6 +6,7 @@ Usage: python depth_map.py input.png output.png [--device cpu|gpu]
 
 import sys
 import argparse
+import time
 from pathlib import Path
 import cv2
 import numpy as np
@@ -27,6 +28,10 @@ def convert_to_depth_map(input_path: str, output_path: str, device: str = "cpu")
     
     input_path = Path(input_path)
     output_path = Path(output_path)
+    
+    # Remove output file if it already exists
+    if output_path.exists():
+        output_path.unlink()
     
     if not input_path.exists():
         raise FileNotFoundError(f"Input image not found: {input_path}")
@@ -55,6 +60,9 @@ def convert_to_depth_map(input_path: str, output_path: str, device: str = "cpu")
     
     print(f"Processing image: {input_path} ({original_size[0]}x{original_size[1]})")
     
+    # Start timer
+    start_time = time.time()
+    
     # Process image
     with torch.no_grad():
         inputs = processor(images=image, return_tensors="pt").to(device)
@@ -71,6 +79,10 @@ def convert_to_depth_map(input_path: str, output_path: str, device: str = "cpu")
     
     # Save depth map
     Image.fromarray(depth_resized).save(output_path)
+    
+    # Calculate and display elapsed time
+    elapsed_time = time.time() - start_time
+    print(f"Time elapsed: {elapsed_time:.2f} seconds")
     print(f"Depth map saved: {output_path}")
 
 
