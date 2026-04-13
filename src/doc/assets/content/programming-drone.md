@@ -1,3 +1,0 @@
-# Programming the drone
-
-#end

@@ -1,3 +1,0 @@
-# Uploading Precompiled Versions
-
-#end
