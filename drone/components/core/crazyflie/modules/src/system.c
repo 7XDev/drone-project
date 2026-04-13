@@ -85,6 +85,7 @@ static bool canFly;
 static bool armed = ARM_INIT;
 static bool forceArm;
 static bool isInit;
+static SemaphoreHandle_t wifiInitDone;
 
 STATIC_MEM_TASK_ALLOC(systemTask, SYSTEM_TASK_STACKSIZE);
 
@@ -94,6 +95,8 @@ static StaticSemaphore_t canStartMutexBuffer;
 
 /* Private functions */
 static void systemTask(void *arg);
+static void wifiInitTask(void *arg);
+static void systemMainTask(void *arg);
 
 /* Public functions */
 void systemLaunch(void)
@@ -167,11 +170,38 @@ bool systemTest()
 
 void systemTask(void *arg)
 {
-  bool pass = true;
+  char out[300];
+  vTaskGetRunTimeStats(out);
+  DEBUG_PRINT(out);
 
   ledInit();
   ledSet(CHG_LED, 1);
+  wifiInitDone = xSemaphoreCreateBinary();
+  if (wifiInitDone != NULL) {
+    xTaskCreate(wifiInitTask, "WIFI-INIT", 1400, NULL, SYSTEM_TASK_PRI + 1, NULL); // stack size is in words
+  }
+
+  // Hand off heavy init to a new task with a bigger stack to avoid overflowing SYSTEM
+  xTaskCreate(systemMainTask, "SYS-MAIN", 1400, NULL, SYSTEM_TASK_PRI, NULL); // stack size is in words
+  vTaskDelete(NULL);
+}
+
+static void wifiInitTask(void *arg)
+{
   wifiInit();
+  if (wifiInitDone) {
+    xSemaphoreGive(wifiInitDone);
+  }
+  vTaskDelete(NULL);
+}
+
+static void systemMainTask(void *arg)
+{
+  bool pass = true;
+
+  if (wifiInitDone) {
+    xSemaphoreTake(wifiInitDone, pdMS_TO_TICKS(5000));
+  }
   vTaskDelay(M2T(500));
 
 #ifdef DEBUG_QUEUE_MONITOR
@@ -192,13 +222,7 @@ void systemTask(void *arg)
 
   StateEstimatorType estimator = anyEstimator;
   estimatorKalmanTaskInit();
-  //deckInit();
-  //estimator = deckGetRequiredEstimator();
   stabilizerInit(estimator);
-  //if (deckGetRequiredLowInterferenceRadioMode() && platformConfigPhysicalLayoutAntennasAreClose())
-  //{
-  //  platformSetLowInterferenceRadioMode();
-  //}
   soundInit();
   memInit();
 

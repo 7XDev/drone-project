@@ -95,7 +95,7 @@ menu "ESPDrone Config"
 
         config BASE_STACK_SIZE
             int "base stack size for system task"
-            range 512 1024
+            range 256 1024
             default 1024 if IDF_TARGET_ESP32
             default 512 if IDF_TARGET_ESP32S2
             default 1024 if IDF_TARGET_ESP32S3

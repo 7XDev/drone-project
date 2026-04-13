@@ -143,26 +143,26 @@
 
 //Task stack sizes
 #define configBASE_STACK_SIZE CONFIG_BASE_STACK_SIZE
-#define CMD_HIGH_LEVEL_TASK_STACKSIZE (2 * configBASE_STACK_SIZE)
-#define CRTP_RX_TASK_STACKSIZE        (3 * configBASE_STACK_SIZE)
-#define CRTP_TX_TASK_STACKSIZE        (3 * configBASE_STACK_SIZE)
+#define CMD_HIGH_LEVEL_TASK_STACKSIZE (5 * configBASE_STACK_SIZE) // needs extra headroom for trajectory handling
+#define CRTP_RX_TASK_STACKSIZE        (2 * configBASE_STACK_SIZE)
+#define CRTP_TX_TASK_STACKSIZE        (2 * configBASE_STACK_SIZE)
 #define EXTRX_TASK_STACKSIZE          (1 * configBASE_STACK_SIZE)
 #define FLOW_TASK_STACKSIZE           (3 * configBASE_STACK_SIZE)
 #define KALMAN_TASK_STACKSIZE         (3 * configBASE_STACK_SIZE)
 #define LEDSEQCMD_TASK_STACKSIZE      (2 * configBASE_STACK_SIZE)
-#define LOG_TASK_STACKSIZE            (3 * configBASE_STACK_SIZE)
+#define LOG_TASK_STACKSIZE            (2 * configBASE_STACK_SIZE)
 #define MEM_TASK_STACKSIZE            (2 * configBASE_STACK_SIZE)
 #define PARAM_TASK_STACKSIZE          (2 * configBASE_STACK_SIZE)
-#define PM_TASK_STACKSIZE             (4 * configBASE_STACK_SIZE)
-#define SENSORS_TASK_STACKSIZE        (5 * configBASE_STACK_SIZE)
-#define STABILIZER_TASK_STACKSIZE     (5 * configBASE_STACK_SIZE)
+#define PM_TASK_STACKSIZE             (3 * configBASE_STACK_SIZE)
+#define SENSORS_TASK_STACKSIZE        (4 * configBASE_STACK_SIZE)
+#define STABILIZER_TASK_STACKSIZE     (4 * configBASE_STACK_SIZE)
 #define SYSLINK_TASK_STACKSIZE        (1 * configBASE_STACK_SIZE)
-#define SYSTEM_TASK_STACKSIZE         (6 * configBASE_STACK_SIZE)
+#define SYSTEM_TASK_STACKSIZE         (5 * configBASE_STACK_SIZE) // Wi-Fi bring-up allocates large frames; keep >4KB to avoid stack overflow
 #define UART2_TASK_STACKSIZE          (1 * configBASE_STACK_SIZE)
-#define UDP_RX_TASK_STACKSIZE         (4 * configBASE_STACK_SIZE)
-#define UDP_TX_TASK_STACKSIZE         (4 * configBASE_STACK_SIZE)
+#define UDP_RX_TASK_STACKSIZE         (3 * configBASE_STACK_SIZE)
+#define UDP_TX_TASK_STACKSIZE         (3 * configBASE_STACK_SIZE)
 #define USBLINK_TASK_STACKSIZE        (1 * configBASE_STACK_SIZE)
-#define WIFILINK_TASK_STACKSIZE       (4 * configBASE_STACK_SIZE)
+#define WIFILINK_TASK_STACKSIZE       (3 * configBASE_STACK_SIZE)
 #define ZRANGER2_TASK_STACKSIZE       (4 * configBASE_STACK_SIZE)
 #define ZRANGER_TASK_STACKSIZE        (2 * configBASE_STACK_SIZE)
 
