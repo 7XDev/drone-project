@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
 Converts any sized input.png to a depth map output.png using Depth Anything model.
-Usage: python depth_map.py input.png output.png
+Usage: python depth_map.py input.png output.png [--device cpu|gpu]
 """
 
 import sys
+import argparse
 from pathlib import Path
 import cv2
 import numpy as np
@@ -21,7 +22,7 @@ except ImportError:
     from transformers import AutoImageProcessor, AutoModelForDepthEstimation
 
 
-def convert_to_depth_map(input_path: str, output_path: str) -> None:
+def convert_to_depth_map(input_path: str, output_path: str, device: str = "cpu") -> None:
     """Convert an image to a depth map using Depth Anything model."""
     
     input_path = Path(input_path)
@@ -35,7 +36,15 @@ def convert_to_depth_map(input_path: str, output_path: str) -> None:
     original_size = image.size
     
     print(f"Loading model...")
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    # Validate and set device
+    if device.lower() in ("gpu", "cuda"):
+        if torch.cuda.is_available():
+            device = "cuda"
+        else:
+            print("Warning: CUDA not available, falling back to CPU")
+            device = "cpu"
+    else:
+        device = "cpu"
     print(f"Using device: {device}")
     
     # Load model and processor
@@ -66,8 +75,12 @@ def convert_to_depth_map(input_path: str, output_path: str) -> None:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python depth_map.py input.png output.png")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description="Convert image to depth map using Depth Anything V2 model")
+    parser.add_argument("input", help="Path to input image")
+    parser.add_argument("output", help="Path to output depth map")
+    parser.add_argument("--device", default="cpu", choices=["cpu", "gpu", "cuda"],
+                        help="Device to use for inference (default: cpu)")
     
-    convert_to_depth_map(sys.argv[1], sys.argv[2])
+    args = parser.parse_args()
+    
+    convert_to_depth_map(args.input, args.output, device=args.device)
