@@ -24,12 +24,12 @@ def downscale(input_path: str, output_path: str) -> None:
     
     # Calculate new height maintaining aspect ratio
     aspect_ratio = original_size[1] / original_size[0]
-    new_height = int(320 * aspect_ratio)
+    new_height = int(180 * aspect_ratio)
     
     print(f"Downscaling: {original_size[0]}x{original_size[1]} → 320x{new_height}")
     
     # Downscale
-    image_resized = image.resize((320, new_height), Image.Resampling.LANCZOS)
+    image_resized = image.resize((180, new_height), Image.Resampling.LANCZOS)
     
     # Save
     image_resized.save(output_path)

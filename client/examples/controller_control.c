@@ -8,8 +8,11 @@
  *   Left Joystick (vertical)  — Height control (up=UP, down=DOWN)
  *   Right Joystick (vertical) — Forward / Backward (pitch)
  *   Right Joystick (horizontal) — Left / Right (roll)
- *   L1 / R1 buttons          — Sideways movement (strafe left/right)
- *   L2 + R2 triggers (both)  — REQUIRED to fly; release either = EMERGENCY STOP
+ *   L1 button                 — Yaw left (in-place rotation)
+ *   R1 button                 — Yaw right (in-place rotation)
+ *   L2 + R2 triggers (both)   — REQUIRED to fly
+ *   Release one L2/R2         — SMOOTH AUTO-LANDING
+ *   Release both L2 + R2 (hold 1s) — EMERGENCY STOP (motors cut)
  *   Triangle (Y)             — Emergency stop (or hold >2s)
  *   Circle (B)               — Cycle thrust limit (30k → 40k → 50k → 65k)
  *   X (Xbox) / A             — Forward flip
@@ -85,6 +88,18 @@ static int      g_armed    = 0;
 static int      g_test_mode = 0;      /* 1 = show inputs, don't control */
 static int      g_debug_gyro = 0;
 static int      g_thrust_level = 0;   /* 0=30k, 1=40k, 2=50k, 3=65k */
+
+/* Landing state */
+static int      g_landing = 0;        /* 1 = smooth landing in progress */
+static uint32_t g_landing_start_ms = 0;
+static int      g_landing_duration_ms = 0;
+static int16_t  g_prev_trigger_l2 = 0;  /* Track previous trigger state for edge detection */
+static int16_t  g_prev_trigger_r2 = 0;
+static int      g_triggers_were_both_pressed = 0;  /* Track if triggers were both pressed */
+static uint32_t g_one_trigger_released_ms = 0;  /* Timestamp when one trigger first released */
+static uint32_t g_both_triggers_released_ms = 0;  /* Timestamp when BOTH triggers released */
+#define TRIGGER_GRACE_PERIOD_MS 500   /* Grace period to distinguish single vs both release */
+#define EMERGENCY_STOP_TIMEOUT_MS 500 /* Time both must be released to trigger emergency stop (1 sec) */
 
 /* Joystick state */
 static int16_t  g_stick_left_y = 0;   /* Left stick vertical (height) */
@@ -198,6 +213,55 @@ static float normalize_axis(int16_t value)
         return 0.0f;
     }
     return (float)value / (float)JOYSTICK_MAX;
+}
+
+/**
+ * Calculate smooth landing duration based on current thrust.
+ * Higher thrust requires longer landing time for smooth descent.
+ * At 23k (hover): ~2.5 seconds, at high altitude scales up proportionally.
+ */
+static int calculate_landing_duration_ms(uint16_t current_thrust)
+{
+    /* Base assumption: 23k is hover thrust, take ~2.5s to land from there */
+    #define HOVER_THRUST_REF 23000
+    #define BASE_LANDING_MS  2500
+    
+    if (current_thrust <= HOVER_THRUST_REF) {
+        return BASE_LANDING_MS;
+    }
+    
+    /* For higher altitudes, scale landing time proportionally */
+    /* Each 1000 units above hover adds ~100ms */
+    uint16_t thrust_above_hover = current_thrust - HOVER_THRUST_REF;
+    int extra_time_ms = (thrust_above_hover / 1000) * 100;
+    int total_landing_ms = BASE_LANDING_MS + extra_time_ms;
+    
+    /* Cap at 8 seconds max for very high altitude */
+    if (total_landing_ms > 8000) {
+        total_landing_ms = 8000;
+    }
+    
+    return total_landing_ms;
+}
+
+/**
+ * Calculate diminishing thrust step based on current altitude.
+ * As the drone goes higher, thrust increments become smaller for finer control.
+ * Returns a factor (0.2 to 1.0) to multiply the base step size.
+ */
+static float calculate_thrust_step_factor(uint16_t current_thrust, uint16_t max_thrust)
+{
+    if (max_thrust == 0) return 1.0f;
+    
+    float thrust_ratio = (float)current_thrust / (float)max_thrust;
+    
+    /* Linear interpolation: at 0% altitude use 100%, at 100% altitude use 20% */
+    float factor = 1.0f - (thrust_ratio * 0.8f);
+    
+    /* Minimum factor of 0.2 to ensure some increment always available */
+    if (factor < 0.2f) factor = 0.2f;
+    
+    return factor;
 }
 
 /**
@@ -662,6 +726,8 @@ int main(void)
             if (held_ms > 2000) {
                 /* Emergency stop */
                 g_armed    = 0;
+                g_landing  = 0;
+                g_landing_start_ms = 0;
                 g_thrust   = 0;
                 g_roll     = 0;
                 g_pitch    = 0;
@@ -690,6 +756,8 @@ int main(void)
                         g_hover_thrust = CD_THRUST_OFF;
                         g_thrust = CD_THRUST_OFF;
                     } else {
+                        g_landing = 0;
+                        g_landing_start_ms = 0;
                         g_thrust   = 0;
                         g_hover_thrust = CD_THRUST_OFF;
                         g_roll     = 0;
@@ -757,35 +825,40 @@ int main(void)
 
         /* Triangle (Y) button: Arm/Disarm, held = emergency stop */
         
-        /* L1/R1: Strafe sideways */
-        float strafe_cmd = 0.0f;
+        /* L1/R1: Yaw control (L1 = left, R1 = right) */
+        float cmd_yaw_button = 0.0f;
         if (g_button_l1) {
-            strafe_cmd = -translation_cmd_deg;
+            cmd_yaw_button = -CTRL_YAW_CMD_NORMAL_DPS;  /* Yaw left */
         } else if (g_button_r1) {
-            strafe_cmd = translation_cmd_deg;
+            cmd_yaw_button = CTRL_YAW_CMD_NORMAL_DPS;   /* Yaw right */
         }
 
         /* ────── Handle analog inputs with exponential curves ────────── */
 
         /* Left stick Y: Height (up=UP, down=DOWN) */
+        /* DISABLED during landing - only flight direction control allowed */
         float left_y_norm = normalize_axis(g_stick_left_y);
-        if (g_armed && fabsf(left_y_norm) > JOYSTICK_NEUTRAL_THRESHOLD) {
+        if (g_armed && !g_landing && fabsf(left_y_norm) > JOYSTICK_NEUTRAL_THRESHOLD) {
             /* Exponential curve for height control */
             float exp_height = apply_exponential_curve(left_y_norm, 2.0f);
             
             const CdSpeedMode *spd = cd_get_speed(drone);
-            uint16_t step = spd ? spd->thrust_step : CD_THRUST_STEP;
+            uint16_t base_step = spd ? spd->thrust_step : CD_THRUST_STEP;
+            
+            /* Calculate diminishing step factor based on current thrust */
+            float step_factor = calculate_thrust_step_factor(g_hover_thrust, thrust_levels[g_thrust_level]);
+            uint16_t adjusted_step = (uint16_t)((float)base_step * step_factor);
             
             if (exp_height < 0.0f) {
                 /* Stick up = increase height */
                 if (g_hover_thrust == CD_THRUST_OFF) {
                     g_hover_thrust = CTRL_TAKEOFF_SETTLE_THRUST;
                 } else {
-                    g_hover_thrust = cd_clamp_thrust((int)g_hover_thrust + (int)step);
+                    g_hover_thrust = cd_clamp_thrust((int)g_hover_thrust + (int)adjusted_step);
                 }
             } else if (exp_height > 0.0f) {
                 /* Stick down = decrease height */
-                g_hover_thrust = cd_clamp_thrust((int)g_hover_thrust - (int)step);
+                g_hover_thrust = cd_clamp_thrust((int)g_hover_thrust - (int)adjusted_step);
             }
             
             /* Clamp to current thrust level max */
@@ -802,22 +875,15 @@ int main(void)
             cmd_pitch = exp_pitch * translation_cmd_deg;
         }
 
-        /* Right stick X: Left/Right (roll) + L1/R1 strafe */
+        /* Right stick X: Left/Right (roll) */
         float right_x_norm = normalize_axis(g_stick_right_x);
         float cmd_roll = 0.0f;
         if (fabsf(right_x_norm) > JOYSTICK_COMMAND_MIN_THRESHOLD) {
             float exp_roll = apply_exponential_curve(right_x_norm, 1.8f);
             cmd_roll = exp_roll * translation_cmd_deg;
         }
-        
-        /* If L1 or R1 pressed, use strafe instead */
-        if (g_button_l1 || g_button_r1) {
-            cmd_roll = strafe_cmd;
-        }
 
-        /* Triggers L2/R2: YAW DISABLED (reserved for arm safety) */
-        /* TODO: Implement yaw on different buttons when needed */
-        float cmd_yaw = 0.0f;
+        /* Yaw control is now on L1/R1 buttons (see above) */
 
         /* Brief opposite command on release to stop drift faster */
         if (fabsf(prev_roll_cmd) > JOYSTICK_COMMAND_MIN_THRESHOLD && fabsf(cmd_roll) < JOYSTICK_COMMAND_MIN_THRESHOLD) {
@@ -843,7 +909,7 @@ int main(void)
 
         g_roll = cmd_roll + roll_brake;
         g_pitch = cmd_pitch + pitch_brake;
-        g_yaw_rate = cmd_yaw;
+        /* NOTE: g_yaw_rate is set by trigger handler below, not here */
 
         /* IMU-assisted trim: keep craft level when no directional input */
         const CdImuData *imu = cd_get_imu(drone);
@@ -925,13 +991,61 @@ int main(void)
         prev_roll_cmd = cmd_roll;
         prev_pitch_cmd = cmd_pitch;
 
-        /* Check if both L2 and R2 triggers are pressed (required to fly) */
-        int both_triggers_pressed = (g_trigger_l2 > JOYSTICK_DEADZONE) && (g_trigger_r2 > JOYSTICK_DEADZONE);
+        /* Check trigger states for flight control */
+        int l2_pressed = (g_trigger_l2 > JOYSTICK_DEADZONE);
+        int r2_pressed = (g_trigger_r2 > JOYSTICK_DEADZONE);
+        int both_triggers_pressed = l2_pressed && r2_pressed;
         
-        if (g_armed && !both_triggers_pressed) {
-            /* Emergency shutdown: both triggers released */
+        /* Detect edge: trigger went from pressed to released */
+        int l2_released = (g_prev_trigger_l2 > JOYSTICK_DEADZONE) && !l2_pressed;
+        int r2_released = (g_prev_trigger_r2 > JOYSTICK_DEADZONE) && !r2_pressed;
+        
+        /* Update previous state for next frame */
+        g_prev_trigger_l2 = g_trigger_l2;
+        g_prev_trigger_r2 = g_trigger_r2;
+        
+        /* Track if both triggers were pressed (for emergency stop detection) */
+        if (both_triggers_pressed) {
+            g_triggers_were_both_pressed = 1;
+            g_both_triggers_released_ms = 0;  /* Reset emergency stop timer when triggers pressed */
+        }
+        
+        /* Handle trigger release events with grace period and 1-second emergency stop timeout */
+        if (g_armed && g_landing && g_landing_start_ms > 0) {
+            /* Currently landing - check if landing is complete */
+            uint32_t landing_elapsed = now - g_landing_start_ms;
+            if (landing_elapsed >= (uint32_t)g_landing_duration_ms) {
+                /* Landing complete */
+                g_landing = 0;
+                g_armed = 0;
+                g_thrust = 0;
+                g_hover_thrust = CD_THRUST_OFF;
+                g_roll = 0;
+                g_pitch = 0;
+                g_yaw_rate = 0;
+                hold_roll_i = hold_pitch_i = 0.0f;
+                imu_filt_init = 0;
+                prev_imu_ts = 0;
+                printf("\r[LAND] Smooth landing complete!\n");
+            }
+        } else if (g_armed && g_triggers_were_both_pressed && !l2_pressed && !r2_pressed && g_both_triggers_released_ms == 0) {
+            /* Both triggers were pressed, now BOTH fully released: start emergency stop timer */
+            g_both_triggers_released_ms = now;
+            g_one_trigger_released_ms = 0;
+            printf("\r[EMERGENCY] Both triggers released! Hold for 1s to execute emergency stop...\n");
+        } else if (g_both_triggers_released_ms > 0 && both_triggers_pressed) {
+            /* Triggers pressed again during emergency stop countdown: cancel */
+            g_both_triggers_released_ms = 0;
+            printf("\r[EMERGENCY] Cancelled! Triggers pressed again.\n");
+        } else if (g_both_triggers_released_ms > 0 && (now - g_both_triggers_released_ms) >= EMERGENCY_STOP_TIMEOUT_MS) {
+            /* 1 second passed with both triggers released: execute emergency stop */
+            g_triggers_were_both_pressed = 0;
+            g_both_triggers_released_ms = 0;
+            g_one_trigger_released_ms = 0;
             g_armed = 0;
             g_thrust = 0;
+            g_landing = 0;
+            g_landing_start_ms = 0;
             g_roll = 0;
             g_pitch = 0;
             g_yaw_rate = 0;
@@ -942,19 +1056,49 @@ int main(void)
             pitch_brake_until = 0;
             g_hover_thrust = CD_THRUST_OFF;
             cd_emergency_stop(drone);
-            printf("\r[EMERGENCY] Both triggers released! Motors stopped!\n");
+            printf("\r[EMERGENCY] EMERGENCY STOP EXECUTED! Motors stopped!\n");
+        } else if (g_armed && !g_landing && (l2_released || r2_released) && !both_triggers_pressed && g_both_triggers_released_ms == 0) {
+            /* One trigger released (not both): start landing grace period */
+            if (g_triggers_were_both_pressed && g_one_trigger_released_ms == 0) {
+                g_one_trigger_released_ms = now;
+                printf("\r[GRACE] One trigger released, waiting %dms...\n", TRIGGER_GRACE_PERIOD_MS);
+            }
+        } else if (g_one_trigger_released_ms > 0 && both_triggers_pressed) {
+            /* User pressed both triggers again during grace period: cancel landing */
+            g_one_trigger_released_ms = 0;
+            printf("\r[GRACE] Recovered! Both triggers pressed again.\n");
+        } else if (g_one_trigger_released_ms > 0 && (now - g_one_trigger_released_ms) >= TRIGGER_GRACE_PERIOD_MS) {
+            /* Grace period expired: both triggers still not pressed, initiate landing */
+            if (!g_landing && g_armed) {
+                uint16_t land_from = g_hover_thrust;
+                g_landing_duration_ms = calculate_landing_duration_ms(land_from);
+                g_landing_start_ms = now;
+                g_landing = 1;
+                g_one_trigger_released_ms = 0;
+                g_triggers_were_both_pressed = 0;
+                printf("\r[LAND] Smooth landing initiated from %u thrust (%dms duration)\n", 
+                       land_from, g_landing_duration_ms);
+                cd_land(drone, land_from, g_landing_duration_ms);
+            }
         }
 
-        if (g_armed && both_triggers_pressed) {
+        /* Assign thrust: flying normally, or stopped */
+        if (g_armed && !g_landing && both_triggers_pressed) {
             g_thrust = g_hover_thrust;
-        } else {
-            g_thrust = 0;
+        } else if (!g_armed || g_landing) {
+            g_thrust = 0;  /* Will be controlled by landing sequence if landing */
         }
 
-        /* Send setpoint if armed AND not in test mode */
-        if (g_armed && !g_test_mode) {
+        /* Apply L1/R1 yaw control if not landing */
+        if (!g_landing) {
+            g_yaw_rate = cmd_yaw_button;
+        }
+
+        /* Send setpoint if armed AND not in test mode AND not landing */
+        /* (Landing sequence handles its own setpoint sending) */
+        if (g_armed && !g_test_mode && !g_landing) {
             cd_send_setpoint(drone, g_roll, g_pitch, g_yaw_rate, g_thrust);
-        } else {
+        } else if (!g_armed) {
             cd_send_setpoint(drone, 0, 0, 0, CD_THRUST_OFF);
         }
 
