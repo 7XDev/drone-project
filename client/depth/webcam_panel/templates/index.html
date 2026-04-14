@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Depth Comparison</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      color: #fff;
+    }
+
+    .stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+    }
+
+    .stream {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+      background: #000;
+    }
+
+    .stats {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: min(260px, 42vw);
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.88);
+      font-size: 0.82rem;
+      line-height: 1.35;
+      backdrop-filter: blur(2px);
+    }
+
+    .stats-title {
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .label {
+      opacity: 0.8;
+    }
+
+    .value {
+      font-weight: 600;
+    }
+
+    .error {
+      margin-top: 8px;
+      color: #ff7b7b;
+      word-break: break-word;
+      white-space: normal;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <img id="stream" class="stream" src="/stream" alt="Webcam and depth comparison">
+
+    <section class="stats" aria-label="Performance stats">
+      <div class="stats-title">Depth Stats</div>
+      <div class="row"><span class="label">FPS</span><span class="value" id="fps">-</span></div>
+      <div class="row"><span class="label">Inference ms</span><span class="value" id="infMs">-</span></div>
+      <div class="row"><span class="label">Frame ms</span><span class="value" id="frameMs">-</span></div>
+      <div class="row"><span class="label">Frames</span><span class="value" id="frames">-</span></div>
+      <div class="row"><span class="label">Capture</span><span class="value" id="capRes">-</span></div>
+      <div class="row"><span class="label">Inference</span><span class="value" id="infRes">-</span></div>
+      <div class="row"><span class="label">Device</span><span class="value" id="device">-</span></div>
+      <div class="row"><span class="label">Precision</span><span class="value" id="precision">-</span></div>
+      <div class="row"><span class="label">Model</span><span class="value" id="curModel">-</span></div>
+      <div class="row"><span class="label">Status</span><span class="value" id="status">-</span></div>
+      <div id="errorLine" class="error"></div>
+    </section>
+  </main>
+
+  <script>
+    const fields = {
+      fps: document.getElementById("fps"),
+      infMs: document.getElementById("infMs"),
+      frameMs: document.getElementById("frameMs"),
+      frames: document.getElementById("frames"),
+      capRes: document.getElementById("capRes"),
+      infRes: document.getElementById("infRes"),
+      device: document.getElementById("device"),
+      precision: document.getElementById("precision"),
+      curModel: document.getElementById("curModel"),
+      status: document.getElementById("status"),
+      errorLine: document.getElementById("errorLine"),
+    };
+
+    async function fetchStats() {
+      try {
+        const response = await fetch("/api/stats", { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error("Failed to fetch stats");
+        }
+
+        const stats = await response.json();
+        fields.fps.textContent = Number(stats.fps || 0).toFixed(2);
+        fields.infMs.textContent = Number(stats.avg_inference_ms || 0).toFixed(1);
+        fields.frameMs.textContent = Number(stats.avg_frame_ms || 0).toFixed(1);
+        fields.frames.textContent = String(stats.processed_frames || 0);
+        fields.capRes.textContent = stats.capture_resolution || "-";
+        fields.infRes.textContent = stats.inference_resolution || "-";
+        fields.device.textContent = stats.device || "-";
+        fields.precision.textContent = stats.precision || "-";
+        fields.curModel.textContent = stats.current_model_size || "-";
+        fields.status.textContent = stats.model_loading ? "Loading" : "Ready";
+
+        if (stats.last_error) {
+          fields.errorLine.textContent = stats.last_error;
+        } else {
+          fields.errorLine.textContent = "";
+        }
+      } catch (err) {
+        fields.errorLine.textContent = err.message;
+      }
+    }
+
+    fetchStats();
+    setInterval(fetchStats, 500);
+  </script>
+</body>
+</html>
