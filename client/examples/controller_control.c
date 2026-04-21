@@ -46,6 +46,12 @@
 #include <linux/joystick.h>
 #include <errno.h>
 #include <time.h>
+#include <pthread.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/select.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include "../lib/crazydrone.h"
 
 /* ── Joystick constants ──────────────────────────────────────────────────── */
@@ -183,6 +189,411 @@ static const uint16_t thrust_levels[] = { 30000, 40000, 50000, 65000 };
 #define BATTERY_EMPTY_V            3.0f   /* Minimum safe voltage */
 #define BATTERY_CAPACITY_MAH       400    /* Typical Crazyflie battery capacity */
 #define BATTERY_NOMINAL_VOLTAGE    3.7f   /* Nominal voltage (1S LiPo) */
+
+static int battery_voltage_to_percent(float voltage);
+
+/* ── Web dashboard (camera + telemetry) ─────────────────────────────────── */
+#define WEB_SERVER_PORT            8080
+#define WEB_ACCEPT_TIMEOUT_MS      300
+
+typedef struct {
+    uint32_t ts_ms;
+    int armed;
+    int landing;
+    int test_mode;
+    int speed_mode;
+    char speed_name[16];
+    uint16_t thrust;
+    uint16_t hover_thrust;
+    uint16_t max_thrust;
+    float roll_cmd;
+    float pitch_cmd;
+    float yaw_rate_cmd;
+    float imu_roll;
+    float imu_pitch;
+    float imu_yaw;
+    float gyro_x;
+    float gyro_y;
+    float gyro_z;
+    int imu_valid;
+    int gyro_valid;
+    float battery_v;
+    int battery_percent;
+    int cam_ok;
+    char camera_stream_url[256];
+    char camera_snapshot_url[256];
+} WebTelemetry;
+
+static volatile int g_web_server_running = 0;
+static int g_web_listen_fd = -1;
+static pthread_t g_web_thread;
+static pthread_mutex_t g_web_mutex = PTHREAD_MUTEX_INITIALIZER;
+static WebTelemetry g_web_telemetry;
+
+static void web_send_http_response(int fd, int code, const char *status,
+                                   const char *content_type, const char *body)
+{
+    if (!status || !content_type || !body) return;
+
+    size_t body_len = strlen(body);
+    char header[512];
+    int hdr_len = snprintf(header, sizeof(header),
+                           "HTTP/1.1 %d %s\r\n"
+                           "Content-Type: %s\r\n"
+                           "Content-Length: %zu\r\n"
+                           "Cache-Control: no-store\r\n"
+                           "Connection: close\r\n"
+                           "\r\n",
+                           code, status, content_type, body_len);
+    if (hdr_len > 0) {
+        (void)write(fd, header, (size_t)hdr_len);
+    }
+    (void)write(fd, body, body_len);
+}
+
+static void web_send_not_found(int fd)
+{
+    web_send_http_response(fd, 404, "Not Found", "text/plain; charset=utf-8", "404");
+}
+
+static void web_send_dashboard_html(int fd)
+{
+    WebTelemetry snap;
+    pthread_mutex_lock(&g_web_mutex);
+    snap = g_web_telemetry;
+    pthread_mutex_unlock(&g_web_mutex);
+
+    char page[16384];
+    int n = snprintf(page, sizeof(page),
+        "<!doctype html>\n"
+        "<html lang=\"en\">\n"
+        "<head>\n"
+        "  <meta charset=\"utf-8\">\n"
+        "  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n"
+        "  <title>ESP32 Drone Dashboard</title>\n"
+        "  <style>\n"
+        "    :root{--bg:#0b1020;--panel:#141a2f;--panel2:#1b2340;--text:#e8ecff;--muted:#95a2d6;--ok:#27d17f;--warn:#ffb020;--danger:#ff5470;--acc:#4aa8ff;}\n"
+        "    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:radial-gradient(circle at 10%% 10%%,#1b2340,#0b1020 55%%);color:var(--text)}\n"
+        "    .wrap{max-width:1280px;margin:0 auto;padding:18px}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.title{font-size:22px;font-weight:700}.sub{color:var(--muted);font-size:13px}\n"
+        "    .grid{display:grid;grid-template-columns:2.1fr 1.2fr;gap:14px}.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid #283155;border-radius:14px;padding:14px;box-shadow:0 8px 26px rgba(0,0,0,.35)}\n"
+        "    .cam{width:100%%;aspect-ratio:16/9;border-radius:10px;border:1px solid #2d3967;background:#03060f;object-fit:cover}.badge{padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700}.ok{background:rgba(39,209,127,.16);color:var(--ok)}.bad{background:rgba(255,84,112,.18);color:var(--danger)}\n"
+        "    .kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}.kpi{background:rgba(255,255,255,.03);border:1px solid #2a355f;border-radius:10px;padding:10px}.kpi .l{font-size:12px;color:var(--muted)}.kpi .v{font-size:22px;font-weight:700}\n"
+        "    .meter{height:9px;background:#0b1228;border:1px solid #2b3868;border-radius:999px;overflow:hidden}.fill{height:100%%;background:linear-gradient(90deg,#4aa8ff,#2ee9d2);width:0%%;transition:width .14s linear}\n"
+        "    .inst{display:grid;grid-template-columns:1fr 1fr;gap:12px}.horizon{position:relative;height:210px;border-radius:12px;overflow:hidden;border:1px solid #2a355f;background:#081126}.sky{position:absolute;inset:-40%% -20%% 50%% -20%%;background:linear-gradient(#4aa8ff,#89cbff)}.ground{position:absolute;inset:50%% -20%% -40%% -20%%;background:linear-gradient(#8a5d34,#5b3a22)}\n"
+        "    .att{position:absolute;inset:0;transform:translateY(0px) rotate(0deg);transition:transform .14s linear}.cross{position:absolute;left:50%%;top:50%%;width:120px;height:2px;background:#fff;transform:translate(-50%%,-50%%)}.cross:before,.cross:after{content:\"\";position:absolute;top:-6px;width:2px;height:14px;background:#fff}.cross:before{left:0}.cross:after{right:0}\n"
+        "    .ring{position:absolute;inset:12px;border:2px solid rgba(255,255,255,.22);border-radius:50%%}.yawv{height:210px;display:flex;align-items:center;justify-content:center;position:relative}.compass{width:180px;height:180px;border:2px solid #2f3e71;border-radius:50%%;position:relative;background:radial-gradient(circle,#182244,#0d1530)}\n"
+        "    .needle{position:absolute;left:50%%;top:50%%;width:4px;height:72px;background:linear-gradient(var(--acc),#fff);transform-origin:center 64px;transform:translate(-50%%,-90%%) rotate(0deg);border-radius:4px;transition:transform .14s linear}.center{position:absolute;left:50%%;top:50%%;width:12px;height:12px;border-radius:50%%;background:#fff;transform:translate(-50%%,-50%%)}\n"
+        "    .foot{margin-top:10px;color:var(--muted);font-size:12px}\n"
+        "    @media (max-width:980px){.grid{grid-template-columns:1fr}.inst{grid-template-columns:1fr}}\n"
+        "  </style>\n"
+        "</head>\n"
+        "<body>\n"
+        "  <div class=\"wrap\">\n"
+        "    <div class=\"head\">\n"
+        "      <div><div class=\"title\">ESP32 Drone Flight Dashboard</div><div class=\"sub\">Live camera + controls + flight instruments</div></div>\n"
+        "      <div id=\"statusBadge\" class=\"badge bad\">DISARMED</div>\n"
+        "    </div>\n"
+        "    <div class=\"grid\">\n"
+        "      <div class=\"panel\">\n"
+        "        <img id=\"cam\" class=\"cam\" src=\"%s\" alt=\"ESP32-CAM Stream\">\n"
+        "        <div class=\"kpis\">\n"
+        "          <div class=\"kpi\"><div class=\"l\">Speed mode</div><div class=\"v\" id=\"mode\">%s</div></div>\n"
+        "          <div class=\"kpi\"><div class=\"l\">Thrust</div><div class=\"v\" id=\"thrust\">0</div><div class=\"meter\"><div id=\"thrustFill\" class=\"fill\"></div></div></div>\n"
+        "          <div class=\"kpi\"><div class=\"l\">Battery</div><div class=\"v\" id=\"battery\">--%%</div><div class=\"meter\"><div id=\"batteryFill\" class=\"fill\"></div></div></div>\n"
+        "        </div>\n"
+        "      </div>\n"
+        "      <div class=\"panel\">\n"
+        "        <div class=\"inst\">\n"
+        "          <div class=\"horizon\">\n"
+        "            <div id=\"att\" class=\"att\"><div class=\"sky\"></div><div class=\"ground\"></div></div>\n"
+        "            <div class=\"ring\"></div><div class=\"cross\"></div>\n"
+        "          </div>\n"
+        "          <div class=\"yawv\">\n"
+        "            <div class=\"compass\"><div id=\"needle\" class=\"needle\"></div><div class=\"center\"></div></div>\n"
+        "          </div>\n"
+        "        </div>\n"
+        "        <div class=\"kpis\" style=\"margin-top:12px\">\n"
+        "          <div class=\"kpi\"><div class=\"l\">Roll</div><div class=\"v\" id=\"roll\">0.0°</div></div>\n"
+        "          <div class=\"kpi\"><div class=\"l\">Pitch</div><div class=\"v\" id=\"pitch\">0.0°</div></div>\n"
+        "          <div class=\"kpi\"><div class=\"l\">Yaw rate</div><div class=\"v\" id=\"yaw\">0.0°/s</div></div>\n"
+        "        </div>\n"
+        "      </div>\n"
+        "    </div>\n"
+        "    <div class=\"foot\">Dashboard API: <code>/api/telemetry</code> | Camera stream: <code id=\"camUrlTxt\">%s</code></div>\n"
+        "  </div>\n"
+        "  <script>\n"
+        "    const fmt=(v,d=1)=>Number.isFinite(v)?v.toFixed(d):'--';\n"
+        "    async function tick(){\n"
+        "      try{\n"
+        "        const r=await fetch('/api/telemetry',{cache:'no-store'});\n"
+        "        if(!r.ok) return;\n"
+        "        const t=await r.json();\n"
+        "        document.getElementById('statusBadge').textContent=t.armed?'ARMED':'DISARMED';\n"
+        "        document.getElementById('statusBadge').className='badge '+(t.armed?'ok':'bad');\n"
+        "        document.getElementById('mode').textContent=t.speed_name;\n"
+        "        document.getElementById('thrust').textContent=t.thrust+' / '+t.max_thrust;\n"
+        "        const thrPct=t.max_thrust>0?Math.max(0,Math.min(100,(t.thrust*100/t.max_thrust))):0;\n"
+        "        document.getElementById('thrustFill').style.width=thrPct+'%%';\n"
+        "        document.getElementById('battery').textContent=t.battery_percent+'%% ('+fmt(t.battery_v,2)+'V)';\n"
+        "        document.getElementById('batteryFill').style.width=Math.max(0,Math.min(100,t.battery_percent))+'%%';\n"
+        "        document.getElementById('roll').textContent=fmt(t.imu_roll,1)+'°';\n"
+        "        document.getElementById('pitch').textContent=fmt(t.imu_pitch,1)+'°';\n"
+        "        document.getElementById('yaw').textContent=fmt(t.yaw_rate_cmd,1)+'°/s';\n"
+        "        document.getElementById('att').style.transform='translateY('+(t.imu_pitch*1.6)+'px) rotate('+(t.imu_roll)+'deg)';\n"
+        "        document.getElementById('needle').style.transform='translate(-50%%,-90%%) rotate('+(t.imu_yaw)+'deg)';\n"
+        "        if(t.camera_stream_url){\n"
+        "          const cam=document.getElementById('cam');\n"
+        "          if(cam.src!==t.camera_stream_url) cam.src=t.camera_stream_url;\n"
+        "          document.getElementById('camUrlTxt').textContent=t.camera_stream_url;\n"
+        "        }\n"
+        "      }catch(e){}\n"
+        "    }\n"
+        "    setInterval(tick,180);\n"
+        "    tick();\n"
+        "  </script>\n"
+        "</body>\n"
+        "</html>\n",
+        snap.camera_stream_url,
+        snap.speed_name,
+        snap.camera_stream_url);
+
+    if (n <= 0 || n >= (int)sizeof(page)) {
+        web_send_http_response(fd, 500, "Internal Server Error", "text/plain; charset=utf-8", "page rendering failed");
+        return;
+    }
+
+    web_send_http_response(fd, 200, "OK", "text/html; charset=utf-8", page);
+}
+
+static void web_send_telemetry_json(int fd)
+{
+    WebTelemetry snap;
+    pthread_mutex_lock(&g_web_mutex);
+    snap = g_web_telemetry;
+    pthread_mutex_unlock(&g_web_mutex);
+
+    char json[2048];
+    int n = snprintf(json, sizeof(json),
+                     "{"
+                     "\"ts_ms\":%u,"
+                     "\"armed\":%d,"
+                     "\"landing\":%d,"
+                     "\"test_mode\":%d,"
+                     "\"speed_mode\":%d,"
+                     "\"speed_name\":\"%s\","
+                     "\"thrust\":%u,"
+                     "\"hover_thrust\":%u,"
+                     "\"max_thrust\":%u,"
+                     "\"roll_cmd\":%.3f,"
+                     "\"pitch_cmd\":%.3f,"
+                     "\"yaw_rate_cmd\":%.3f,"
+                     "\"imu_roll\":%.3f,"
+                     "\"imu_pitch\":%.3f,"
+                     "\"imu_yaw\":%.3f,"
+                     "\"gyro_x\":%.3f,"
+                     "\"gyro_y\":%.3f,"
+                     "\"gyro_z\":%.3f,"
+                     "\"imu_valid\":%d,"
+                     "\"gyro_valid\":%d,"
+                     "\"battery_v\":%.3f,"
+                     "\"battery_percent\":%d,"
+                     "\"cam_ok\":%d,"
+                     "\"camera_stream_url\":\"%s\","
+                     "\"camera_snapshot_url\":\"%s\""
+                     "}",
+                     snap.ts_ms,
+                     snap.armed,
+                     snap.landing,
+                     snap.test_mode,
+                     snap.speed_mode,
+                     snap.speed_name,
+                     snap.thrust,
+                     snap.hover_thrust,
+                     snap.max_thrust,
+                     snap.roll_cmd,
+                     snap.pitch_cmd,
+                     snap.yaw_rate_cmd,
+                     snap.imu_roll,
+                     snap.imu_pitch,
+                     snap.imu_yaw,
+                     snap.gyro_x,
+                     snap.gyro_y,
+                     snap.gyro_z,
+                     snap.imu_valid,
+                     snap.gyro_valid,
+                     snap.battery_v,
+                     snap.battery_percent,
+                     snap.cam_ok,
+                     snap.camera_stream_url,
+                     snap.camera_snapshot_url);
+
+    if (n <= 0 || n >= (int)sizeof(json)) {
+        web_send_http_response(fd, 500, "Internal Server Error", "application/json", "{\"error\":\"json overflow\"}");
+        return;
+    }
+
+    web_send_http_response(fd, 200, "OK", "application/json", json);
+}
+
+static void web_handle_client(int fd)
+{
+    char req[2048];
+    ssize_t n = recv(fd, req, sizeof(req) - 1, 0);
+    if (n <= 0) return;
+    req[n] = '\0';
+
+    char method[8] = {0};
+    char path[256] = {0};
+    if (sscanf(req, "%7s %255s", method, path) != 2) {
+        web_send_http_response(fd, 400, "Bad Request", "text/plain; charset=utf-8", "bad request");
+        return;
+    }
+
+    if (strcmp(method, "GET") != 0) {
+        web_send_http_response(fd, 405, "Method Not Allowed", "text/plain; charset=utf-8", "method not allowed");
+        return;
+    }
+
+    if (strcmp(path, "/") == 0) {
+        web_send_dashboard_html(fd);
+    } else if (strcmp(path, "/api/telemetry") == 0) {
+        web_send_telemetry_json(fd);
+    } else if (strcmp(path, "/health") == 0) {
+        web_send_http_response(fd, 200, "OK", "text/plain; charset=utf-8", "ok");
+    } else {
+        web_send_not_found(fd);
+    }
+}
+
+static void *web_server_thread_main(void *arg)
+{
+    (void)arg;
+    while (g_web_server_running) {
+        struct sockaddr_in cli;
+        socklen_t cli_len = sizeof(cli);
+
+        fd_set rset;
+        FD_ZERO(&rset);
+        FD_SET(g_web_listen_fd, &rset);
+        struct timeval tv = {
+            .tv_sec = 0,
+            .tv_usec = WEB_ACCEPT_TIMEOUT_MS * 1000
+        };
+
+        int sel = select(g_web_listen_fd + 1, &rset, NULL, NULL, &tv);
+        if (sel <= 0 || !FD_ISSET(g_web_listen_fd, &rset)) {
+            continue;
+        }
+
+        int cfd = accept(g_web_listen_fd, (struct sockaddr *)&cli, &cli_len);
+        if (cfd < 0) {
+            continue;
+        }
+
+        web_handle_client(cfd);
+        close(cfd);
+    }
+    return NULL;
+}
+
+static int web_server_start(void)
+{
+    int fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (fd < 0) {
+        perror("web socket");
+        return -1;
+    }
+
+    int yes = 1;
+    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
+
+    struct sockaddr_in addr;
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    addr.sin_port = htons(WEB_SERVER_PORT);
+
+    if (bind(fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+        perror("web bind");
+        close(fd);
+        return -1;
+    }
+
+    if (listen(fd, 8) < 0) {
+        perror("web listen");
+        close(fd);
+        return -1;
+    }
+
+    g_web_listen_fd = fd;
+    g_web_server_running = 1;
+    if (pthread_create(&g_web_thread, NULL, web_server_thread_main, NULL) != 0) {
+        perror("web pthread_create");
+        g_web_server_running = 0;
+        close(g_web_listen_fd);
+        g_web_listen_fd = -1;
+        return -1;
+    }
+    return 0;
+}
+
+static void web_server_stop(void)
+{
+    if (!g_web_server_running) return;
+    g_web_server_running = 0;
+
+    if (g_web_listen_fd >= 0) {
+        shutdown(g_web_listen_fd, SHUT_RDWR);
+        close(g_web_listen_fd);
+        g_web_listen_fd = -1;
+    }
+
+    pthread_join(g_web_thread, NULL);
+}
+
+static void web_update_telemetry(CrazyDrone *drone)
+{
+    static uint32_t last_cam_probe_ms = 0;
+    static int cam_probe_ok = 0;
+
+    const CdImuData *imu = cd_get_imu(drone);
+    WebTelemetry t;
+    memset(&t, 0, sizeof(t));
+
+    t.ts_ms = cd_now_ms();
+    t.armed = g_armed;
+    t.landing = g_landing;
+    t.test_mode = g_test_mode;
+    t.speed_mode = drone->speed_mode;
+    snprintf(t.speed_name, sizeof(t.speed_name), "%s", speed_names[drone->speed_mode]);
+    t.thrust = g_thrust;
+    t.hover_thrust = g_hover_thrust;
+    t.max_thrust = thrust_levels[g_thrust_level];
+    t.roll_cmd = g_roll;
+    t.pitch_cmd = g_pitch;
+    t.yaw_rate_cmd = g_yaw_rate;
+    t.imu_roll = imu->roll;
+    t.imu_pitch = imu->pitch;
+    t.imu_yaw = imu->yaw;
+    t.gyro_x = imu->gyro_x;
+    t.gyro_y = imu->gyro_y;
+    t.gyro_z = imu->gyro_z;
+    t.imu_valid = imu->stab_valid;
+    t.gyro_valid = imu->gyro_valid;
+    t.battery_v = imu->battery_v;
+    t.battery_percent = battery_voltage_to_percent(imu->battery_v);
+    if (t.ts_ms - last_cam_probe_ms > 2500) {
+        cam_probe_ok = cd_camera_probe(drone, 250);
+        last_cam_probe_ms = t.ts_ms;
+    }
+    t.cam_ok = cam_probe_ok;
+    cd_camera_get_stream_url(drone, t.camera_stream_url, sizeof(t.camera_stream_url));
+    cd_camera_get_snapshot_url(drone, t.camera_snapshot_url, sizeof(t.camera_snapshot_url));
+
+    pthread_mutex_lock(&g_web_mutex);
+    g_web_telemetry = t;
+    pthread_mutex_unlock(&g_web_mutex);
+}
 
 /* ── Exponential curve helper ───────────────────────────────────────────── */
 
@@ -647,6 +1058,13 @@ int main(void)
         return EXIT_FAILURE;
     }
 
+    cd_camera_set_endpoint(drone, CD_DEFAULT_CAM_PORT,
+                           CD_DEFAULT_CAM_STREAM_PATH,
+                           CD_DEFAULT_CAM_SNAPSHOT_PATH);
+
+    char cam_url[256] = {0};
+    cd_camera_get_stream_url(drone, cam_url, sizeof(cam_url));
+
     cd_print_banner("Controller Drone Flight", drone->ip, drone->port);
 
     /* Increase control update rate */
@@ -659,6 +1077,9 @@ int main(void)
         printf("Warning: No reply from drone. Continuing anyway.\n");
         printf("(Make sure you're connected to the drone's WiFi AP)\n\n");
     }
+
+    printf("Camera stream endpoint: %s\n", cam_url);
+    printf("Camera probe: %s\n", cd_camera_probe(drone, 1200) ? "OK" : "not reachable yet");
 
     /* Try to set up IMU logging */
     printf("Setting up IMU logging (this may take a moment)…\n");
@@ -679,6 +1100,19 @@ int main(void)
     printf("\nController connected! Press Triangle (Y) to arm, then move sticks.\n");
     printf("Press Touchpad/Back to toggle TEST MODE.\n");
     printf("Press PS/Xbox button to quit.\n\n");
+
+    memset(&g_web_telemetry, 0, sizeof(g_web_telemetry));
+    snprintf(g_web_telemetry.speed_name, sizeof(g_web_telemetry.speed_name), "%s", speed_names[drone->speed_mode]);
+    cd_camera_get_stream_url(drone, g_web_telemetry.camera_stream_url, sizeof(g_web_telemetry.camera_stream_url));
+    cd_camera_get_snapshot_url(drone, g_web_telemetry.camera_snapshot_url, sizeof(g_web_telemetry.camera_snapshot_url));
+
+    if (web_server_start() == 0) {
+        printf("Web dashboard: http://127.0.0.1:%d\n", WEB_SERVER_PORT);
+        printf("(Open from another device: http://<this-computer-ip>:%d)\n\n", WEB_SERVER_PORT);
+    } else {
+        printf("Warning: Could not start web dashboard on port %d\n\n", WEB_SERVER_PORT);
+    }
+
     cd_sleep_ms(2000);
 
     uint32_t last_display = 0;
@@ -1104,6 +1538,7 @@ int main(void)
 
         /* Update display every 100ms */
         if (now - last_display >= 100) {
+            web_update_telemetry(drone);
             print_status(drone);
             last_display = now;
         }
@@ -1112,6 +1547,8 @@ int main(void)
     }
 
 done:
+    web_server_stop();
+
     /* Ensure motors are stopped */
     cd_emergency_stop(drone);
     close(js_fd);

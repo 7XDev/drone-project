@@ -7,8 +7,8 @@
 # Requires: gcc, Linux/macOS (POSIX sockets + termios)
 
 CC       = gcc
-CFLAGS   = -O2 -Wall -Wextra -std=c11 -D_POSIX_C_SOURCE=199309L
-LDFLAGS  = -lm
+CFLAGS   = -O2 -Wall -Wextra -std=c11 -D_POSIX_C_SOURCE=199309L -pthread
+LDFLAGS  = -lm -pthread
 
 LIB_SRC  = lib/crazydrone.c
 LIB_HDR  = lib/crazydrone.h

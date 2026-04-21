@@ -44,6 +44,9 @@ extern "C" {
 #define CD_DEFAULT_IP        "192.168.43.42"
 #define CD_DEFAULT_PORT      2390
 #define CD_DEFAULT_RATE_HZ   50       /* Packet send rate (Hz) */
+#define CD_DEFAULT_CAM_PORT  81
+#define CD_DEFAULT_CAM_STREAM_PATH "/stream"
+#define CD_DEFAULT_CAM_SNAPSHOT_PATH "/capture"
 
 /* ── Thrust constants (uint16, 0–65535) ──────────────────────────────────── */
 #define CD_THRUST_OFF        0        /* Motors off / disarm */
@@ -208,6 +211,11 @@ typedef struct {
 
     /* ── Latest sensor data ───────────────────────────────────────────── */
     CdImuData        imu;
+
+    /* ── Camera endpoint config (ESP32-CAM HTTP) ─────────────────────── */
+    int              cam_port;
+    char             cam_stream_path[64];
+    char             cam_snapshot_path[64];
 } CrazyDrone;
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -388,6 +396,31 @@ int cd_get_accel(CrazyDrone *drone, float *ax, float *ay, float *az);
 
 /** Get full IMU data snapshot. */
 const CdImuData *cd_get_imu(CrazyDrone *drone);
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * API — Camera endpoint helpers (ESP32-CAM on the drone)
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+/**
+ * Configure camera HTTP endpoint.
+ * @param cam_port      Camera TCP port (typically 81)
+ * @param stream_path   MJPEG stream path (typically "/stream")
+ * @param snapshot_path JPEG snapshot path (typically "/capture")
+ */
+void cd_camera_set_endpoint(CrazyDrone *drone, int cam_port,
+                            const char *stream_path, const char *snapshot_path);
+
+/** Build camera stream URL into out buffer. Returns 0 on success. */
+int cd_camera_get_stream_url(CrazyDrone *drone, char *out, size_t out_len);
+
+/** Build camera snapshot URL into out buffer. Returns 0 on success. */
+int cd_camera_get_snapshot_url(CrazyDrone *drone, char *out, size_t out_len);
+
+/**
+ * Probe camera endpoint by opening TCP connection and issuing HTTP request.
+ * Returns 1 if endpoint responds with an HTTP status line, otherwise 0.
+ */
+int cd_camera_probe(CrazyDrone *drone, int timeout_ms);
 
 /* ═══════════════════════════════════════════════════════════════════════════
  * API — Terminal I/O (raw keyboard for interactive programs)

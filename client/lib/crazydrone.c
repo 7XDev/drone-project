@@ -38,6 +38,7 @@ static size_t cd_strnlen(const char *s, size_t maxlen) {
 #include <fcntl.h>
 #include <termios.h>
 #include <sys/select.h>
+#include <sys/time.h>
 
 /* ═══════════════════════════════════════════════════════════════════════════
  * Internal globals
@@ -137,6 +138,23 @@ static float log_value_to_float(const uint8_t *data, uint8_t type)
     }
 }
 
+static void cd_copy_path_with_default(char *dst, size_t dst_sz,
+                                      const char *path, const char *def_path)
+{
+    if (!dst || dst_sz == 0) return;
+
+    const char *src = path;
+    if (!src || src[0] == '\0') {
+        src = def_path;
+    }
+
+    if (src[0] != '/') {
+        snprintf(dst, dst_sz, "/%s", src);
+    } else {
+        snprintf(dst, dst_sz, "%s", src);
+    }
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
  * Signal handler
  * ═══════════════════════════════════════════════════════════════════════════ */
@@ -230,6 +248,11 @@ CrazyDrone *cd_create(const char *ip, int port)
     d->send_rate_hz = CD_DEFAULT_RATE_HZ;
     d->running      = 1;
     d->speed_mode   = CD_SPEED_NORMAL;
+    d->cam_port     = CD_DEFAULT_CAM_PORT;
+    cd_copy_path_with_default(d->cam_stream_path, sizeof(d->cam_stream_path),
+                              CD_DEFAULT_CAM_STREAM_PATH, CD_DEFAULT_CAM_STREAM_PATH);
+    cd_copy_path_with_default(d->cam_snapshot_path, sizeof(d->cam_snapshot_path),
+                              CD_DEFAULT_CAM_SNAPSHOT_PATH, CD_DEFAULT_CAM_SNAPSHOT_PATH);
 
     /* Initialize speed mode presets */
     d->speeds[CD_SPEED_SLOW]   = (CdSpeedMode){ 10.0f, 10.0f,  60.0f, 3.0f, 3.0f, 1000 };
@@ -774,6 +797,134 @@ const CdSpeedMode *cd_get_speed(CrazyDrone *drone)
 {
     if (!drone) return NULL;
     return &drone->speeds[drone->speed_mode];
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * Camera helpers
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+void cd_camera_set_endpoint(CrazyDrone *drone, int cam_port,
+                            const char *stream_path, const char *snapshot_path)
+{
+    if (!drone) return;
+
+    if (cam_port > 0 && cam_port <= 65535) {
+        drone->cam_port = cam_port;
+    }
+
+    cd_copy_path_with_default(drone->cam_stream_path, sizeof(drone->cam_stream_path),
+                              stream_path, CD_DEFAULT_CAM_STREAM_PATH);
+    cd_copy_path_with_default(drone->cam_snapshot_path, sizeof(drone->cam_snapshot_path),
+                              snapshot_path, CD_DEFAULT_CAM_SNAPSHOT_PATH);
+}
+
+int cd_camera_get_stream_url(CrazyDrone *drone, char *out, size_t out_len)
+{
+    if (!drone || !out || out_len == 0) return -1;
+    int n = snprintf(out, out_len, "http://%s:%d%s",
+                     drone->ip, drone->cam_port, drone->cam_stream_path);
+    return (n > 0 && (size_t)n < out_len) ? 0 : -1;
+}
+
+int cd_camera_get_snapshot_url(CrazyDrone *drone, char *out, size_t out_len)
+{
+    if (!drone || !out || out_len == 0) return -1;
+    int n = snprintf(out, out_len, "http://%s:%d%s",
+                     drone->ip, drone->cam_port, drone->cam_snapshot_path);
+    return (n > 0 && (size_t)n < out_len) ? 0 : -1;
+}
+
+int cd_camera_probe(CrazyDrone *drone, int timeout_ms)
+{
+    if (!drone) return 0;
+    if (timeout_ms <= 0) timeout_ms = 1200;
+
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock < 0) return 0;
+
+    int flags = fcntl(sock, F_GETFL, 0);
+    if (flags < 0) {
+        close(sock);
+        return 0;
+    }
+
+    if (fcntl(sock, F_SETFL, flags | O_NONBLOCK) < 0) {
+        close(sock);
+        return 0;
+    }
+
+    struct sockaddr_in cam_addr;
+    memset(&cam_addr, 0, sizeof(cam_addr));
+    cam_addr.sin_family = AF_INET;
+    cam_addr.sin_port = htons((uint16_t)drone->cam_port);
+    if (inet_pton(AF_INET, drone->ip, &cam_addr.sin_addr) <= 0) {
+        close(sock);
+        return 0;
+    }
+
+    int rc = connect(sock, (struct sockaddr *)&cam_addr, sizeof(cam_addr));
+    if (rc < 0 && errno != EINPROGRESS) {
+        close(sock);
+        return 0;
+    }
+
+    fd_set wset;
+    FD_ZERO(&wset);
+    FD_SET(sock, &wset);
+    struct timeval tv = {
+        .tv_sec = timeout_ms / 1000,
+        .tv_usec = (timeout_ms % 1000) * 1000
+    };
+
+    rc = select(sock + 1, NULL, &wset, NULL, &tv);
+    if (rc <= 0 || !FD_ISSET(sock, &wset)) {
+        close(sock);
+        return 0;
+    }
+
+    int soerr = 0;
+    socklen_t slen = sizeof(soerr);
+    if (getsockopt(sock, SOL_SOCKET, SO_ERROR, &soerr, &slen) < 0 || soerr != 0) {
+        close(sock);
+        return 0;
+    }
+
+    if (fcntl(sock, F_SETFL, flags) < 0) {
+        close(sock);
+        return 0;
+    }
+
+    struct timeval io_tv = {
+        .tv_sec = timeout_ms / 1000,
+        .tv_usec = (timeout_ms % 1000) * 1000
+    };
+    setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &io_tv, sizeof(io_tv));
+    setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &io_tv, sizeof(io_tv));
+
+    char request[256];
+    int req_len = snprintf(request, sizeof(request),
+                           "GET %s HTTP/1.1\r\n"
+                           "Host: %s\r\n"
+                           "Connection: close\r\n"
+                           "\r\n",
+                           drone->cam_stream_path, drone->ip);
+    if (req_len <= 0 || req_len >= (int)sizeof(request)) {
+        close(sock);
+        return 0;
+    }
+
+    ssize_t sent = send(sock, request, (size_t)req_len, 0);
+    if (sent <= 0) {
+        close(sock);
+        return 0;
+    }
+
+    char resp[64] = {0};
+    ssize_t got = recv(sock, resp, sizeof(resp) - 1, 0);
+    close(sock);
+    if (got <= 0) return 0;
+
+    return (strncmp(resp, "HTTP/", 5) == 0) ? 1 : 0;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
