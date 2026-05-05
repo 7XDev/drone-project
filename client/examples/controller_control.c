@@ -105,7 +105,7 @@ static int      g_triggers_were_both_pressed = 0;  /* Track if triggers were bot
 static uint32_t g_one_trigger_released_ms = 0;  /* Timestamp when one trigger first released */
 static uint32_t g_both_triggers_released_ms = 0;  /* Timestamp when BOTH triggers released */
 #define TRIGGER_GRACE_PERIOD_MS 500   /* Grace period to distinguish single vs both release */
-#define EMERGENCY_STOP_TIMEOUT_MS 500 /* Time both must be released to trigger emergency stop (1 sec) */
+#define EMERGENCY_STOP_TIMEOUT_MS 150 /* Time both must be released to trigger emergency stop (1 sec) */
 
 /* Joystick state */
 static int16_t  g_stick_left_y = 0;   /* Left stick vertical (height) */
