@@ -37,6 +37,8 @@
 #include "freertos/task.h"
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
+#include "driver/gpio.h"
+#include "esp_rom_sys.h"
 
 #include "stm32_legacy.h"
 #include "i2c_drv.h"
@@ -77,10 +79,43 @@ I2cDrv deckBus = {
     .def                = &deckBusDef,
 };
 
+static void i2cdrvRecoverBus(int scl, int sda)
+{
+    gpio_config_t io_conf = {
+        .pin_bit_mask = (1ULL << scl) | (1ULL << sda),
+        .mode = GPIO_MODE_OUTPUT_OD,
+        .pull_up_en = GPIO_PULLUP_ENABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE,
+    };
+    gpio_config(&io_conf);
+
+    gpio_set_level(sda, 1);
+    for (int i = 0; i < 10; i++) {
+        gpio_set_level(scl, 0);
+        esp_rom_delay_us(5);
+        gpio_set_level(scl, 1);
+        esp_rom_delay_us(5);
+    }
+
+    gpio_set_level(sda, 0);
+    esp_rom_delay_us(5);
+    gpio_set_level(scl, 1);
+    esp_rom_delay_us(5);
+    gpio_set_level(sda, 1);
+    esp_rom_delay_us(5);
+    gpio_reset_pin(scl);
+    gpio_reset_pin(sda);
+}
+
 static void i2cdrvInitBus(I2cDrv *i2c)
 {
+    i2cdrvRecoverBus(i2c->def->gpioSCLPin, i2c->def->gpioSDAPin);
+
     if (isinit_i2cPort[i2c->def->i2cPort]) {
-        return;
+        i2c_driver_delete(i2c->def->i2cPort);
+        vSemaphoreDelete(i2c->isBusFreeMutex);
+        isinit_i2cPort[i2c->def->i2cPort] = false;
     }
 
     i2c_config_t conf = {0};
@@ -111,6 +146,7 @@ void i2cdrvInit(I2cDrv *i2c)
 
 void i2cdrvTryToRestartBus(I2cDrv *i2c)
 {
+    i2cdrvRecoverBus(i2c->def->gpioSCLPin, i2c->def->gpioSDAPin);
     i2cdrvInitBus(i2c);
 }
 

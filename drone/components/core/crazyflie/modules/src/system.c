@@ -170,19 +170,15 @@ bool systemTest()
 
 void systemTask(void *arg)
 {
-  char out[300];
-  vTaskGetRunTimeStats(out);
-  DEBUG_PRINT(out);
-
   ledInit();
   ledSet(CHG_LED, 1);
   wifiInitDone = xSemaphoreCreateBinary();
   if (wifiInitDone != NULL) {
-    xTaskCreate(wifiInitTask, "WIFI-INIT", 1400, NULL, SYSTEM_TASK_PRI + 1, NULL); // stack size is in words
+    xTaskCreate(wifiInitTask, "WIFI-INIT", 2800, NULL, SYSTEM_TASK_PRI + 1, NULL);
   }
 
   // Hand off heavy init to a new task with a bigger stack to avoid overflowing SYSTEM
-  xTaskCreate(systemMainTask, "SYS-MAIN", 1400, NULL, SYSTEM_TASK_PRI, NULL); // stack size is in words
+  xTaskCreate(systemMainTask, "SYS-MAIN", 2800, NULL, SYSTEM_TASK_PRI, NULL);
   vTaskDelete(NULL);
 }
 

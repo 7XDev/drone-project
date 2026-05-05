@@ -414,11 +414,18 @@ static void sensorsDeviceInit(void)
     if (mpu6050TestConnection() == true) {
         DEBUG_PRINTI("MPU6050 I2C connection [OK].\n");
     } else {
-        DEBUG_PRINTE("MPU6050 I2C connection [FAIL].\n");
-        DEBUG_PRINTE("Please power off and power on the device.\n");
-        while (1) 
-        {
-            vTaskDelay(M2T(100));
+        DEBUG_PRINTE("MPU6050 I2C connection [FAIL]. Retrying...\n");
+        i2cdrvTryToRestartBus(I2C0_DEV);
+        vTaskDelay(M2T(200));
+
+        mpu6050Init(I2C0_DEV);
+        if (mpu6050TestConnection() == true) {
+            DEBUG_PRINTI("MPU6050 I2C connection [OK] on retry.\n");
+        } else {
+            DEBUG_PRINTE("MPU6050 I2C connection [FAIL]. Please power off and power on the device.\n");
+            while (1) {
+                vTaskDelay(M2T(100));
+            }
         }
     }
 

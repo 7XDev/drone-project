@@ -59,6 +59,11 @@ extern I2cDrv sensorsBus;
 void i2cdrvInit(I2cDrv *i2c);
 
 /**
+ * Try to restart a stuck I2C bus by bit-banging SCL and sending STOP.
+ */
+void i2cdrvTryToRestartBus(I2cDrv *i2c);
+
+/**
  * Send or receive a message over the I2C bus.
  *
  * The message is synchrony by semapthore and uses interrupts to transfer the message.
