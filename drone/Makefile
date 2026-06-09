@@ -2,7 +2,7 @@ PODMAN ?= podman
 SUDO ?= sudo
 IDF_IMAGE ?= docker.io/espressif/idf:release-v5.0
 PROJECT_DIR := $(CURDIR)
-PORT ?= /dev/ttyUSB1
+PORT ?= /dev/ttyUSB0
 PODMAN_VOLUME_SUFFIX ?=
 PODMAN_RUN_USER ?= --user 0
 PODMAN_SECURITY_OPTS ?= --security-opt label=disable

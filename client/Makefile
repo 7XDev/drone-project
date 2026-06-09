@@ -16,7 +16,8 @@ LIB_OBJ  = lib/crazydrone.o
 
 EXAMPLES = examples/wasd_control \
            examples/controller_control \
-           examples/controller_test
+           examples/controller_test \
+           examples/flycm
 
 .PHONY: all clean help
 
@@ -44,6 +45,9 @@ examples/controller_control: examples/controller_control.c $(LIB_OBJ) $(LIB_HDR)
 
 examples/controller_test: examples/controller_test.c
 	$(CC) $(CFLAGS) -o $@ examples/controller_test.c $(LDFLAGS)
+
+examples/flycm: examples/flycm.c $(LIB_OBJ) $(LIB_HDR)
+	$(CC) $(CFLAGS) -o $@ examples/flycm.c $(LIB_OBJ) $(LDFLAGS)
 
 # ── Housekeeping ────────────────────────────────────────────────────────────
 
