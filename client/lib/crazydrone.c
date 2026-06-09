@@ -180,6 +180,125 @@ static void install_signal_handler(void)
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+ * Multi-Drone Discovery
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+int cd_discover_drones(CdDiscoveredDrone *drones, int max, int timeout_ms)
+{
+    if (!drones || max <= 0) return 0;
+    
+    memset(drones, 0, sizeof(CdDiscoveredDrone) * max);
+    
+    int disc_sock = socket(AF_INET, SOCK_DGRAM, 0);
+    if (disc_sock < 0) {
+        perror("[CD] discovery socket");
+        return 0;
+    }
+    
+    int broadcast_enable = 1;
+    setsockopt(disc_sock, SOL_SOCKET, SO_BROADCAST, &broadcast_enable, sizeof(broadcast_enable));
+    
+    /* Bind to any port to receive responses */
+    struct sockaddr_in local_addr;
+    memset(&local_addr, 0, sizeof(local_addr));
+    local_addr.sin_family = AF_INET;
+    local_addr.sin_addr.s_addr = INADDR_ANY;
+    local_addr.sin_port = 0;  /* ephemeral */
+    if (bind(disc_sock, (struct sockaddr *)&local_addr, sizeof(local_addr)) < 0) {
+        perror("[CD] discovery bind");
+        close(disc_sock);
+        return 0;
+    }
+    
+    /* Send broadcast discovery packet */
+    struct sockaddr_in broadcast_addr;
+    memset(&broadcast_addr, 0, sizeof(broadcast_addr));
+    broadcast_addr.sin_family = AF_INET;
+    broadcast_addr.sin_port = htons(CD_DISCOVERY_PORT);
+    broadcast_addr.sin_addr.s_addr = INADDR_BROADCAST;
+    
+    const char *discover_msg = "ESPDRONE_DISCOVER";
+    
+    /* Send discovery packet multiple times */
+    int found = 0;
+    uint32_t start_ms = cd_now_ms();
+    
+    for (int i = 0; i < 3; i++) {
+        sendto(disc_sock, discover_msg, strlen(discover_msg), 0,
+               (struct sockaddr *)&broadcast_addr, sizeof(broadcast_addr));
+        cd_sleep_ms(200);
+    }
+    
+    /* Collect responses */
+    while (cd_now_ms() - start_ms < (uint32_t)timeout_ms && found < max) {
+        fd_set rset;
+        FD_ZERO(&rset);
+        FD_SET(disc_sock, &rset);
+        
+        struct timeval tv = {
+            .tv_sec = 0,
+            .tv_usec = 500000  /* 500ms */
+        };
+        
+        int sel = select(disc_sock + 1, &rset, NULL, NULL, &tv);
+        if (sel <= 0) {
+            /* Send another discovery packet periodically */
+            if (cd_now_ms() - start_ms < (uint32_t)timeout_ms) {
+                sendto(disc_sock, discover_msg, strlen(discover_msg), 0,
+                       (struct sockaddr *)&broadcast_addr, sizeof(broadcast_addr));
+            }
+            continue;
+        }
+        
+        char buf[256];
+        struct sockaddr_in from_addr;
+        socklen_t from_len = sizeof(from_addr);
+        
+        int n = recvfrom(disc_sock, buf, sizeof(buf) - 1, 0,
+                         (struct sockaddr *)&from_addr, &from_len);
+        if (n > 0) {
+            buf[n] = '\0';
+            
+            /* Parse response: "ESPDRONE <id> <ip>" */
+            char resp_type[32] = {0};
+            char drone_id[32] = {0};
+            char drone_ip[64] = {0};
+            
+            if (sscanf(buf, "%31s %31s %63s", resp_type, drone_id, drone_ip) >= 2) {
+                if (strcmp(resp_type, "ESPDRONE") == 0) {
+                    /* Check if we already have this drone */
+                    int already = 0;
+                    for (int j = 0; j < found; j++) {
+                        if (strcmp(drones[j].id, drone_id) == 0) {
+                            already = 1;
+                            break;
+                        }
+                    }
+                    
+                    if (!already) {
+                        strncpy(drones[found].id, drone_id, sizeof(drones[found].id) - 1);
+                        if (drone_ip[0] != '\0') {
+                            strncpy(drones[found].ip, drone_ip, sizeof(drones[found].ip) - 1);
+                        } else {
+                            inet_ntop(AF_INET, &from_addr.sin_addr, 
+                                      drones[found].ip, sizeof(drones[found].ip));
+                        }
+                        drones[found].port = CD_DEFAULT_PORT;
+                        drones[found].replied = 1;
+                        found++;
+                        printf("[CD] Discovered drone %d: %s at %s\n", 
+                               found, drone_id, drones[found - 1].ip);
+                    }
+                }
+            }
+        }
+    }
+    
+    close(disc_sock);
+    return found;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
  * Utility
  * ═══════════════════════════════════════════════════════════════════════════ */
 

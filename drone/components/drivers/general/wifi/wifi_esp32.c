@@ -22,24 +22,22 @@
 #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(4, 4, 0)
 #include "esp_mac.h"
 #endif
-#include "espnow.h"
-#include "espnow_ctrl.h"
-#include "espnow_utils.h"
 
 #define UDP_SERVER_PORT         2390
 #define UDP_SERVER_BUFSIZE      64
+#define UDP_DISCOVERY_PORT      2391
+#define UDP_BROADCAST_INTERVAL_MS 1000
+
+/* SSID and password for the WiFi network to connect to */
+#define STA_SSID                "dronewifi"
+#define STA_PASSWORD            "12345678"
+#define STA_MAX_RETRY           10
 
 static struct sockaddr_storage source_addr;
 
-static char WIFI_SSID[32] = "";
-static char WIFI_PWD[64] = CONFIG_WIFI_PASSWORD;
-static uint8_t WIFI_CH = CONFIG_WIFI_CHANNEL;
-#define WIFI_MAX_STA_CONN CONFIG_WIFI_MAX_STA_CONN
-
-#ifndef MAC2STR
-#define MAC2STR(a) (a)[0], (a)[1], (a)[2], (a)[3], (a)[4], (a)[5]
-#define MACSTR "%02x:%02x:%02x:%02x:%02x:%02x"
-#endif
+/* STA connection state */
+static int s_retry_num = 0;
+static bool isSTAConnected = false;
 
 static int sock;
 static xQueueHandle udpDataRx;
@@ -48,6 +46,13 @@ static xQueueHandle udpDataTx;
 static bool isInit = false;
 static bool isUDPInit = false;
 static bool isUDPConnected = false;
+
+static char drone_id_str[32] = "";  /* Unique drone identifier e.g. "drone_AABBCCDDEEFF" */
+
+#ifndef MAC2STR
+#define MAC2STR(a) (a)[0], (a)[1], (a)[2], (a)[3], (a)[4], (a)[5]
+#define MACSTR "%02x:%02x:%02x:%02x:%02x:%02x"
+#endif
 
 static esp_err_t udp_server_create(void *arg);
 
@@ -64,16 +69,98 @@ static uint8_t calculate_cksum(void *data, size_t len)
     return cksum;
 }
 
+/**
+ * STA event handler: connect/disconnect from the router AP
+ */
 static void wifi_event_handler(void *arg, esp_event_base_t event_base,
                                int32_t event_id, void *event_data)
 {
-    if (event_id == WIFI_EVENT_AP_STACONNECTED) {
-        wifi_event_ap_staconnected_t *event = (wifi_event_ap_staconnected_t *) event_data;
-        DEBUG_PRINT_LOCAL("station" MACSTR "join, AID=%d", MAC2STR(event->mac), event->aid);
+    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
+        DEBUG_PRINT_LOCAL("STA started, connecting to %s", STA_SSID);
+        esp_wifi_connect();
+    } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
+        isSTAConnected = false;
+        isUDPConnected = false;
+        if (s_retry_num < STA_MAX_RETRY) {
+            DEBUG_PRINT_LOCAL("STA disconnected, retrying (%d/%d)...", s_retry_num + 1, STA_MAX_RETRY);
+            esp_wifi_connect();
+            s_retry_num++;
+        } else {
+            DEBUG_PRINT_LOCAL("STA max retries reached. Rebooting...");
+            esp_restart();
+        }
+    } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
+        ip_event_got_ip_t *event = (ip_event_got_ip_t *) event_data;
+        DEBUG_PRINT_LOCAL("Got IP: " IPSTR, IP2STR(&event->ip_info.ip));
+        s_retry_num = 0;
+        isSTAConnected = true;
+        isUDPConnected = true;
+    }
+}
 
-    } else if (event_id == WIFI_EVENT_AP_STADISCONNECTED) {
-        wifi_event_ap_stadisconnected_t *event = (wifi_event_ap_stadisconnected_t *) event_data;
-        DEBUG_PRINT_LOCAL("station" MACSTR "leave, AID=%d", MAC2STR(event->mac), event->aid);
+/**
+ * Discovery responder task: listens on UDP_DISCOVERY_PORT for "ESPDRONE_DISCOVER"
+ * and replies with drone identity info so clients on the network can find all drones.
+ */
+static void discovery_responder_task(void *pvParameters)
+{
+    int disc_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
+    if (disc_sock < 0) {
+        DEBUG_PRINT_LOCAL("Discovery socket creation failed");
+        vTaskDelete(NULL);
+        return;
+    }
+
+    struct sockaddr_in disc_addr;
+    memset(&disc_addr, 0, sizeof(disc_addr));
+    disc_addr.sin_family = AF_INET;
+    disc_addr.sin_port = htons(UDP_DISCOVERY_PORT);
+    disc_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    if (bind(disc_sock, (struct sockaddr *)&disc_addr, sizeof(disc_addr)) < 0) {
+        DEBUG_PRINT_LOCAL("Discovery bind failed");
+        close(disc_sock);
+        vTaskDelete(NULL);
+        return;
+    }
+
+    DEBUG_PRINT_LOCAL("Discovery responder listening on port %d", UDP_DISCOVERY_PORT);
+
+    while (1) {
+        char rx_buf[64];
+        struct sockaddr_in from_addr;
+        socklen_t from_len = sizeof(from_addr);
+
+        int len = recvfrom(disc_sock, rx_buf, sizeof(rx_buf) - 1, 0,
+                           (struct sockaddr *)&from_addr, &from_len);
+        if (len > 0) {
+            rx_buf[len] = '\0';
+            if (strcmp(rx_buf, "ESPDRONE_DISCOVER") == 0) {
+                /* Reply with drone ID and IP info */
+                char reply[128];
+                struct sockaddr_in our_addr;
+                socklen_t our_len = sizeof(our_addr);
+                getsockname(sock, (struct sockaddr *)&our_addr, &our_len);
+
+                uint32_t our_ip = ntohl(our_addr.sin_addr.s_addr);
+                snprintf(reply, sizeof(reply), "ESPDRONE %s %u.%u.%u.%u",
+                         drone_id_str,
+                         (unsigned)((our_ip >> 24) & 0xFF),
+                         (unsigned)((our_ip >> 16) & 0xFF),
+                         (unsigned)((our_ip >> 8) & 0xFF),
+                         (unsigned)(our_ip & 0xFF));
+
+                sendto(disc_sock, reply, strlen(reply), 0,
+                       (struct sockaddr *)&from_addr, from_len);
+                
+                uint32_t from_ip = ntohl(from_addr.sin_addr.s_addr);
+                DEBUG_PRINT_LOCAL("Discovery reply sent to %u.%u.%u.%u",
+                         (unsigned)((from_ip >> 24) & 0xFF),
+                         (unsigned)((from_ip >> 16) & 0xFF),
+                         (unsigned)((from_ip >> 8) & 0xFF),
+                         (unsigned)(from_ip & 0xFF));
+            }
+        }
     }
 }
 
@@ -202,124 +289,68 @@ static void udp_server_tx_task(void *pvParameters)
     }
 }
 
-static void espnow_ctrl_data_cb(espnow_attribute_t initiator_attribute,
-                                       espnow_attribute_t responder_attribute,
-                                       uint32_t status1,
-                                       int status2,
-                                       int lx_value,
-                                       int ly_value,
-                                       int rx_value,
-                                       int ry_value,
-                                       int channel_one_value,
-                                       int channel_two_value)
-{
-    UDPPacket inPacket;
-    inPacket.size = 7;
-    inPacket.data[0] = 'n';
-    inPacket.data[1] = 'o';
-    inPacket.data[2] = 'w';
-    inPacket.data[3] = lx_value & 0xFF;
-    inPacket.data[4] = ly_value & 0xFF;
-    inPacket.data[5] = ry_value & 0xFF;
-    inPacket.data[6] = rx_value & 0xFF;
-    xQueueSend(udpDataRx, &inPacket, 0);
-}
-
-static void app_espnow_event_handler(void *handler_args, esp_event_base_t base, int32_t id, void *event_data)
-{
-    if (base != ESP_EVENT_ESPNOW) {
-        return;
-    }
-
-    switch (id) {
-    case ESP_EVENT_ESPNOW_CTRL_BIND: {
-        espnow_ctrl_bind_info_t *info = (espnow_ctrl_bind_info_t *)event_data;
-        DEBUG_PRINT_LOCAL("bind, uuid: " MACSTR ", initiator_type: %d", MAC2STR(info->mac), info->initiator_attribute);
-        break;
-    }
-
-    case ESP_EVENT_ESPNOW_CTRL_UNBIND: {
-        espnow_ctrl_bind_info_t *info = (espnow_ctrl_bind_info_t *)event_data;
-        DEBUG_PRINT_LOCAL("unbind, uuid: " MACSTR ", initiator_type: %d", MAC2STR(info->mac), info->initiator_attribute);
-        break;
-    }
-
-    default:
-        break;
-    }
-}
-
 void wifiInit(void)
 {
     if (isInit) {
         return;
     }
-    // This should probably be reduced to a CRTP packet size
+    
     udpDataRx = xQueueCreate(16, sizeof(UDPPacket));
     DEBUG_QUEUE_MONITOR_REGISTER(udpDataRx);
     udpDataTx = xQueueCreate(16, sizeof(UDPPacket));
     DEBUG_QUEUE_MONITOR_REGISTER(udpDataTx);
 
-    espnow_storage_init();
-    esp_netif_t *ap_netif = NULL;
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
-    ap_netif = esp_netif_create_default_wifi_ap();
-    uint8_t mac[6];
+    esp_netif_create_default_wifi_sta();
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 
+    /* Register event handlers */
     ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
                     ESP_EVENT_ANY_ID,
                     &wifi_event_handler,
                     NULL,
                     NULL));
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
+                    IP_EVENT_STA_GOT_IP,
+                    &wifi_event_handler,
+                    NULL,
+                    NULL));
 
-    ESP_ERROR_CHECK(esp_wifi_get_mac(ESP_IF_WIFI_AP, mac));
-    sprintf(WIFI_SSID, "%s_%02X%02X%02X%02X%02X%02X", CONFIG_WIFI_BASE_SSID, mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    /* Build a unique drone ID from MAC address */
+    uint8_t mac[6];
+    esp_wifi_get_mac(WIFI_IF_STA, mac);
+    snprintf(drone_id_str, sizeof(drone_id_str), "drone_%02X%02X%02X%02X%02X%02X",
+             mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
     wifi_config_t wifi_config = {
-        .ap = {
-            .channel = WIFI_CH,
-            .max_connection = WIFI_MAX_STA_CONN,
-            .authmode = WIFI_AUTH_WPA_WPA2_PSK,
+        .sta = {
+            .ssid = STA_SSID,
+            .password = STA_PASSWORD,
+            .threshold.authmode = WIFI_AUTH_WPA2_PSK,
         },
     };
 
-    memcpy(wifi_config.ap.ssid, WIFI_SSID, strlen(WIFI_SSID) + 1) ;
-    wifi_config.ap.ssid_len = strlen(WIFI_SSID);
-    memcpy(wifi_config.ap.password, WIFI_PWD, strlen(WIFI_PWD) + 1) ;
-
-    if (strlen(WIFI_PWD) == 0) {
-        wifi_config.ap.authmode = WIFI_AUTH_OPEN;
-    }
-
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
-    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_AP, &wifi_config));
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());
-    esp_wifi_set_channel(WIFI_CH, WIFI_SECOND_CHAN_NONE);
-    espnow_config_t espnow_config = ESPNOW_INIT_CONFIG_DEFAULT();
-    espnow_init(&espnow_config);
-    esp_event_handler_register(ESP_EVENT_ESPNOW, ESP_EVENT_ANY_ID, app_espnow_event_handler, NULL);
-    ESP_ERROR_CHECK(espnow_ctrl_responder_bind(30 * 1000, -55, NULL));
-    espnow_ctrl_responder_data(espnow_ctrl_data_cb);
-    esp_netif_ip_info_t ip_info = {
-        .ip.addr = ipaddr_addr("192.168.43.42"),
-        .netmask.addr = ipaddr_addr("255.255.255.0"),
-        .gw.addr      = ipaddr_addr("192.168.43.42"),
-    };
-    ESP_ERROR_CHECK(esp_netif_dhcps_stop(ap_netif));
-    ESP_ERROR_CHECK(esp_netif_set_ip_info(ap_netif, &ip_info));
-    ESP_ERROR_CHECK(esp_netif_dhcps_start(ap_netif));
-    DEBUG_PRINT_LOCAL("wifi_init_softap complete.SSID:%s password:%s", WIFI_SSID, WIFI_PWD);
 
+    DEBUG_PRINT_LOCAL("STA connecting to SSID:%s", STA_SSID);
+
+    /* Create UDP CRTP server socket */
     if (udp_server_create(NULL) == ESP_FAIL) {
         DEBUG_PRINT_LOCAL("UDP server create socket failed");
     } else {
         DEBUG_PRINT_LOCAL("UDP server create socket succeed");
     }
+    
     xTaskCreate(udp_server_tx_task, UDP_TX_TASK_NAME, UDP_TX_TASK_STACKSIZE, NULL, UDP_TX_TASK_PRI, NULL);
     xTaskCreate(udp_server_rx_task, UDP_RX_TASK_NAME, UDP_RX_TASK_STACKSIZE, NULL, UDP_RX_TASK_PRI, NULL);
+    
+    /* Start the discovery responder so clients can find this drone on the network */
+    xTaskCreate(discovery_responder_task, "disc_responder", 4096, NULL, 5, NULL);
+    
     isInit = true;
 }

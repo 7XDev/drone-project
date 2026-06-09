@@ -442,6 +442,31 @@ int cd_kbhit(void);
 int cd_getkey(void);
 
 /* ═══════════════════════════════════════════════════════════════════════════
+ * API — Multi-Drone Discovery
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+#define CD_DISCOVERY_PORT       2391
+#define CD_MAX_DRONES           16
+#define CD_DISCOVERY_TIMEOUT_MS 3000
+
+/** A discovered drone on the network. */
+typedef struct {
+    char id[32];         /* e.g. "drone_AABBCCDDEEFF" */
+    char ip[64];         /* IP address string */
+    int  port;           /* CRTP port (typically 2390) */
+    int  replied;        /* 1 if a response was received */
+} CdDiscoveredDrone;
+
+/**
+ * Broadcast a discovery request on the network and collect responses.
+ * @param drones   Array of CdDiscoveredDrone to fill (must hold at least CD_MAX_DRONES).
+ * @param max      Max drones to collect (typically CD_MAX_DRONES).
+ * @param timeout_ms How long to wait for responses.
+ * @return Number of drones discovered.
+ */
+int cd_discover_drones(CdDiscoveredDrone *drones, int max, int timeout_ms);
+
+/* ═══════════════════════════════════════════════════════════════════════════
  * API — Utility
  * ═══════════════════════════════════════════════════════════════════════════ */
 
